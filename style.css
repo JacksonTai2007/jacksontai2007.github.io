@@ -1,0 +1,202 @@
+/* Reset and Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background: #f7f7f7;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Header */
+header {
+    position: relative;
+    background: linear-gradient(135deg, #3498db, #9b59b6);
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://source.unsplash.com/1600x900/?technology');
+    background-size: cover;
+    filter: brightness(0.5);
+    z-index: -1;
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+header p {
+    font-size: 1.2rem;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+/* About Section */
+.about {
+    background: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.about h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.about p {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.about ul {
+    list-style: none;
+    margin-top: 20px;
+    padding-left: 0;
+}
+
+.about ul li {
+    font-size: 1.1rem;
+    margin: 10px 0;
+    color: #3498db;
+}
+
+/* Projects Section */
+.projects {
+    background: #ecf0f1;
+    padding: 60px 20px;
+}
+
+.projects h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.project-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+.card p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.card a {
+    color: #3498db;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.card a:hover {
+    color: #2c3e50;
+}
+
+/* Contact Section */
+.contact {
+    background: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.contact h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.contact ul {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.contact ul li {
+    margin: 10px 0;
+}
+
+.contact ul li a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.contact ul li a:hover {
+    color: #2c3e50;
+}
+
+/* Footer */
+footer {
+    background: #34495e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.2rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+
+    .about h2, .projects h2, .contact h2 {
+        font-size: 1.8rem;
+    }
+
+    .projects .project-cards {
+        grid-template-columns: 1fr;
+    }
+}
