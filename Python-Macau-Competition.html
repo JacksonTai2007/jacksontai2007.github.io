@@ -98,8 +98,8 @@
     <p class="mb-3">請選擇考試類型，然後點擊「開始作答」：</p>
 
     <select id="examTypeSelect" class="form-select w-auto mb-3">
-      <option value="preliminary">初賽（40 選擇題 + 2 簡答題）</option>
-      <option value="final">決賽（35 選擇題 + 15 程式結果題）</option>
+      <option value="preliminary">初賽試卷</option>
+      <option value="final">決賽試卷</option>
     </select>
 
     <button id="startBtn" class="btn btn-primary">開始作答</button>
@@ -875,12 +875,13 @@ startBtn.addEventListener("click", () => {
   resultSection.style.display = "none";
   
   if (currentExamType === "preliminary") {
-    examTitle.textContent = "初賽試卷";
-    questions = preliminaryQuestions;
-  } else {
-    examTitle.textContent = "決賽試卷";
-    questions = finalQuestions;
-  }
+  examTitle.textContent = "初賽試卷";
+  questions = finalQuestions;
+} else {
+  examTitle.textContent = "決賽試卷";
+  questions = preliminaryQuestions;
+}
+
   
   userAnswers = Array(questions.length).fill(null);
   renderQuestions();
