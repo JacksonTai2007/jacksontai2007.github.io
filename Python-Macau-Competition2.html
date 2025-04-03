@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>全澳中學生Python解難大賽模擬測試系統</title>
+  <title>全澳中學生Python解難大賽模擬測試系統2.0</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
@@ -94,7 +94,7 @@
 
   <!-- 區塊1：首頁/選擇考試類型 -->
   <div id="welcomeSection">
-    <h1 class="mb-4">全澳中學生Python解難大賽模擬測試</h1>
+    <h1 class="mb-4">全澳中學生Python解難大賽模擬測試系統2.0</h1>
     <p class="mb-3">請選擇考試類型，然後點擊「開始作答」：</p>
 
     <select id="examTypeSelect" class="form-select w-auto mb-3">
@@ -573,13 +573,11 @@ startBtn.addEventListener("click", () => {
   
   if (currentExamType === "preliminary") {
   examTitle.textContent = "初賽試卷";
-  questions = finalQuestions;
+  questions = preliminaryQuestions;
 } else {
   examTitle.textContent = "決賽試卷";
-  questions = preliminaryQuestions;
+  questions = finalQuestions;
 }
-
-  
   userAnswers = Array(questions.length).fill(null);
   renderQuestions();
   
