@@ -642,11 +642,11 @@
     "solution_idea": "直接使用 set() 可將列表轉換為集合。"
   },
   {
-    "question": "30. 下列 Python 代碼的輸出結果是什麼？\n\nimport panda as pd\n data = {'name': ['Alice', 'Bob', 'Charlie'], 'age' : [25, 30, 35]}\n df = pd.DataFrame(data)\n print(df['name'])",
+    "question": "30. 下列 Python 代碼的輸出結果是什麼？\n\nimport pandas as pd\n data = {'name': ['Alice', 'Bob', 'Charlie'], 'age' : [25, 30, 35]}\n df = pd.DataFrame(data)\n print(df['name'])",
     "options": ["[25, 30, 35]", "name", "Alice, Bob, Charlie", "Error"],
-    "answerIndex": 3,
+    "answerIndex": 2,
     "knowledge_points": "模組導入",
-    "solution_idea": "模組名拼寫錯誤（應為 pandas），運行時會報錯。"
+    "solution_idea": "代码使用 df['name'] 来提取 DataFrame 的 name 列。这个操作会返回一个 pandas Series，其中只包含 name 列的数据"
   },
   {
     "question": "31. 在 Python 中，下列哪個函數可以用來計算 list 中元素的總和？",
