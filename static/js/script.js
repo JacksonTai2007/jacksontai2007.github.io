@@ -1,220 +1,143 @@
+// Disable default context menu
+document.addEventListener('contextmenu', e => e.preventDefault());
 
+function handlePress() { this.classList.add('pressed'); }
+function handleRelease() { this.classList.remove('pressed'); }
+function handleCancel() { this.classList.remove('pressed'); }
 
-
-document.addEventListener('contextmenu', function (event) {
-    event.preventDefault();
-});
-
-function handlePress(event) {
-    this.classList.add('pressed');
-}
-
-function handleRelease(event) {
-    this.classList.remove('pressed');
-}
-
-function handleCancel(event) {
-    this.classList.remove('pressed');
-}
-
-var buttons = document.querySelectorAll('.projectItem');
-buttons.forEach(function (button) {
-    button.addEventListener('mousedown', handlePress);
-    button.addEventListener('mouseup', handleRelease);
-    button.addEventListener('mouseleave', handleCancel);
-    button.addEventListener('touchstart', handlePress);
-    button.addEventListener('touchend', handleRelease);
-    button.addEventListener('touchcancel', handleCancel);
-});
-
-function toggleClass(selector, className) {
-    var elements = document.querySelectorAll(selector);
-    elements.forEach(function (element) {
-        element.classList.toggle(className);
+function bindPressEffect(elements) {
+    elements.forEach(el => {
+        el.addEventListener('mousedown', handlePress);
+        el.addEventListener('mouseup', handleRelease);
+        el.addEventListener('mouseleave', handleCancel);
+        el.addEventListener('touchstart', handlePress);
+        el.addEventListener('touchend', handleRelease);
+        el.addEventListener('touchcancel', handleCancel);
     });
 }
 
-function pop(imageURL) {
-    var tcMainElement = document.querySelector(".tc-img");
-    if (imageURL) {
-        tcMainElement.src = imageURL;
-    }
-    toggleClass(".tc-main", "active");
-    toggleClass(".tc", "active");
+function toggleClass(selector, cls) {
+    document.querySelectorAll(selector).forEach(el => el.classList.toggle(cls));
 }
 
-var tc = document.getElementsByClassName('tc');
-var tc_main = document.getElementsByClassName('tc-main');
-tc[0].addEventListener('click', function (event) {
-    pop();
-});
-tc_main[0].addEventListener('click', function (event) {
-    event.stopPropagation();
-});
+function pop(url) {
+    const img = document.querySelector('.tc-img');
+    if (url) img.src = url;
+    toggleClass('.tc-main', 'active');
+    toggleClass('.tc', 'active');
+}
 
-
+const pageLoading = document.getElementById('zyyo-loading');
+window.addEventListener('load', () => {
+    setTimeout(() => { pageLoading.style.opacity = '0'; }, 100);
+});
 
 function setCookie(name, value, days) {
-    var expires = "";
+    let expires = '';
     if (days) {
-        var date = new Date();
+        const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        expires = "; expires=" + date.toUTCString();
+        expires = '; expires=' + date.toUTCString();
     }
-    document.cookie = name + "=" + value + expires + "; path=/";
+    document.cookie = name + '=' + value + expires + '; path=/';
 }
 
 function getCookie(name) {
-    var nameEQ = name + "=";
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        while (cookie.charAt(0) == ' ') {
-            cookie = cookie.substring(1, cookie.length);
+    const nameEQ = name + '=';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1);
         }
-        if (cookie.indexOf(nameEQ) == 0) {
-            return cookie.substring(nameEQ.length, cookie.length);
+        if (cookie.indexOf(nameEQ) === 0) {
+            return cookie.substring(nameEQ.length);
         }
     }
     return null;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-
-
-
-
-
-
-    var html = document.querySelector('html');
-    var themeState = getCookie("themeState") || "Light";
-    var tanChiShe = document.getElementById("tanChiShe");
-
-
-
-
-
-
-    function changeTheme(theme) {
-        tanChiShe.src = "./static/svg/snake-" + theme + ".svg";
-        html.dataset.theme = theme;
-        setCookie("themeState", theme, 365);
-        themeState = theme;
-    }
-
-
-
-
-
-
-
-    var Checkbox = document.getElementById('myonoffswitch')
-    Checkbox.addEventListener('change', function () {
-        if (themeState == "Dark") {
-            changeTheme("Light");
-        } else if (themeState == "Light") {
-            changeTheme("Dark");
-        } else {
-            changeTheme("Dark");
-        }
+function renderTags() {
+    const container = document.getElementById('tags');
+    if (!container) return;
+    container.innerHTML = '';
+    tags.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'left-tag-item';
+        div.textContent = t;
+        container.appendChild(div);
     });
+}
 
+function renderTimeline() {
+    const ul = document.getElementById('timeline');
+    if (!ul) return;
+    ul.innerHTML = '';
+    timeline.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `<div class="focus"></div><div>${item.text}</div><div>${item.date}</div>`;
+        ul.appendChild(li);
+    });
+}
 
+function renderProjects(selector, list) {
+    const container = document.querySelector(selector);
+    if (!container) return;
+    container.innerHTML = '';
+    list.forEach(p => {
+        const a = document.createElement('a');
+        a.className = 'projectItem';
+        a.target = '_blank';
+        if (p.link) a.href = p.link;
+        a.innerHTML = `<div class="projectItemLeft"><h1>${p.title || ''}</h1><p>${p.desc || ''}</p></div><div class="projectItemRight"><img src="${p.img}" alt=""></div>`;
+        container.appendChild(a);
+    });
+}
 
-    if (themeState == "Dark") {
-        Checkbox.checked = false;
-    }
-
-    changeTheme(themeState);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-
-    var fpsElement = document.createElement('div');
+function showFPS() {
+    const fpsElement = document.createElement('div');
     fpsElement.id = 'fps';
     fpsElement.style.zIndex = '10000';
     fpsElement.style.position = 'fixed';
     fpsElement.style.left = '0';
     document.body.insertBefore(fpsElement, document.body.firstChild);
 
-    var showFPS = (function () {
-        var requestAnimationFrame = window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (callback) {
-                window.setTimeout(callback, 1000 / 60);
-            };
-
-        var fps = 0,
-            last = Date.now(),
-            offset, step, appendFps;
-
-        step = function () {
-            offset = Date.now() - last;
-            fps += 1;
-
-            if (offset >= 1000) {
-                last += offset;
-                appendFps(fps);
-                fps = 0;
-            }
-
-            requestAnimationFrame(step);
-        };
-
-        appendFps = function (fpsValue) {
-            fpsElement.textContent = 'FPS: ' + fpsValue;
-        };
-
-        step();
+    let fps = 0, last = Date.now();
+    (function step() {
+        const offset = Date.now() - last;
+        fps += 1;
+        if (offset >= 1000) {
+            last += offset;
+            fpsElement.textContent = 'FPS: ' + fps;
+            fps = 0;
+        }
+        requestAnimationFrame(step);
     })();
-    
-    
-    
-    //pop('./static/img/tz.jpg')
-    
-    
-    
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const html = document.documentElement;
+    const tanChiShe = document.getElementById('tanChiShe');
+    const checkbox = document.getElementById('myonoffswitch');
+    let themeState = getCookie('themeState') || 'Light';
+
+    function changeTheme(theme) {
+        tanChiShe.src = `./static/svg/snake-${theme}.svg`;
+        html.dataset.theme = theme;
+        setCookie('themeState', theme, 365);
+        themeState = theme;
+    }
+
+    checkbox.addEventListener('change', () => {
+        changeTheme(themeState === 'Dark' ? 'Light' : 'Dark');
+    });
+
+    if (themeState === 'Dark') checkbox.checked = false;
+    changeTheme(themeState);
+
+    renderTags();
+    renderTimeline();
+    renderProjects('#siteList', siteProjects);
+    renderProjects('#projectList', otherProjects);
+    bindPressEffect(document.querySelectorAll('.projectItem'));
+    showFPS();
 });
-
-
-
-
-var pageLoading = document.querySelector("#zyyo-loading");
-window.addEventListener('load', function() {
-    setTimeout(function () {
-        pageLoading.style.opacity = '0';
-    }, 100);
-});
-
