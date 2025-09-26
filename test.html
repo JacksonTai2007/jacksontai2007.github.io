@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知識競賽測驗</title>
+<style>
+body {
+    background-color: #e3f2fd;
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+h1, h2, h3 {
+    font-weight: normal;
+    color: #1565c0;
+}
+#home h1 {
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+.button-group {
+    text-align: center;
+    margin: 1em 0;
+}
+.button-group button {
+    background-color: #64b5f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.button-group button:hover {
+    background-color: #42a5f5;
+}
+#home input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    font-size: 1em;
+    margin-left: 10px;
+}
+#home label {
+    font-size: 1em;
+    margin-right: 10px;
+}
+#quiz {
+    display: none;
+}
+#quiz-section {
+    display: flex;
+}
+#question-nav {
+    flex: 0 0 100px;
+    margin-right: 20px;
+}
+#question-nav .nav-num {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin: 3px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+#question-nav .nav-num.current {
+    border: 2px solid #1565c0;
+}
+#question-nav .nav-num.flagged {
+    background-color: #ffcc80;
+}
+#question-container {
+    flex: 1;
+}
+#question-container h2 {
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+}
+.options label {
+    margin-left: 5px;
+}
+.option-item {
+    margin: 0.5em 0;
+}
+#flagBtn {
+    background-color: #ffd54f;
+    border: none;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#flagBtn.active {
+    background-color: #ffa726;
+}
+#nav-buttons {
+    margin-top: 1em;
+}
+#nav-buttons button {
+    background-color: #64b5f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 5px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#nav-buttons button:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+}
+#submitBtn {
+    background-color: #1976d2;
+}
+#submitBtn:hover {
+    background-color: #1565c0;
+}
+#result, #reading, #browse {
+    display: none;
+}
+.correct-highlight {
+    background-color: #ffff8d;
+}
+#result h2 {
+    color: #1565c0;
+}
+#result .question-block {
+    margin-bottom: 1em;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+#result .question-block p {
+    margin: 0.2em 0;
+}
+#result .question-block .correct-highlight {
+    font-weight: bold;
+}
+#reading .question-block, #browse .question-block {
+    margin-bottom: 1em;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+#reading .question-block .correct-highlight {
+    font-weight: bold;
+}
+.back-home-btn {
+    margin-top: 1em;
+    display: inline-block;
+    background-color: #64b5f6;
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+}
+.back-home-btn:hover {
+    background-color: #42a5f5;
+}
+@media(max-width: 600px) {
+    #quiz-section {
+        display: block;
+    }
+    #question-nav {
+        display: none;
+    }
+}
+</style>
+</head>
+<body>
+<div id="home" class="container">
+    <h1>知識競賽測驗</h1>
+    <div class="button-group">
+        <button data-count="10">10 題</button>
+        <button data-count="20">20 題</button>
+        <button data-count="30">30 題</button>
+        <button data-count="40">40 題</button>
+        <button data-count="50">50 題</button>
+    </div>
+    <div style="text-align:center; margin-bottom:1em;">
+        <label for="customCount">自訂題數 (1-100):</label>
+        <input type="number" id="customCount" min="1" max="100" value="10">
+    </div>
+    <div style="text-align:center; margin-bottom:1em;">
+        <label><input type="radio" name="mode" value="sequential" checked> 順序</label>
+        <label><input type="radio" name="mode" value="random"> 隨機</label>
+    </div>
+    <div style="text-align:center;">
+        <button id="startBtn">開始測驗</button>
+        <button id="readingModeBtn">閱讀模式</button>
+        <button id="browseModeBtn">題庫瀏覽</button>
+    </div>
+</div>
+<div id="quiz" class="container">
+    <div id="quiz-section">
+        <div id="question-nav"></div>
+        <div id="question-container">
+            <h2 id="q-number"></h2>
+            <p id="q-text"></p>
+            <div id="options"></div>
+            <div id="nav-buttons">
+                <button id="flagBtn">標記</button>
+                <button id="prevBtn">上一題</button>
+                <button id="nextBtn">下一題</button>
+                <button id="submitBtn">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="result" class="container">
+    <h2>測驗結果</h2>
+    <p id="scoreText"></p>
+    <div id="wrongQuestions"></div>
+    <a href="#" class="back-home-btn" id="backToHomeBtn">返回首頁</a>
+</div>
+<div id="reading" class="container">
+    <h2>閱讀模式</h2>
+    <div id="readingContent"></div>
+    <a href="#" class="back-home-btn" id="backToHomeBtn2">返回首頁</a>
+</div>
+<div id="browse" class="container">
+    <h2>題庫瀏覽</h2>
+    <div id="browseContent"></div>
+    <a href="#" class="back-home-btn" id="backToHomeBtn3">返回首頁</a>
+</div>
+<script>
+const questions = [
+  {
+    "number": 1,
+    "text": "1792 年，英國國王喬治三世派出馬嘎爾尼使團出訪中國。這個使團的實際任務是        。",
+    "options": [
+      "向乾隆皇帝祝壽",
+      "進一步開拓中國市場",
+      "為對中國開戰做準備"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 2,
+    "text": "鴉片戰爭前夕，清政府對中外貿易進行嚴格的限制和管理，規定外國商船只能在        港口停泊。",
+    "options": [
+      "廣州",
+      "虎門",
+      "廈門"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 3,
+    "text": "近代中國規模最大、實力最強的海軍艦隊是        。",
+    "options": [
+      "北洋水師",
+      "南洋水師",
+      "福建水師"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 4,
+    "text": "1901 年，清政府宣佈撤銷        ，改設外務部。",
+    "options": [
+      "理藩院",
+      "大理寺",
+      "總理各國事務衙門"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 5,
+    "text": "中國最早開放的五個通商口岸是        。",
+    "options": [
+      "廣州、廈門、福州、寧波、天津",
+      "廣州、廈門、福州、上海、寧波",
+      "廣州、深圳、福州、上海、寧波"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 6,
+    "text": "近代以後，西方國家在中國享有“片面最惠國待遇”，這裏的“片面”指的是        。",
+    "options": [
+      "只有部分西方國家享有這一權利",
+      "西方國家只在部分領域享受這一權利",
+      "只是中國給西方國家這項權利，西方國家不給予中國這項權利"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 7,
+    "text": "西方國家在中國劃出的第一塊租界是        。",
+    "options": [
+      "位於香港的英租界",
+      "位於上海的英租界",
+      "位於上海的法租界"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 8,
+    "text": "將黑龍江以北、外興安嶺以南六十萬平方公里的領土割讓給俄國的條約是        。",
+    "options": [
+      "《中俄瑗琿條約》",
+      "《中俄天津條約》",
+      "《中俄北京條約》"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 9,
+    "text": "洋務運動中，洋務派最先提出來的是要學習西方的軍事技術。原因在於        。",
+    "options": [
+      "軍事技術學起來最容易",
+      "中國希望建設現代化的軍隊以對外擴張",
+      "在之前的幾次戰爭中感受到西方武器的先進"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 10,
+    "text": "1894 年，日本發動侵華“甲午戰爭”。次年，中國戰敗，被迫簽訂《馬關條約》，        被迫割讓給日本。",
+    "options": [
+      "台灣及其附屬島嶼、澎湖列島",
+      "香港及其附近島嶼",
+      "台灣"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 11,
+    "text": "19世紀末 20世紀初，西方國家掀起了瓜分中國的狂潮，紛紛在中國劃分勢力範圍。當時中國的長江流域是        的勢力範圍。",
+    "options": [
+      "法國",
+      "英國",
+      "美國"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 12,
+    "text": "“庚子賠款”指的是        中規定的賠款。",
+    "options": [
+      "《馬關條約》",
+      "《辛丑條約》",
+      "“二十一條”"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 13,
+    "text": "曾兩次發動侵藏戰爭的西方國家是        。",
+    "options": [
+      "日本",
+      "俄國",
+      "英國"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 14,
+    "text": "孫中山頒佈的《中華民國臨時約法》規定，中華民國的主權屬於        。",
+    "options": [
+      "總統",
+      "議會",
+      "全體國民"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 15,
+    "text": "下列口號能全面反映“五四”運動性質的是        。",
+    "options": [
+      "外爭國權，內懲國賊",
+      "誓死力爭，還我青島",
+      "廢除“二十一條”"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 16,
+    "text": "標誌著日本開始大規模侵華，中國人民開始局部抗戰的事件是       。",
+    "options": [
+      "皇姑屯事件",
+      "九一八事變",
+      "盧溝橋事件"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 17,
+    "text": "        年 12 月，日本攻佔南京，在長達一個星期的時間中，對南京市民進行了慘無人道的大屠殺。",
+    "options": [
+      "1931",
+      "1937",
+      "1938"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 18,
+    "text": "1945 年 4 月到 6 月，中國參加了舊金山會議並簽署了        。",
+    "options": [
+      "《聯合國家宣言》",
+      "《聯合國憲章》",
+      "《三藩市和約》"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 19,
+    "text": "第二次世界大戰期間，香港被        侵略者佔領了 3年零 8個月。",
+    "options": [
+      "英國",
+      "日本",
+      "美國"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 20,
+    "text": "1947年 10月 31日，聯合國大會通過決議，確定每年的 10月 24日為        。",
+    "options": [
+      "全球議程日",
+      "世界和平日",
+      "聯合國日"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 21,
+    "text": "中華人民共和國成立前夕，毛澤東主席提出“打掃乾淨屋子再請客”方針的意思是        。",
+    "options": [
+      "要在新的基礎上同世界各國建立新的外交關係",
+      "在徹底清除帝國主義在華特權和殘餘勢力後再與西方國家建立外交關係",
+      "倒向社會主義一邊"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 22,
+    "text": "1949年 10月 1日中華人民共和國成立當天，我國政府向世界宣告了中國政府同外國建交的原則：凡願意遵守        、互相尊重領土主權等項原則的國家，中國都願意與之建交。",
+    "options": [
+      "和平共處、互利",
+      "平等、互利",
+      "對等、合作"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 23,
+    "text": "《聯合國憲章》是當今世界最重要的多邊條約，確立了聯合國的宗旨、原則和組織機構設置，規定了成員國的責任、權利、義務及處理國際關係、維護世界和平與安全的基本原則和方法。          不屬於《聯合國憲章》規定的宗旨和原則。",
+    "options": [
+      "維持國際和平及安全",
+      "各會員國主權平等",
+      "促進人類可持續發展"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 24,
+    "text": "“和平共處五項原則”是中國對外關係的基本原則，是中國對國際法的重大貢獻。        不屬於該五項原則。",
+    "options": [
+      "擱置爭議",
+      "互不侵犯",
+      "互不干涉內政"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 25,
+    "text": "80年前，包括中國、蘇聯在內的全世界正義力量同仇敵愾、英勇戰鬥，並肩打敗了不可一世的法西斯勢力，贏得世界反法西斯戰爭勝利。其中，        開始時間最早、持續時間最長。",
+    "options": [
+      "中國人民抗日戰爭",
+      "美國太平洋戰爭",
+      "蘇聯偉大衛國戰爭"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 26,
+    "text": "新中國第一次承辦的世界性體育賽事是        。",
+    "options": [
+      "1961 年世界乒乓球錦標賽",
+      "1990 年亞運會",
+      "2008 年北京奧運會"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 27,
+    "text": "《維也納領事關係公約》是公約成員國之間處理雙邊        關係的一個國際準則，它於 1963年在維也納簽訂。",
+    "options": [
+      "貿易",
+      "外交",
+      "領事"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 28,
+    "text": "        是二戰的勝利成果，是戰後國際秩序重要組成部分。",
+    "options": [
+      "香港回歸中國",
+      "台灣回歸中國",
+      "澳門回歸中國"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 29,
+    "text": "2022年，中國與近 20個立場相近國家共同發起建立國際調解院倡議。經過共同努力，已經完成《關於建立國際調解院的公約》談判，並一致同意國際調解院總部設在        。",
+    "options": [
+      "荷蘭海牙",
+      "瑞士洛桑",
+      "中國香港"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 30,
+    "text": "中美建交的三項原則是：        ；撤走美國在台灣和台灣海峽地區的一切武裝力量和軍事設施；廢除同台灣的所謂《共同防禦條約》。",
+    "options": [
+      "美國必須斷絕同台灣的所謂外交關係",
+      "互相尊重主權和領土完整",
+      "不干涉內政"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 31,
+    "text": "2001年 6月 15日，上海合作組織成員國六國元首在       簽署了《上海合作組織成立宣言》，宣告上合組織正式成立。",
+    "options": [
+      "烏茲別克斯坦塔什干",
+      "俄羅斯聖彼德堡",
+      "中國上海"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 32,
+    "text": "2024年 7月上海合作組織阿斯坦納峰會後，中國正式接任上海合作組織 2024至 2025年輪值主席國，將於今年秋天在        主辦上合組織峰會。",
+    "options": [
+      "北京",
+      "天津",
+      "上海"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 33,
+    "text": "《馬斯特里赫特條約》於 1993年 11月 1日開始生效，標誌著        正式成立。",
+    "options": [
+      "歐洲議會",
+      "歐洲聯盟",
+      "歐洲理事會"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 34,
+    "text": "        年 11月 10日，在多哈舉行的世界貿易組織第四屆部長級會議審議並通過了中國加入世界貿易組織的決定，標誌著中國長達 15年恢復和加入世界貿易組織談判進程的結束。",
+    "options": [
+      "1991",
+      "2001",
+      "2011"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 35,
+    "text": "2013年 3月，習近平主席首次出訪，在俄羅斯莫斯科國際關係學院發表重要演講，面向世界提出        。",
+    "options": [
+      "新型國際關係",
+      "全人類共同價值",
+      "人類命運共同體理念"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 36,
+    "text": "2013年 9月 7日，習近平主席在哈薩克斯坦納紮爾巴耶夫大學發表重要演講，首次提出共建“        ”倡議。",
+    "options": [
+      "絲綢之路經濟帶",
+      "振興古絲綢之路",
+      "陸上絲綢之路"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 37,
+    "text": "2013年10月3日，國家主席習近平在印度尼西亞國會發表重要演講，提出共建“        ”倡議。",
+    "options": [
+      "雅萬高鐵",
+      "21世紀海上絲綢之路",
+      "兩國雙園"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 38,
+    "text": "2021年 9月 21日，國家主席習近平在北京以視頻方式出席第七十六屆聯合國大會一般性辯論並發表重要講話，提出        。",
+    "options": [
+      "全球安全倡議",
+      "全球文明倡議",
+      "全球發展倡議"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 39,
+    "text": "2022年 4月 21日，博鰲亞洲論壇 2022年年會開幕式在海南博鰲舉行，國家主席習近平以視頻方式發表題為《攜手迎接挑戰，合作開創未來》的主旨演講，提出        。",
+    "options": [
+      "全球安全倡議",
+      "全球文明倡議",
+      "全球發展倡議"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 40,
+    "text": "2023年 3月 15日，中共中央總書記、國家主席習近平在北京出席中國共產黨與世界政黨高層對話會，並發表題為《攜手同行現代化之路》的主旨講話，提出        。",
+    "options": [
+      "全球安全倡議",
+      "全球文明倡議",
+      "全球發展倡議"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 41,
+    "text": "2025年 4月 8日至 9日，中央周邊工作會議在北京舉行，中共中央總書記、國家主席、中央軍委主席習近平出席會議並發表重要講話。會議指出，我國幅員遼闊、邊界線長，周邊是實現發展繁榮的重要基礎、維護國家安全的重點、運籌外交全局的        、推動構建人類命運共同體的關鍵。",
+    "options": [
+      "前沿",
+      "首要",
+      "中心"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 42,
+    "text": "2025年 4月 8日至 9日舉行的中央周邊工作會議指出，當前我國同周邊關係處於近代以來最好的時期，同時也進入周邊格局和世界變局        的重要階段。",
+    "options": [
+      "相互影響",
+      "徹底割裂",
+      "深度聯動"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 43,
+    "text": "2023年 10月，習近平主席在向紀念親誠惠容周邊外交理念提出 10周年國際研討會發表書面致辭時，提出弘揚以和平、合作、包容、融合為核心的        。",
+    "options": [
+      "亞洲價值觀",
+      "周邊價值觀",
+      "亞洲精神"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 44,
+    "text": "2024年 6月 28日，和平共處五項原則發表 70周年紀念大會在北京人民大會堂隆重舉行。國家主席習近平出席紀念大會並發表重要講話，強調 70年後的今天，面對“建設一個什麼樣的世界、如何建設這個世界”的重大課題，中國給出了        這個時代答案。",
+    "options": [
+      "弘揚全人類共同價值",
+      "構建人類命運共同體",
+      "推動構建新型國際關係"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 45,
+    "text": "中國共產黨第 二十屆中央委員會第三次全體會議，於 2024年 7月 15日至 18日在北京舉行。全會高度評價新時代以來全面深化改革的成功實踐和偉大成就，研究了        問題。",
+    "options": [
+      "推進改革新征程、開創改革開放全新局面",
+      "進一步全面推進強國建設、民族復興偉業",
+      "進一步全面深化改革、推進中國式現代化"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 46,
+    "text": "中國共產黨二十屆三中全會要求，要發揮“一國兩制”制度優勢，鞏固提升香港國際金融、航運、貿易中心地位，支持香港、澳門打造        集聚高地，健全香港、澳門在國家對外開放中更好發揮作用機制。",
+    "options": [
+      "國際高端人才",
+      "國際活躍資本",
+      "國際先進技術"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 47,
+    "text": "2024年 9月 5日，國家主席習近平在北京人民大會堂出席        北京峰會開幕式並發表主旨講話。這是中國近年來舉辦的規模最大、外國領導人出席最多的主場外交。",
+    "options": [
+      "中拉論壇",
+      "中阿論壇",
+      "中非合作論壇"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 48,
+    "text": "習近平主席在 2024 年中非合作論壇北京峰會開幕式上宣佈，中國同所有非洲建交國的雙邊關係提升到        層面，中非關係整體定位提升至新時代全天候中非命運共同體，將實施中非攜手推進現代化十大夥伴行動。",
+    "options": [
+      "戰略關係",
+      "合作夥伴",
+      "軍事同盟"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 49,
+    "text": "2024年 10月 23日，國家主席習近平在俄羅斯喀山出席金磚國家領導人第十六次會晤並發表重要講話，強調當前世界進入新的動盪變革期，是任由世界動盪不安，還是推動其重回和平發展的正道，面臨關鍵抉擇。時代的風浪越大，我們越要勇立潮頭，以堅韌不拔之志、敢為人先之勇、識變應變之謀，共同譜寫“        ”高品質發展新篇章。",
+    "options": [
+      "南南合作",
+      "大金磚合作",
+      "一帶一路"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 50,
+    "text": "2024年 12月 20日，中共中央總書記、國家主席、中央軍委主席習近平出席慶祝澳門回歸祖國 25 周年大會暨澳門特別行政區第六屆政府就職典禮並發表重要講話，強調澳門回歸祖國以來取得的輝煌成就向世人證明，“一國兩制”具有顯著制度優勢和強大生命力，是保持香港、澳門長期繁榮穩定的好制度，是服務強國建設、民族復興偉業的好制度，是實現不同社會制度________的好制度，必須長期堅持。",
+    "options": [
+      "和平共處、合作共贏",
+      "和諧共生、相互借鑒",
+      "和美共榮、交流融合"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 51,
+    "text": "習近平主席在慶祝澳門回歸祖國 25 周年大會暨澳門特別行政區第六屆政府就職典禮上強調，“一國兩制”蘊含的和平、包容、________、共享的價值理念，是中國的，也是世界的，值得共同守護。",
+    "options": [
+      "創新",
+      "開放",
+      "進步"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 52,
+    "text": "習近平主席在慶祝澳門回歸祖國 25 周年大會暨澳門特別行政區第六屆政府就職典禮上強調，要發揮獨特優勢、強化        。以更加開放包容的姿態，廣泛拓展國際聯繫，提升全球影響力和吸引力。深度對接國家發展戰略，加快融入國家發展大局，在構建新發展格局中更好扮演橋樑角色。",
+    "options": [
+      "對外交往",
+      "融入內地",
+      "內聯外通"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 53,
+    "text": "習近平主席在慶祝澳門回歸祖國 25 周年大會暨澳門特別行政區第六屆政府就職典禮上強調，要進一步加大雙向開放力度，促進同葡語國家全方位互利合作，積極投身高品質共建“一帶一路”，擴大國際“朋友圈”，打造國家        重要的橋頭堡。",
+    "options": [
+      "高水平對外開放",
+      "共建“一帶一路”",
+      "拓展對外交往"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 54,
+    "text": "習近平主席在慶祝澳門回歸祖國 25 周年大會暨澳門特別行政區第六屆政府就職典禮上強調，要用好        的文化優勢，促進國際人文交流，講好澳門故事、中國故事，打造中西文明交流互鑒的重要窗口。",
+    "options": [
+      "中華文化",
+      "中西薈萃",
+      "外來文化"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 55,
+    "text": "2011 年，西亞北非局勢動盪後，中國政府圓滿完成從動盪地區撤離中國公民的行動。從__________撤出 35860名中國公民，並在力所能及的情況下説明 12個國家撤出了約 2100名外籍公民。這是新中國成立以來最大規模一次有組織撤離海外中國人員的行動。",
+    "options": [
+      "埃及",
+      "利比亞",
+      "敘利亞"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 56,
+    "text": "2025年 3月 7日，中共中央政治局委員、外交部長王毅在兩會記者會上介紹外交部在踐行外交為民方面的舉措，表示臨近邊境的        電詐園區已經全部清除，中泰緬老正在合力對泰緬邊境地區的電詐進行集中打擊。",
+    "options": [
+      "泰北",
+      "妙瓦底",
+      "緬北"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 57,
+    "text": "        是第一個在中國境內宣佈成立、第一個以中國城市命名的國際組織，旨在維護中亞地區的和平、穩定與安全。",
+    "options": [
+      "國際紅十字會香港分會",
+      "上海合作組織",
+      "博鰲亞洲論壇"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 58,
+    "text": "2024年 10月 24日上午，國家主席習近平出席俄羅斯喀山“金磚+”領導人對話會並發表重要講話，指出        是世界大變局的鮮明標誌。全球南方國家共同邁向現代化是世界歷史上一件大事，也是人類文明進程中史無前例的壯舉。",
+    "options": [
+      "中國和平發展",
+      "發展中國家快速發展",
+      "全球南方群體性崛起"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 59,
+    "text": "2025年 2月，        擔任聯合國安全理事會輪值主席期間，安理會通過了三年來首份關於烏克蘭危機的決議。",
+    "options": [
+      "中國",
+      "美國",
+      "俄羅斯"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 60,
+    "text": "2025年 3月，緬甸曼德勒強烈地震造成重大人員傷亡和財產損失。地震發生後，        赴緬甸災區開展有關救助工作。",
+    "options": [
+      "澳門紅十字會",
+      "中國國際應急醫療隊（澳門）",
+      "愛無界國際慈善會（澳門）"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 61,
+    "text": "2024年 11月 14日，國家主席習近平同秘魯總統博魯阿爾特在利馬總統府以視頻方式共同出席        港開港儀式。習近平主席指出，“從        到上海”，我們正在見證的，不僅是共建“一帶一路”倡議在秘魯的生根開花，也是一條新時代亞拉陸海新通道的誕生。",
+    "options": [
+      "錢凱；錢凱",
+      "利馬；利馬",
+      "派塔；派塔"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 62,
+    "text": "2024年 11月 16日，習近平主席出席亞太經合組織第三十一次領導人非正式會議並發表重要講話，強調堅持多邊主義和開放型經濟大方向，堅定維護以為_________核心的多邊貿易體制，著力推進區域經濟一體化和互聯互通，維護產業鏈供應鏈穩定通暢。",
+    "options": [
+      "聯合國貿易和發展會議",
+      "世界貿易組織",
+      "國際貿易中心"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 63,
+    "text": "2024年 11月 18日，國家主席習近平在巴西里約熱內盧出席二十國集團領導人第十九次峰會並發表重要講話，指出中國的脫貧歷程表明，本著滴水穿石、        的韌性、恒心和奮鬥精神，發展中國家的貧困問題是可以解決的，弱鳥是可以先飛、高飛的。中國可以成功，其他發展中國家同樣可以成功。這是中國成功打贏脫貧攻堅戰的世界意義。",
+    "options": [
+      "精衛填海、愚公移山",
+      "擼起袖子加油幹",
+      "一張藍圖繪到底"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 64,
+    "text": "2024年 11月 20日，國家主席習近平在巴西利亞總統官邸黎明宮同巴西總統盧拉舉行會談。兩國元首宣佈，將中巴關係定位提升為攜手構建更公正世界和更可持續星球的中巴命運共同體，將        同巴西發展戰略對接。",
+    "options": [
+      "共建“一帶一路”倡議",
+      "全球發展倡議",
+      "中拉論壇成果"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 65,
+    "text": "習近平主席在巴西裡約熱內盧出席二十國集團領導人第十九次峰會時強調，中國始終是________的一員，是發展中國家可靠的長期合作夥伴，也是支援全球發展事業的行動派和實幹家，願同廣大發展中國家攜手實現現代化。",
+    "options": [
+      "國際社會",
+      "全球南方",
+      "新興市場"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 66,
+    "text": "2024 年 12 月 10 日上午，國家主席習近平在北京人民大會堂會見來華出席“1+10”對話會的主要國際經濟組織負責人，指出經歷 40 多年持續快速發展，中國經濟已經步入高品質發展階段，對世界經濟增長貢獻率保持在________左右。",
+    "options": [
+      "10%",
+      "20%",
+      "30%"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 67,
+    "text": "聯合國安理會五個常任理事國是_________。",
+    "options": [
+      "中國、美國、俄羅斯、英國、法國",
+      "中國、美國、俄羅斯、法國、印度",
+      "中國、美國、印度、巴西、英國"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 68,
+    "text": "2025年 1月 17日晚，國家主席習近平應約同美國當選總統特朗普通電話。習近平主席指出，作為兩個國情不同的大國，中美之間難免會有一些分歧，關鍵是要尊重彼此_________和重大關切，找到妥善解決問題的辦法。",
+    "options": [
+      "核心利益",
+      "經貿訴求",
+      "軍事安全"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 69,
+    "text": "2025年 2月 6日上午，國家主席習近平在北京人民大會堂會見來華進行正式訪問的泰國總理佩通坦。習近平主席指出，中泰友好傳承千年，“中泰一家親”歷久彌新。今年是中泰建交_________周年暨“中泰友誼金色_________年”，雙方要繼往開來、攜手前行。",
+    "options": [
+      "50；30",
+      "50；50",
+      "30；50"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 70,
+    "text": "2025年 2月 7日晚，第九屆亞洲冬季運動會在_________隆重開幕，國家主席習近平出席開幕式並宣佈本屆亞冬會開幕。",
+    "options": [
+      "遼寧省瀋陽市",
+      "吉林省長春市",
+      "黑龍江省哈爾濱市"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 71,
+    "text": "2025年 3月 4日，國務院新聞辦公室發佈《中國的芬太尼類物質管控》白皮書。白皮書指出，中國秉持人類命運共同體理念，認真履行國際禁毒義務，堅持_________、全面均衡原則，倡導各國互幫互助、共建共享，反對相互指責、推卸責任。",
+    "options": [
+      "責任共擔",
+      "主動擔責",
+      "責任在外"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 72,
+    "text": "2025年 3月 28日，國家主席習近平在北京人民大會堂會見國際工商界代表時強調，中國過去是、現在是、將來也必然是外商理想、_________、有為的投資目的地，與中國同行就是與機遇同行，相信中國就是相信明天，投資中國就是投資未來。",
+    "options": [
+      "穩定",
+      "安全",
+      "增長"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 73,
+    "text": "2025年 4月 9日，中國國務院新聞辦公室發佈《關於中美經貿關係若干問題的中方立場》白皮書，指出中美經貿關係的本質是_________。",
+    "options": [
+      "溫和競爭",
+      "零和博弈",
+      "互利共贏"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 74,
+    "text": "2025年 4月 11日，國家主席習近平在北京釣魚台國賓館會見來華訪問的西班牙首相桑切斯。習近平主席指出，今年是中國和西班牙建立全面戰略夥伴關係_________周年，中方願同西班牙打造更有戰略定力、更富發展活力的全面戰略夥伴關係。",
+    "options": [
+      "20",
+      "30",
+      "40"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 75,
+    "text": "2025年 4月 14日，中共中央總書記、國家主席習近平在越共中央駐地同越共中央總書記蘇林舉行會談。習近平主席強調，今年是中越建交 75周年暨“中越人文交流年”。75年來，無論國際風雲如何變化，雙方在爭取國家獨立和民族解放的鬥爭中相互支持，在社會主義建設事業中攜手並進，在推進各自現代化進程中砥礪前行，成為        團結合作的典範。",
+    "options": [
+      "亞洲國家",
+      "社會主義國家",
+      "發展中國家"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 76,
+    "text": "國家主席習近平於 2025年 4月 15日至 17日對馬來西亞進行國事訪問。訪問期間，習近平主席會見易卜拉欣最高元首，與安瓦爾總理舉行會談，就中馬雙邊關係及共同關心的國際地區問題深入交換意見，達成廣泛共識。雙方一致同意構建高水平戰略性        ，更好助力兩國現代化進程，共同促進地區和世界繁榮穩定。",
+    "options": [
+      "中馬命運共同體",
+      "中馬戰略夥伴關係",
+      "中馬友好合作關係"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 77,
+    "text": "“國事訪問”是指       。",
+    "options": [
+      "一國政府首腦接受另一國政府首腦的邀請，對該國進行正式訪問。",
+      "一國外交部長接受另一國外交部長的邀請，對該國進行正式訪問。",
+      "一國國家元首接受另一國國家元首的邀請，對該國進行正式訪問。"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 78,
+    "text": "常駐外交代表機構有不同的級別，以下不屬於常駐外交代表機構的是             。",
+    "options": [
+      "特使辦公室",
+      "大使館",
+      "公使館"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 79,
+    "text": "2025年 4月 17日，國家主席習近平同柬埔寨首相洪瑪奈在金邊和平大廈舉行會談。兩國領導人一致同意攜手構建新時代        中柬命運共同體，宣佈 2025年為“中柬旅遊年”。",
+    "options": [
+      "高水平",
+      "全天候",
+      "戰略性"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 80,
+    "text": "和平解決國際爭端的司法方式是            。",
+    "options": [
+      "談判",
+      "斡旋",
+      "仲裁"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 81,
+    "text": "2025年 4月 25日，習近平總書記在中共中央政治局第二十次集體學習時強調，人工智能可以是造福人類的        。要廣泛開展人工智能國際合作，幫助全球南方國家加強技術能力建設，為彌合全球智能鴻溝作出中國貢獻。",
+    "options": [
+      "先進技術武器",
+      "基礎科學工具",
+      "國際公共產品"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 82,
+    "text": "中國共產黨在與各國政黨交往中，遵循“獨立自主、_________、互相尊重、互不干涉內部事務”四項基本原則。",
+    "options": [
+      "完全平等",
+      "平等互利",
+      "合作共贏"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 83,
+    "text": "2025年 5月 6日，國家主席習近平同歐洲理事會主席科斯塔、歐盟委員會主席馮德萊恩互致賀電，熱烈慶祝中國和歐盟建交_________周年。",
+    "options": [
+      "30",
+      "50",
+      "70"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 84,
+    "text": "2025年 4月 29日，習近平主席在上海指出，        是首個由新興市場國家和發展中國家創立並主導的多邊開發機構，是全球南方聯合自強的創舉，順應了改革和完善全球治理的歷史潮流，成長為國際金融體系中新興力量和全球南方合作的金字招牌。",
+    "options": [
+      "新開發銀行",
+      "亞洲基礎設施投資銀行",
+      "絲路基金"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 85,
+    "text": "2025年 5月 7日至 10日，國家主席習近平應邀對俄羅斯進行國事訪問並出席紀念蘇聯偉大衛國戰爭勝利 80周年慶典。此訪是習近平主席擔任國家主席以來第 11次到訪俄羅斯，也是時隔_________年再次出席紀念蘇聯偉大衛國戰爭勝利慶典。",
+    "options": [
+      "6",
+      "8",
+      "10"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 86,
+    "text": "2025年 5月 13日，國家主席習近平在國家會議中心出席中國—拉美和加勒比國家共同體論壇第四屆部長級會議開幕式並發表主旨講話。習近平主席宣佈，中方同拉方攜手啟動        ，共謀發展振興，共建中拉命運共同體。",
+    "options": [
+      "五大工程",
+      "八大行動",
+      "九項工程"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 87,
+    "text": "16、17 世紀以澳門為貿易樞紐的“海上絲綢之路”，為何被稱為“絲銀之路”，是因為       。",
+    "options": [
+      "絲綢和白銀是貿易的主要物品",
+      "貿易利潤驚人",
+      "貿易航線狹窄"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 88,
+    "text": "中國積極踐行________的全球治理觀，支援發展中國家在全球政治、經濟、安全事務中獲得更大發言權。",
+    "options": [
+      "共商共建共享",
+      "共商共建共用",
+      "共商共用共享"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 89,
+    "text": "澳門特別行政區基本法第一條的內容是_______。",
+    "options": [
+      "澳門特別行政區是中華人民共和國不可分離的部分",
+      "澳門特別行政區以法律保護私有財產權",
+      "澳門特別行政區依法保障澳門居民和其他人的權利和自由"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 90,
+    "text": "澳門特別行政區的高度自治權由          授予。",
+    "options": [
+      "全國人民代表大會",
+      "國務院",
+      "國家主席"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 91,
+    "text": "澳門可以“_________”的名義參加不以國家為單位參加的國際組織和國際會議。",
+    "options": [
+      "中國",
+      "澳門",
+      "中國澳門"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 92,
+    "text": "在海外華人的國籍問題上，中國政府歷來主張       。",
+    "options": [
+      "雙重國籍",
+      "僑居在國外的華僑可以自由選擇國籍，在華僑選擇居住國國籍的同時，就自然放棄了中國國籍",
+      "必須保留中國國籍"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 93,
+    "text": "根據《中華人民共和國澳門特別行政區基本法》，以下關於中央和澳門特區表述不正確的一項是______。",
+    "options": [
+      "外交部在澳門設立特派員公署處理外交事務",
+      "中央人民政府授權澳門特區依照《基本法》自行處理有關的對外事務",
+      "澳門特區享有獨立的司法權和終審權，特區法院對國防、外交等國家行為有管轄權"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 94,
+    "text": "中央人民政府嚴格根據《中華人民共和國澳門特別行政區基本法》和         方針處理涉及澳門特別行政區的條約和法律服務，為澳門特別行政區在有關領域參與國際合作、保持對外交往提供支援。",
+    "options": [
+      "“和平共處”",
+      "“一國兩制”",
+      "“依法治國”"
+    ],
+    "correct": "B"
+  },
+  {
+    "number": 95,
+    "text": "當前，世界多極化、經濟全球化、社會信息化、文化多樣化深入發展，國際社會進入格局調整、體系變革的關鍵階段。我國提出了推動構建以________為核心的新型國際關係思想，成為引導 21世紀國際關係發展的重要理念和新時代中國特色大國外交的重要內容。",
+    "options": [
+      "相互尊重、霸權主義、零和博弈",
+      "相互尊重、公平正義、零和博弈",
+      "相互尊重、公平正義、合作共贏"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 96,
+    "text": "我國始終將周邊置於外交全局的首要位置，以促進周邊和平、穩定、發展為己任，始終踐行________理念和________周邊外交方針。",
+    "options": [
+      "親誠惠容；以鄰為善、以鄰為伴",
+      "真實親誠；和平相處",
+      "親誠惠容；多元文化共存"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 97,
+    "text": "“五通”是共建“一帶一路”倡議的核心內容，以下哪項不是“五通”之一？",
+    "options": [
+      "民心相通",
+      "政策溝通",
+      "經濟聯通"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 98,
+    "text": "_______是中國領事官員可以提供的協助。",
+    "options": [
+      "為遺失旅行證件或無證件回國的中國公民簽發旅行證或回國證明",
+      "為當事人長期保管行李物品",
+      "為中國國內有關機關出具的證書或文書辦理公證"
+    ],
+    "correct": "A"
+  },
+  {
+    "number": 99,
+    "text": "20世紀 40年代，出生於澳門的中國音樂家冼星海輾轉來到        ，偶遇當地音樂家拜卡達莫夫。語言不通的兩位音樂家惺惺相惜，成為至交。這段感人至深的友誼佳話，習近平主席在不同國際場合多次提及。",
+    "options": [
+      "俄羅斯莫斯科",
+      "烏茲別克斯坦撒馬爾罕",
+      "哈薩克斯坦阿拉木圖"
+    ],
+    "correct": "C"
+  },
+  {
+    "number": 100,
+    "text": "以下關於澳門特別行政區與世界貿易組織（World Trade Organization，簡稱 WTO）關係描述不正確的一項是_______。",
+    "options": [
+      "澳門以“中國澳門”名義加入世界貿易組織",
+      "澳門以國際自由港身份加入世界貿易組織",
+      "澳門於 1991年 1月加入世界貿易組織的前身關貿總協定"
+    ],
+    "correct": "B"
+  }
+];
+let quizQuestions = []; // 當次測驗的題目列表
+let quizCount = 0;
+let currentIndex = 0;
+let userAnswers = [];
+let flagged = [];
+let sequentialMode = true;
+
+const homeDiv = document.getElementById('home');
+const quizDiv = document.getElementById('quiz');
+const resultDiv = document.getElementById('result');
+const readingDiv = document.getElementById('reading');
+const browseDiv = document.getElementById('browse');
+
+const questionNavDiv = document.getElementById('question-nav');
+const qNumberEl = document.getElementById('q-number');
+const qTextEl = document.getElementById('q-text');
+const optionsDiv = document.getElementById('options');
+const flagBtn = document.getElementById('flagBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitBtn = document.getElementById('submitBtn');
+
+document.querySelectorAll('#home .button-group button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('customCount').value = btn.getAttribute('data-count');
+    });
+});
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('readingModeBtn').addEventListener('click', () => {
+    homeDiv.style.display = 'none';
+    generateReadingMode();
+    readingDiv.style.display = 'block';
+});
+document.getElementById('browseModeBtn').addEventListener('click', () => {
+    homeDiv.style.display = 'none';
+    generateBrowseMode();
+    browseDiv.style.display = 'block';
+});
+document.getElementById('backToHomeBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    resultDiv.style.display = 'none';
+    homeDiv.style.display = 'block';
+});
+document.getElementById('backToHomeBtn2').addEventListener('click', (e) => {
+    e.preventDefault();
+    readingDiv.style.display = 'none';
+    homeDiv.style.display = 'block';
+});
+document.getElementById('backToHomeBtn3').addEventListener('click', (e) => {
+    e.preventDefault();
+    browseDiv.style.display = 'none';
+    homeDiv.style.display = 'block';
+});
+
+flagBtn.addEventListener('click', toggleFlag);
+prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; showQuestion(currentIndex); } });
+nextBtn.addEventListener('click', () => { if (currentIndex < quizCount - 1) { currentIndex++; showQuestion(currentIndex); } });
+submitBtn.addEventListener('click', submitQuiz);
+
+function startQuiz() {
+    // 獲取題數
+    let count = parseInt(document.getElementById('customCount').value);
+    if (isNaN(count) || count < 1) count = 1;
+    if (count > 100) count = 100;
+    // 獲取模式
+    sequentialMode = document.querySelector('#home input[name="mode"]:checked').value === 'sequential';
+    // 準備測驗題目
+    quizQuestions = [];
+    if (sequentialMode) {
+        quizQuestions = questions.slice(0, count);
+    } else {
+        // 隨機模式，隨機抽取題目
+        let indices = [...Array(questions.length).keys()];
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        indices = indices.slice(0, count);
+        indices.forEach(idx => quizQuestions.push(questions[idx]));
+    }
+    quizCount = quizQuestions.length;
+    // 初始化答案和標記狀態
+    userAnswers = Array(quizCount).fill(null);
+    flagged = Array(quizCount).fill(false);
+    currentIndex = 0;
+    // 建立題目導航
+    buildQuestionNav();
+    // 顯示第一題
+    showQuestion(0);
+    // 切換到測驗界面
+    homeDiv.style.display = 'none';
+    resultDiv.style.display = 'none';
+    readingDiv.style.display = 'none';
+    browseDiv.style.display = 'none';
+    quizDiv.style.display = 'block';
+}
+
+function buildQuestionNav() {
+    questionNavDiv.innerHTML = '';
+    for (let i = 0; i < quizCount; i++) {
+        const numBtn = document.createElement('div');
+        numBtn.classList.add('nav-num');
+        numBtn.textContent = (i + 1);
+        numBtn.addEventListener('click', () => {
+            currentIndex = i;
+            showQuestion(i);
+        });
+        questionNavDiv.appendChild(numBtn);
+    }
+}
+
+function showQuestion(index) {
+    const q = quizQuestions[index];
+    // 更新題目文字（保留填空處的下劃線）
+    let qText = q.text;
+    if (qText.indexOf('    ') !== -1) {
+        qText = qText.replace(/\s{4,}/g, match => '_'.repeat(match.length));
+    }
+    qNumberEl.textContent = `第 ${index + 1} 題（共 ${quizCount} 題）`;
+    qTextEl.textContent = qText;
+    // 建立選項按鈕
+    optionsDiv.innerHTML = '';
+    const letters = ['A', 'B', 'C'];
+    for (let i = 0; i < q.options.length; i++) {
+        const opt = q.options[i];
+        const letter = letters[i];
+        const optId = 'opt' + letter;
+        const optionDiv = document.createElement('div');
+        optionDiv.classList.add('option-item');
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'option';
+        radio.id = optId;
+        radio.value = letter;
+        radio.addEventListener('change', () => {
+            userAnswers[index] = radio.value;
+        });
+        const label = document.createElement('label');
+        label.htmlFor = optId;
+        label.textContent = letter + '. ' + opt;
+        optionDiv.appendChild(radio);
+        optionDiv.appendChild(label);
+        optionsDiv.appendChild(optionDiv);
+        // 若該題已有作答，預先勾選
+        if (userAnswers[index] === letter) {
+            radio.checked = true;
+        }
+    }
+    // 更新標記按鈕狀態
+    if (flagged[index]) {
+        flagBtn.classList.add('active');
+        flagBtn.textContent = '取消標記';
+    } else {
+        flagBtn.classList.remove('active');
+        flagBtn.textContent = '標記';
+    }
+    // 更新導航按鈕高亮狀態
+    const navButtons = questionNavDiv.getElementsByClassName('nav-num');
+    for (let i = 0; i < navButtons.length; i++) {
+        navButtons[i].classList.remove('current');
+        if (flagged[i]) {
+            navButtons[i].classList.add('flagged');
+        } else {
+            navButtons[i].classList.remove('flagged');
+        }
+    }
+    if (navButtons[index]) {
+        navButtons[index].classList.add('current');
+    }
+    // 切換上一題/下一題按鈕狀態
+    prevBtn.disabled = (index === 0);
+    nextBtn.disabled = (index === quizCount - 1);
+}
+
+function toggleFlag() {
+    flagged[currentIndex] = !flagged[currentIndex];
+    // 切換按鈕文字與樣式
+    if (flagged[currentIndex]) {
+        flagBtn.classList.add('active');
+        flagBtn.textContent = '取消標記';
+    } else {
+        flagBtn.classList.remove('active');
+        flagBtn.textContent = '標記';
+    }
+    // 更新導航中對應題號的標記提示
+    const navButtons = questionNavDiv.getElementsByClassName('nav-num');
+    if (navButtons[currentIndex]) {
+        if (flagged[currentIndex]) {
+            navButtons[currentIndex].classList.add('flagged');
+        } else {
+            navButtons[currentIndex].classList.remove('flagged');
+        }
+    }
+}
+
+function submitQuiz() {
+    // 提交前確認是否有未作答題目
+    const unansweredCount = userAnswers.filter(ans => ans === null).length;
+    if (unansweredCount > 0) {
+        if (!confirm(`您還有 ${unansweredCount} 題未作答，確定要提交嗎？`)) {
+            return;
+        }
+    }
+    // 計算得分並收集錯題
+    let correctCount = 0;
+    const wrongList = [];
+    for (let i = 0; i < quizCount; i++) {
+        const q = quizQuestions[i];
+        const userAns = userAnswers[i];
+        if (userAns && userAns === q.correct) {
+            correctCount++;
+        } else {
+            wrongList.push({ index: i, question: q, userAns: userAns });
+        }
+    }
+    // 顯示得分
+    const scoreText = document.getElementById('scoreText');
+    scoreText.textContent = `答對 ${correctCount} 題，共 ${quizCount} 題`;
+    // 顯示錯題詳情
+    const wrongDiv = document.getElementById('wrongQuestions');
+    wrongDiv.innerHTML = '';
+    if (wrongList.length === 0) {
+        const p = document.createElement('p');
+        p.textContent = '全部答對！';
+        wrongDiv.appendChild(p);
+    } else {
+        wrongList.forEach(item => {
+            const q = item.question;
+            const idx = item.index;
+            const qBlock = document.createElement('div');
+            qBlock.classList.add('question-block');
+            const qTitle = document.createElement('p');
+            qTitle.textContent = `第 ${idx + 1} 題: ${q.text}`;
+            if (qTitle.textContent.indexOf('    ') !== -1) {
+                qTitle.textContent = qTitle.textContent.replace(/\s{4,}/g, match => '_'.repeat(match.length));
+            }
+            qBlock.appendChild(qTitle);
+            const letters = ['A', 'B', 'C'];
+            for (let j = 0; j < q.options.length; j++) {
+                const optText = q.options[j];
+                const letter = letters[j];
+                const optP = document.createElement('p');
+                if (letter === q.correct) {
+                    const span = document.createElement('span');
+                    span.classList.add('correct-highlight');
+                    span.textContent = `${letter}. ${optText}`;
+                    optP.appendChild(span);
+                    if (item.userAns !== q.correct) {
+                        optP.appendChild(document.createTextNode('  (正確答案)'));
+                    }
+                } else {
+                    optP.textContent = `${letter}. ${optText}`;
+                    if (letter === item.userAns) {
+                        optP.style.textDecoration = 'line-through';
+                        optP.style.color = '#d32f2f';
+                        optP.appendChild(document.createTextNode('  (你的答案)'));
+                    }
+                }
+                qBlock.appendChild(optP);
+            }
+            wrongDiv.appendChild(qBlock);
+        });
+    }
+    // 切換到結果界面
+    quizDiv.style.display = 'none';
+    resultDiv.style.display = 'block';
+}
+
+function generateReadingMode() {
+    const container = document.getElementById('readingContent');
+    container.innerHTML = '';
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const qBlock = document.createElement('div');
+        qBlock.classList.add('question-block');
+        const qTitle = document.createElement('p');
+        qTitle.textContent = `${i + 1}、${q.text}`;
+        if (qTitle.textContent.indexOf('    ') !== -1) {
+            qTitle.textContent = qTitle.textContent.replace(/\s{4,}/g, match => '_'.repeat(match.length));
+        }
+        qBlock.appendChild(qTitle);
+        const letters = ['A', 'B', 'C'];
+        for (let j = 0; j < q.options.length; j++) {
+            const letter = letters[j];
+            const optText = q.options[j];
+            const optP = document.createElement('p');
+            if (letter === q.correct) {
+                const span = document.createElement('span');
+                span.classList.add('correct-highlight');
+                span.textContent = `${letter}. ${optText}`;
+                optP.appendChild(span);
+            } else {
+                optP.textContent = `${letter}. ${optText}`;
+            }
+            qBlock.appendChild(optP);
+        }
+        container.appendChild(qBlock);
+    }
+}
+
+function generateBrowseMode() {
+    const container = document.getElementById('browseContent');
+    container.innerHTML = '';
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const qBlock = document.createElement('div');
+        qBlock.classList.add('question-block');
+        const qTitle = document.createElement('p');
+        qTitle.textContent = `${i + 1}、${q.text}`;
+        if (qTitle.textContent.indexOf('    ') !== -1) {
+            qTitle.textContent = qTitle.textContent.replace(/\s{4,}/g, match => '_'.repeat(match.length));
+        }
+        qBlock.appendChild(qTitle);
+        const letters = ['A', 'B', 'C'];
+        for (let j = 0; j < q.options.length; j++) {
+            const letter = letters[j];
+            const optText = q.options[j];
+            const optP = document.createElement('p');
+            optP.textContent = `${letter}. ${optText}`;
+            qBlock.appendChild(optP);
+        }
+        container.appendChild(qBlock);
+    }
+}
+</script>
+</body>
+</html>
