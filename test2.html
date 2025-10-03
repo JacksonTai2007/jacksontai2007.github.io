@@ -189,7 +189,7 @@ h1, h2, h3, footer{
         <button data-count="300">300 題</button>
     </div>
     <div style="text-align:center; margin-bottom:1em;">
-        <label for="customCount">自訂題數 (1-100):</label>
+        <label for="customCount">自訂題數 (1-300):</label>
         <input type="number" id="customCount" min="1" max="300" value="10">
     </div>
     <div style="text-align:center; margin-bottom:1em;">
@@ -3299,7 +3299,7 @@ function startQuiz() {
     // 獲取題數
     let count = parseInt(document.getElementById('customCount').value);
     if (isNaN(count) || count < 1) count = 1;
-    if (count > 100) count = 100;
+    if (count > 300) count = 300;
     // 獲取模式
     sequentialMode = document.querySelector('#home input[name="mode"]:checked').value === 'sequential';
     // 準備測驗題目
