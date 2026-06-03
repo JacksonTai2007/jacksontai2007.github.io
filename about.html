@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>关于 · JacksonTai</title>
+  <meta name="description" content="关于 JacksonTai。">
+  <link rel="icon" href="./static/img/favicon.ico">
+  <link rel="stylesheet" href="./assets/css/blog.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header"></header>
+
+  <main>
+    <div class="wrap">
+      <article class="prose about-block">
+        <h1>关于我</h1>
+        <p>你好，我是 <strong>Jackson</strong> 👋 — 整天半吊子和不学无术的坏孩子，梦想成为庄稼地里的读书人。</p>
+        <p>常驻中国澳门特别行政区。平时折腾逆向工程、移动安全、Python 自动化和一点前端。这个博客用来记录踩过的坑、读过的代码，以及偶尔的灵光一闪。</p>
+
+        <h2>我在玩什么</h2>
+        <div class="tags" style="margin:10px 0 4px">
+          <span class="chip">IDA Pro</span>
+          <span class="chip">逆向工程</span>
+          <span class="chip">Python</span>
+          <span class="chip">Android</span>
+          <span class="chip">前端 / HTML</span>
+          <span class="chip">CTF</span>
+        </div>
+
+        <h2>时间线</h2>
+        <ul>
+          <li><strong>2018.11</strong> — 做了人生第一个个人网站</li>
+          <li><strong>2025</strong> — 开始系统地写技术博客</li>
+          <li><strong>未来</strong> — Coming soon……</li>
+        </ul>
+
+        <h2>找到我</h2>
+        <p>
+          GitHub：<a href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">@JacksonTai2007</a><br>
+          邮箱：<a href="mailto:jacksontai200701@gmail.com">jacksontai200701@gmail.com</a>
+        </p>
+
+        <hr>
+        <p style="color:var(--text-faint);font-family:var(--mono);font-size:13px">
+          📝 The only way to do great work is to love what you do.
+        </p>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="./assets/js/blog.js"></script>
+</body>
+</html>

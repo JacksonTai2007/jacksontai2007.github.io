@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文章 · JacksonTai</title>
+  <meta name="description" content="JacksonTai 的文章。">
+  <link rel="icon" href="./static/img/favicon.ico">
+  <link rel="stylesheet" href="./assets/css/blog.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header"></header>
+
+  <main>
+    <div class="wrap wrap-wide">
+      <div class="article-layout">
+        <div>
+          <header class="article-header" id="article-head"></header>
+          <article class="prose" id="article">
+            <p class="skeleton">正在加载文章…</p>
+          </article>
+          <nav class="post-nav" id="post-nav"></nav>
+        </div>
+        <aside class="toc-wrap">
+          <div class="toc" id="toc"></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="./assets/js/marked.min.js"></script>
+  <script src="./assets/js/blog.js"></script>
+  <script src="./assets/js/post.js"></script>
+</body>
+</html>

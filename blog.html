@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文章 · JacksonTai</title>
+  <meta name="description" content="JacksonTai 的全部文章 — 逆向、安全、Python 与前端笔记。">
+  <link rel="icon" href="./static/img/favicon.ico">
+  <link rel="stylesheet" href="./assets/css/blog.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header"></header>
+
+  <main>
+    <div class="wrap">
+      <div class="section-head" style="margin-top:8px">
+        <h2>全部文章</h2>
+      </div>
+
+      <div class="toolbar">
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="search" type="search" placeholder="搜索标题、标签、摘要…" autocomplete="off">
+        </label>
+      </div>
+      <div class="filter-tags" id="filter"></div>
+
+      <ul class="post-list" id="post-list" style="margin-top:18px">
+        <li class="skeleton">正在加载文章…</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="./assets/js/blog.js"></script>
+  <script>
+    Blog.renderBlog("#post-list", { search: "#search", filter: "#filter" });
+  </script>
+</body>
+</html>

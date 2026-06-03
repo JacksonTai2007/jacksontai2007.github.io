@@ -1,0 +1,20 @@
+{
+  "posts": [
+    {
+      "id": "hello-world",
+      "title": "Hello World：博客换新装",
+      "date": "2026-06-01",
+      "category": "杂谈",
+      "tags": ["公告", "FrontEnd"],
+      "excerpt": "把个人主页重构成了极简黑白风的技术博客 —— 零构建、纯静态、用 Markdown 写文章。聊聊为什么这么做，以及怎么往里加新文章。"
+    },
+    {
+      "id": "reverse-engineering-101",
+      "title": "逆向入门：用 IDA Pro 啃下第一个 CrackMe",
+      "date": "2026-05-20",
+      "category": "逆向",
+      "tags": ["IDA Pro", "逆向工程", "安全"],
+      "excerpt": "从静态分析到动态调试，记录一次完整的 CrackMe 求解过程，以及一个新手最容易踩的几个坑。"
+    }
+  ]
+}
