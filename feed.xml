@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JacksonTai 的博客</title>
+    <link>https://jacksontai2007.github.io/</link>
+    <description>记录逆向、安全、Python 与前端的折腾。</description>
+    <language>zh-CN</language>
+    <atom:link href="https://jacksontai2007.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>Mon, 01 Jun 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>Hello World：博客换新装</title>
+      <link>https://jacksontai2007.github.io/post.html?id=hello-world</link>
+      <guid isPermaLink="true">https://jacksontai2007.github.io/post.html?id=hello-world</guid>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category>杂谈</category>
+      <description>把个人主页重构成了极简黑白风的技术博客 —— 零构建、纯静态、用 Markdown 写文章。聊聊为什么这么做，以及怎么往里加新文章。</description>
+    </item>
+    <item>
+      <title>逆向入门：用 IDA Pro 啃下第一个 CrackMe</title>
+      <link>https://jacksontai2007.github.io/post.html?id=reverse-engineering-101</link>
+      <guid isPermaLink="true">https://jacksontai2007.github.io/post.html?id=reverse-engineering-101</guid>
+      <pubDate>Wed, 20 May 2026 00:00:00 GMT</pubDate>
+      <category>逆向</category>
+      <description>从静态分析到动态调试，记录一次完整的 CrackMe 求解过程，以及一个新手最容易踩的几个坑。</description>
+    </item>
+  </channel>
+</rss>

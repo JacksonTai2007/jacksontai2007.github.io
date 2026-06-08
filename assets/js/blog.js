@@ -33,7 +33,11 @@
     return (
       '<div class="wrap">' +
         "<span>© " + new Date().getFullYear() + " JacksonTai</span>" +
-        "<span>Built with ☕ &amp; vanilla JS</span>" +
+        '<span class="footer-links">' +
+          '<a href="feed.xml" title="RSS 订阅">RSS</a>' +
+          '<span class="sep">·</span>' +
+          "Built with ☕ &amp; vanilla JS" +
+        "</span>" +
       "</div>"
     );
   }

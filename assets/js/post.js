@@ -45,6 +45,7 @@
         '<div class="post-meta">' +
           "<span>" + B.fmtDate(meta.date) + "</span>" +
           (meta.category ? '<span class="sep">/</span><span>' + B.esc(meta.category) + "</span>" : "") +
+          '<span class="sep">/</span><span id="read-time">…</span>' +
         "</div>" +
         '<div class="tags">' + B.tagChips(meta.tags, true) + "</div>";
 
@@ -89,6 +90,19 @@
           article.querySelectorAll('a[href^="http"]').forEach(function (a) {
             a.target = "_blank"; a.rel = "noopener";
           });
+
+          // estimate reading time (CJK chars + western words)
+          var rt = document.getElementById("read-time");
+          if (rt) {
+            var text = article.textContent || "";
+            var cjk = (text.match(/[一-鿿]/g) || []).length;
+            var words = (text.replace(/[一-鿿]/g, " ").match(/[A-Za-z0-9]+/g) || []).length;
+            var mins = Math.max(1, Math.round(cjk / 400 + words / 200));
+            rt.textContent = mins + " 分钟阅读";
+          }
+
+          // progressive enhancements: code highlight + copy, lightbox, TOC scroll-spy, etc.
+          if (window.Enhance) window.Enhance.article(article, toc);
 
           // prev / next (posts sorted newest-first)
           var newer = posts[idx - 1]; // newer
