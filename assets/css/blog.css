@@ -254,7 +254,7 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
 .back-link { font-family: var(--mono); font-size: 13px; color: var(--text-soft); }
 .back-link:hover { color: var(--text); }
 
-.prose { font-size: 16.5px; line-height: 1.8; }
+.prose { font-size: 16.5px; line-height: 1.8; min-width: 0; overflow-wrap: break-word; word-wrap: break-word; }
 .prose > *:first-child { margin-top: 0; }
 .prose h1, .prose h2, .prose h3, .prose h4 {
   line-height: 1.3; letter-spacing: -0.01em; scroll-margin-top: 80px;
@@ -283,10 +283,13 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
 .prose pre {
   background: var(--bg-code); border: 1px solid var(--border);
   border-radius: 12px; padding: 16px 18px; overflow-x: auto; margin: 1.4em 0;
-  font-size: 13.5px; line-height: 1.6;
+  font-size: 13.5px; line-height: 1.6; max-width: 100%;
 }
-.prose pre code { background: none; border: none; padding: 0; font-size: inherit; }
-.prose table { width: 100%; border-collapse: collapse; margin: 1.4em 0; font-size: 0.95em; }
+/* code inside pre must NOT wrap (it scrolls); inline code may wrap */
+.prose pre code { background: none; border: none; padding: 0; font-size: inherit; white-space: pre; overflow-wrap: normal; }
+.prose :not(pre) > code { overflow-wrap: break-word; }
+/* tables can be wide: let them scroll horizontally within the column */
+.prose table { width: 100%; border-collapse: collapse; margin: 1.4em 0; font-size: 0.95em; display: block; overflow-x: auto; }
 .prose th, .prose td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
 .prose th { background: var(--bg-soft); font-weight: 600; }
 
@@ -300,9 +303,12 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
 .toc a:hover { color: var(--text); border-left-color: var(--border-strong); text-decoration: none; }
 .toc .lvl-3 { padding-left: 26px; }
 
-.article-layout { display: grid; grid-template-columns: 1fr; gap: 0; }
+.article-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+/* grid children default to min-width:auto, which lets wide content (long <pre>,
+   tables) blow past the viewport on phones. Force them to be shrinkable. */
+.article-layout > * { min-width: 0; }
 @media (min-width: 1080px) {
-  .article-layout.has-toc { grid-template-columns: 1fr 220px; gap: 48px; align-items: start; }
+  .article-layout.has-toc { grid-template-columns: minmax(0, 1fr) 220px; gap: 48px; align-items: start; }
   .article-layout .toc-wrap { position: sticky; top: 84px; }
 }
 
