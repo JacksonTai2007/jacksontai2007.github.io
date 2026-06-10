@@ -18,6 +18,11 @@
   --selection: #111111;
   --selection-text: #ffffff;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* global background image + frosted surfaces */
+  --scrim: rgba(248, 250, 253, 0.42);
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-border: rgba(255, 255, 255, 0.55);
+  --header-bg: rgba(255, 255, 255, 0.68);
   --maxw: 720px;
   --maxw-wide: 1080px;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -39,6 +44,10 @@ html[data-theme="dark"] {
   --selection: #ededed;
   --selection-text: #0e0e0e;
   --shadow: none;
+  --scrim: rgba(5, 8, 18, 0.52);
+  --surface: rgba(13, 15, 22, 0.68);
+  --surface-border: rgba(255, 255, 255, 0.10);
+  --header-bg: rgba(10, 12, 18, 0.60);
 }
 
 * { box-sizing: border-box; }
@@ -56,6 +65,32 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* global night-scene background: a fixed layer (iOS-safe, no background-attachment)
+   topped by a theme-aware scrim for contrast */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--scrim), var(--scrim)),
+    url(../../static/img/background.jpg);
+  background-size: cover;
+  background-position: center;
+  transition: background-color 0.25s ease;
+}
+
+/* frosted content sheet that floats above the background image */
+.sheet {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 28px 28px 32px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
 }
 
 ::selection { background: var(--selection); color: var(--selection-text); }
@@ -78,10 +113,10 @@ main { min-height: 70vh; padding: 56px 0 80px; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: saturate(180%) blur(10px);
-  -webkit-backdrop-filter: saturate(180%) blur(10px);
-  border-bottom: 1px solid var(--border);
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--surface-border);
 }
 .nav {
   display: flex;
@@ -137,37 +172,16 @@ html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
   align-items: center; justify-content: center;
 }
 
-/* ---------- Hero banner (home only): night-scene image + frosted card ---------- */
-.hero-banner {
-  position: relative;
-  margin: 8px 0 8px;
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background-image:
-    linear-gradient(180deg, rgba(8, 12, 26, 0.30) 0%, rgba(8, 12, 26, 0.62) 100%),
-    url(../../static/img/background.jpg);
-  background-size: cover;
-  background-position: center 38%;
-  isolation: isolate;
-}
-/* subtle animated sheen so the static image feels alive */
-.hero-banner::after {
-  content: "";
-  position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(120% 80% at 70% 0%, rgba(120, 160, 255, 0.12), transparent 60%);
-}
-.hero-banner .hero { position: relative; z-index: 1; }
-
-/* frosted-glass card holding the intro */
+/* ---------- Hero (home): frosted-glass intro card over the global background ---------- */
+.hero-banner { margin: 8px 0; }
 .hero-banner .hero {
-  margin: 22px;
+  margin: 0;
   padding: 30px 30px 28px;
-  border-radius: 14px;
-  background: rgba(16, 20, 34, 0.34);
+  border-radius: 16px;
+  background: rgba(14, 18, 32, 0.45);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
 }
 /* banner content uses light text regardless of site theme (image is dark) */
@@ -349,6 +363,15 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
 .toc {
   font-size: 13.5px; line-height: 1.9;
 }
+/* give the floating TOC a glass backing so it reads over the page image */
+.toc:not(:empty) {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 16px 14px;
+}
 .toc-title { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); margin-bottom: 8px; }
 .toc ul { list-style: none; padding: 0; margin: 0; }
 .toc a { color: var(--text-soft); display: block; padding: 2px 0; border-left: 2px solid var(--border); padding-left: 12px; }
@@ -374,7 +397,10 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
 
 /* ---------- Footer ---------- */
 .site-footer {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--surface-border);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
   padding: 30px 0;
   color: var(--text-faint);
   font-size: 13px;
@@ -402,9 +428,9 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
   .nav-links.open { display: flex; }
   .nav-links .nav-link { padding: 11px 6px; border-radius: 0; }
   .nav { position: relative; }
-  /* tighten the hero banner on small screens */
-  .hero-banner { border-radius: 14px; background-position: center 42%; }
-  .hero-banner .hero { margin: 12px; padding: 22px 18px 20px; }
+  /* tighten the hero card and sheets on small screens */
+  .hero-banner .hero { padding: 22px 18px 20px; }
+  .sheet { padding: 18px 16px 22px; border-radius: 14px; }
 }
 @media (min-width: 641px) {
   .nav-links { display: flex !important; align-items: center; gap: 4px; }
