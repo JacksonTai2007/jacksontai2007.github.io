@@ -382,9 +382,17 @@ a.chip:hover { color: var(--text); border-color: var(--border-strong); text-deco
 /* grid children default to min-width:auto, which lets wide content (long <pre>,
    tables) blow past the viewport on phones. Force them to be shrinkable. */
 .article-layout > * { min-width: 0; }
+/* single-column mode (<1080px): hide the side TOC (it would otherwise drop to the
+   page bottom) and narrow the container to a comfortable reading measure */
+@media (max-width: 1079px) {
+  .article-layout .toc-wrap { display: none; }
+  .wrap-wide { max-width: var(--maxw); }
+}
 @media (min-width: 1080px) {
   .article-layout.has-toc { grid-template-columns: minmax(0, 1fr) 220px; gap: 48px; align-items: start; }
   .article-layout .toc-wrap { position: sticky; top: 84px; }
+  /* roomier padding for the long-form reading panel */
+  .article-layout .sheet { padding: 40px 48px 48px; }
 }
 
 .post-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); }
