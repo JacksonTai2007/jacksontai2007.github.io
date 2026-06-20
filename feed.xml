@@ -6,7 +6,15 @@
     <description>记录逆向、安全、Python 与前端的折腾。</description>
     <language>zh-CN</language>
     <atom:link href="https://jacksontai2007.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 01 Jun 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 20 Jun 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>把 GPT Image 2 提示词工程做成一个 Claude Skill</title>
+      <link>https://jacksontai2007.github.io/post.html?id=gpt-image-2-prompting-skill</link>
+      <guid isPermaLink="true">https://jacksontai2007.github.io/post.html?id=gpt-image-2-prompting-skill</guid>
+      <pubDate>Sat, 20 Jun 2026 00:00:00 GMT</pubDate>
+      <category>AI</category>
+      <description>我开源了一个 Claude Skill：用六段式协议 + 13 个模板 + 29 个场景配方，把模糊的画面想法变成可复现的 GPT Image 2 提示词。聊聊它解决什么问题、怎么设计、怎么上手。</description>
+    </item>
     <item>
       <title>Hello World：博客换新装</title>
       <link>https://jacksontai2007.github.io/post.html?id=hello-world</link>
