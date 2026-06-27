@@ -13,9 +13,20 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
+  // Purge old cache buckets. We intentionally do NOT clients.claim(): a tab keeps the
+  // generation it loaded for its lifetime, so the main thread and the (respawnable) module
+  // worker never mix versions. Asset freshness is handled by stale-while-revalidate below.
   e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
 });
+
+// return cached immediately, refresh the cache in the background
+function staleWhileRevalidate(req) {
+  return caches.match(req).then(cached => {
+    const net = fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; }).catch(() => cached);
+    return cached || net;
+  });
+}
 
 self.addEventListener('fetch', e => {
   const req = e.request;
@@ -33,16 +44,9 @@ self.addEventListener('fetch', e => {
   }
 
   // data JSON: stale-while-revalidate (offline instantly; CI refresh shows next launch)
-  if (url.pathname.includes('/data/')) {
-    e.respondWith(caches.match(req).then(cached => {
-      const net = fetch(req).then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); return r; }).catch(() => cached);
-      return cached || net;
-    }));
-    return;
-  }
+  if (url.pathname.includes('/data/')) { e.respondWith(staleWhileRevalidate(req)); return; }
 
-  // everything else (js/css/icons): cache-first
-  e.respondWith(caches.match(req).then(cached => cached || fetch(req).then(r => {
-    const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); return r;
-  })));
+  // js/css/icons: stale-while-revalidate too, so a normal Pages deploy that changes assets
+  // (without bumping sw.js) still reaches returning users on their next launch.
+  e.respondWith(staleWhileRevalidate(req));
 });

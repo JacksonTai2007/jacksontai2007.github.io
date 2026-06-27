@@ -161,14 +161,16 @@ export function runForStock(candles, signalFn, config = DEFAULT_CONFIG) {
             avgEntry = (avgEntry * Math.abs(shares) + fill * Math.abs(delta)) / Math.abs(targetShares);
             entryFee += fee;
           } else {
-            // reducing or closing
+            // reducing, fully closing, or flipping side -> realize the closed portion
             const closedShares = Math.min(Math.abs(delta), Math.abs(shares));
-            const pnl = (fill - avgEntry) * closedShares * Math.sign(shares) - entryFee * (closedShares / Math.abs(shares)) - fee * (closedShares / Math.abs(delta));
-            if (targetShares === 0 || crossesZero) {
-              trades.push({ entryIdx: start + entryIdx, exitIdx: start + k, entryPx: avgEntry, exitPx: fill, pnl, bars: k - entryIdx });
-            }
+            const feeForClose = entryFee * (closedShares / Math.abs(shares)); // entry fee attributable to closed shares
+            const exitFeeShare = fee * (closedShares / Math.abs(delta));      // exit fee attributable to closed shares
+            const pnl = (fill - avgEntry) * closedShares * Math.sign(shares) - feeForClose - exitFeeShare;
+            trades.push({ entryIdx: start + entryIdx, exitIdx: start + k, entryPx: avgEntry, exitPx: fill, pnl, bars: k - entryIdx });
+            entryFee -= feeForClose; // remaining open basis keeps only its share of the entry fee
             if (crossesZero) { avgEntry = fill; entryFee = fee * (Math.abs(targetShares) / Math.abs(delta)); entryIdx = k; }
             else if (targetShares === 0) { avgEntry = 0; entryFee = 0; entryIdx = -1; }
+            // else: partial reduce -> avgEntry unchanged, entryFee already decremented, entryIdx unchanged
           }
           cash -= delta * fill;
           cash -= fee;

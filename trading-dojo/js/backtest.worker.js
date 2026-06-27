@@ -1,5 +1,10 @@
 // backtest.worker.js — module Web Worker. Runs user/preset strategy code OFF the main
-// thread, sandboxed. The page can terminate+respawn this worker on a global timeout.
+// thread. Strategy code is treated as UNTRUSTED-BUT-SAME-ORIGIN (it's the user's own code
+// in their own browser): we shadow the obvious network/DOM/eval identifiers so casual access
+// fails and isolate errors per stock, but identifier-shadowing is not an airtight sandbox
+// (e.g. dynamic import() is syntax, not an identifier). There is no other user's data here,
+// so the blast radius is the user's own session. The page can terminate+respawn this worker
+// on a global timeout to recover from infinite loops.
 
 import { runForStock, DEFAULT_CONFIG } from './backtest.js';
 import { score0to100 } from './scoring.js';
@@ -16,7 +21,9 @@ function ingest(universe) {
     const candles = new Array(n);
     for (let i = 0; i < n; i++) {
       const o = s.o[i];
-      candles[i] = (o == null) ? null : { t: dates[i], o, h: s.h[i], l: s.l[i], c: s.c[i], v: s.v[i], i };
+      // FROZEN: candles are built once and shared across runs/stocks; freezing makes a strategy's
+      // in-place write throw (caught per-stock) instead of silently corrupting the universe.
+      candles[i] = (o == null) ? null : Object.freeze({ t: dates[i], o, h: s.h[i], l: s.l[i], c: s.c[i], v: s.v[i], i });
     }
     return { symbol: s.symbol, name: s.name, meta: s.meta, candles };
   });
@@ -26,7 +33,10 @@ function ingest(universe) {
 // Compile strategy source in a scope where network/DOM/global identifiers are shadowed undefined.
 const SHADOW = ['self', 'globalThis', 'window', 'document', 'postMessage', 'importScripts',
   'fetch', 'XMLHttpRequest', 'WebSocket', 'Worker', 'SharedWorker', 'indexedDB', 'caches',
-  'localStorage', 'navigator', 'location'];
+  'localStorage', 'navigator', 'location', 'Function', 'setTimeout', 'setInterval',
+  'queueMicrotask', 'Request', 'Response', 'AbortController', 'BroadcastChannel'];
+// NB: 'eval'/'arguments' are illegal as strict-mode parameter names, so they cannot be
+// shadowed this way; blocking eval would require a CSP (not available on static GitHub Pages).
 function compile(source) {
   const make = new Function(...SHADOW,
     '"use strict";\n' + source + '\n;if (typeof strategy !== "function") throw new Error("define function strategy(candles, ctx)");\nreturn strategy;');

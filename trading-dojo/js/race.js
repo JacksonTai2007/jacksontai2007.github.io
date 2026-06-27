@@ -34,9 +34,10 @@ export class Race {
       const base = e.find(v => Number.isFinite(v) && v > 0) || 1;
       return { ...c, reb: e.map(v => (Number.isFinite(v) ? v / base : 1)) };
     });
-    this.n = Math.max(2, ...this.curves.map(c => c.reb.length));
+    this.n = this.curves.length ? Math.max(2, ...this.curves.map(c => c.reb.length)) : 0;
     this.playhead = 0;
     this.particles = [];
+    if (!this.curves.length) { this.pause(); this.hideBanner(); if (this.ctx && this.W) this.ctx.clearRect(0, 0, this.W, this.H); if (this.standingsEl) this.standingsEl.innerHTML = ''; return; }
     const [lo, hi] = this._range(1);
     this.curMin = lo; this.curMax = hi;
     this.hideBanner();
@@ -104,6 +105,7 @@ export class Race {
 
   _render(idx, frac) {
     const ctx = this.ctx, W = this.W, H = this.H;
+    if (!this.curves.length || !this.xs || !this.xs.length) { ctx.clearRect(0, 0, W, H); return; }
 
     // smooth the running axis toward the visible range
     const [tLo, tHi] = this._range(idx + 1);
@@ -167,6 +169,7 @@ export class Race {
 
   _finish() {
     this.playing = false;
+    if (!this.curves.length) { this.hideBanner(); return; }
     const ranked = this.curves.map((c, i) => ({ c, i, val: this._valAt(i, this.n - 1, 0) })).sort((a, b) => b.val - a.val);
     const win = ranked[0];
     if (this.bannerEl) {

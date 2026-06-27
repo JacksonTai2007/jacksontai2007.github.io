@@ -48,7 +48,7 @@ function spawnWorker() {
   if (state.worker) state.worker.terminate();
   state.worker = new Worker(new URL('./backtest.worker.js', import.meta.url), { type: 'module' });
   state.worker.onmessage = onWorkerMessage;
-  state.worker.onerror = (e) => { toast('Worker error: ' + (e.message || 'crashed')); endRun(); };
+  state.worker.onerror = (e) => { clearTimeout(state.watchdog); toast('Worker error: ' + (e.message || 'crashed')); endRun(); };
   state.worker.postMessage({ type: 'init', universe: getUniverse() });
 }
 
@@ -59,6 +59,8 @@ function onWorkerMessage(ev) {
     runStrategy(store.getSource(DEFAULT_STRATEGY_SOURCE), true);
     return;
   }
+  // ignore stale messages from a superseded run
+  if ((msg.type === 'progress' || msg.type === 'error' || msg.type === 'result') && msg.runId !== state.runId) return;
   if (msg.type === 'progress') {
     setProgress(msg.done / msg.total, `Scoring ${msg.done}/${msg.total}…`);
     return;
@@ -163,6 +165,8 @@ function updateLadderMeta() {
 function loadRace() {
   const n = clampInt(readConfig().topN ?? state.settings.topN, 2, 8);
   const top = state.rows.filter(r => !r.dnf).slice(0, n);
+  if (top.length === 0) { state.race.load([]); $('raceNote').textContent = 'No stock traded under this strategy — nothing to race.'; return; }
+  $('raceNote').textContent = 'Top movers under your strategy, racing from a common start.';
   const curves = top.map((r, i) => ({ symbol: r.symbol, equity: r.equity, color: COLORS[i % COLORS.length], tier: r.tier }));
   state.race.onTick = (frac) => { const s = $('scrub'); if (s) s.value = String(Math.round(frac * 1000)); };
   state.race.load(curves);

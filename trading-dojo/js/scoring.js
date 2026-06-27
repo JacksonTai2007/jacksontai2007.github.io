@@ -53,7 +53,9 @@ export const TIERS = [
   { name: 'Bronze', min: 0, color: '#cd853f' },
 ];
 export function tierFor(score) {
-  if (score <= 0) return 'Unranked';
+  // 'Unranked' is reserved for the never-traded path (score0to100 sets it directly);
+  // a strategy that traded to a rounded 0 is still Bronze (Bronze owns 0).
+  if (score < 0) return 'Unranked';
   for (const t of TIERS) if (score >= t.min) return t.name;
   return 'Bronze';
 }
@@ -70,40 +72,44 @@ function expected(a, b) { return 1 / (1 + Math.pow(10, (b - a) / 400)); }
 
 // Update an ELO map { symbol: {elo, matches} } in place from one run's scores.
 // runScores: [{symbol, score}], baselineScores: { symbol -> score } (buy&hold per stock).
-// Each stock duels (1) the buy&hold baseline on the SAME stock, and (2) its 4 nearest
-// score-ranked neighbors (±2). Placement K=40 for first 5 matches, then K=24.
+// Each stock duels (1) the buy&hold baseline on the SAME stock (one-sided: baseline is a
+// FIXED 1200 yardstick, only the stock moves — this is the intended source of net ELO
+// movement), and (2) its score-rank neighbors (+1, +2) as SYMMETRIC pairwise duels
+// (+d to A, -d to B with a shared K) so neighbor duels conserve ELO mass. K=40 while a
+// symbol has fewer than 5 matches (fast placement), else 24.
 export function eloUpdate(eloMap, runScores, baselineScores) {
   const ranked = [...runScores].sort((a, b) => b.score - a.score);
-  const deltas = new Map();
   const ensure = sym => { if (!eloMap[sym]) eloMap[sym] = { elo: ELO_START, matches: 0 }; return eloMap[sym]; };
+  ranked.forEach(r => ensure(r.symbol));
+  const kOf = sym => (eloMap[sym].matches < 5 ? 40 : 24);
+  const delta = {}; ranked.forEach(r => (delta[r.symbol] = 0));
+  const matchesPlayed = {}; ranked.forEach(r => (matchesPlayed[r.symbol] = 0));
 
-  for (let i = 0; i < ranked.length; i++) {
-    const A = ranked[i];
-    const a = ensure(A.symbol);
-    const kA = a.matches < 5 ? 40 : 24;
-    let dA = 0;
-
-    // (1) baseline duel
+  // (1) one-sided baseline duels
+  for (const A of ranked) {
     const bScore = baselineScores[A.symbol];
-    if (Number.isFinite(bScore)) {
-      const res = A.score > bScore ? 1 : (A.score === bScore ? 0.5 : 0);
-      dA += kA * (res - expected(a.elo, BASELINE_ELO));
-    }
-    // (2) neighbor duels (±2)
-    for (const j of [i - 2, i - 1, i + 1, i + 2]) {
-      if (j < 0 || j >= ranked.length) continue;
-      const B = ranked[j];
-      const b = ensure(B.symbol);
+    if (!Number.isFinite(bScore)) continue;
+    const res = A.score > bScore ? 1 : (A.score === bScore ? 0.5 : 0);
+    delta[A.symbol] += kOf(A.symbol) * (res - expected(eloMap[A.symbol].elo, BASELINE_ELO));
+    matchesPlayed[A.symbol] += 1;
+  }
+  // (2) symmetric neighbor duels (each unique pair scored once)
+  for (let i = 0; i < ranked.length; i++) {
+    for (const j of [i + 1, i + 2]) {
+      if (j >= ranked.length) continue;
+      const A = ranked[i], B = ranked[j];
+      const k = Math.min(kOf(A.symbol), kOf(B.symbol));
       const res = A.score > B.score ? 1 : (A.score === B.score ? 0.5 : 0);
-      dA += kA * (res - expected(a.elo, b.elo));
+      const d = k * (res - expected(eloMap[A.symbol].elo, eloMap[B.symbol].elo));
+      delta[A.symbol] += d; delta[B.symbol] -= d;
+      matchesPlayed[A.symbol] += 1; matchesPlayed[B.symbol] += 1;
     }
-    deltas.set(A.symbol, dA);
   }
 
   for (const A of ranked) {
     const a = eloMap[A.symbol];
-    a.elo = clamp(Math.round(a.elo + (deltas.get(A.symbol) || 0)), 100, 3000);
-    a.matches += 1;
+    a.elo = clamp(Math.round(a.elo + delta[A.symbol]), 100, 3000);
+    a.matches += matchesPlayed[A.symbol];
   }
   return eloMap;
 }
