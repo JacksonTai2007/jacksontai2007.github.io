@@ -1,44 +1,67 @@
-# Trading Dojo 📈
+# Penny Stock Arena 🏟️
 
-一個離線可用、可安裝到手機的**價格行為練習場**（PWA）。看 K 線圖，預測接下來幾根會漲還是跌，按 **做多 Long / 做空 Short**，系統揭曉走勢、結算虛擬損益，並追蹤你的勝率、連勝與資金曲線。
+Write a trading **strategy**, watch it score and rank a universe of **$0.50–$5 US stocks** on a
+CodeCombat-style **ladder**, and replay the top movers as an animated **equity race**. Offline-capable,
+installable PWA. Deploys under `https://<user>.github.io/trading-dojo/`.
 
-> 純練習用途：行情由隨機演算法即時生成，與真實市場無關，不構成投資建議。
+> **Not investment advice.** Backtests on a survivorship-biased, currently-listed universe with idealized
+> fills. Real penny-stock liquidity, spreads, and halts make live results far worse. Education only.
 
-## 功能
+## The loop
+1. **Write a strategy** (`function strategy(candles, ctx)`) in the in-app editor, or pick a preset
+   (SMA Crossover, RSI Mean-Reversion, Donchian Breakout, ATR Trend, Volume-Surge). Runs **sandboxed**
+   in a Web Worker with indicator helpers (`ctx.sma/ema/rsi/atr/highest/lowest/roc/stdev/crossover`).
+2. It's **backtested on every stock** in the $0.50–$5 universe (signal on bar *t* → fill at *t+1* open,
+   with fees + slippage; no lookahead).
+3. Each stock earns a transparent **0–100 score** (return/Sharpe/drawdown/win-rate/exposure + anti-gaming
+   penalties) and a season-long **ELO**.
+4. The **ladder** ranks the stocks (tiers Bronze→Diamond, Champion crown, rank-delta arrows). Tap a row
+   for the full score breakdown, metrics, equity chart, and trades.
+5. The **race** animates the top stocks' equity curves from a common start — leader highlight, live
+   standings, scrub/speed, finish flourish. Plus a **strategy vs Buy & Hold** duel.
 
-- 🕯️ Canvas 繪製的 K 線圖，最後一根之後的走勢被隱藏
-- ▲▼ Long / Short 二選一預測，逐根揭曉 + 損益結算動畫
-- 📊 勝率、連勝 / 最佳連勝、交易數、虛擬資金（存在 `localStorage`）
-- 🎚️ 三種難度（波動率 / 揭曉根數不同）
-- 📱 PWA：可「加入主畫面」，離線也能玩
-- 🔒 無後端、無追蹤，資料只留在你自己的裝置
+## Data (three tiers — "both" baked + live)
+- **Baked `data/universe.json`** — ships in the repo so the arena works fully **offline**. Seeded by
+  `tools/gen-seed.mjs` (deterministic synthetic data, clearly labeled `SEED`).
+- **Live (in-browser)** — paste a free [Finnhub](https://finnhub.io) key in the Data tab to pull
+  real-time quotes for the candidate penny stocks. Key stays on your device.
+- **Real (CI)** — `tools/update-universe.mjs` + `.github/workflows/update-universe.yml` refresh the baked
+  data with **real** $0.50–$5 OHLCV from FMP on a schedule. First successful run flips `dataKind`
+  seed→real and the banner self-clears. Add repo secret `FMP_API_KEY` to enable.
 
-## 檔案
+See [`data/README.md`](data/README.md) for the schema, scoring formula, and honest data caveats.
 
-| 檔案 | 用途 |
-|------|------|
-| `index.html` | 整個 App（內嵌 CSS / JS，單檔運行） |
-| `manifest.json` | PWA 設定（名稱、圖示、`scope` 為相對路徑） |
-| `sw.js` | Service Worker，快取 App Shell 供離線使用 |
-| `icons/` | 192 / 512 一般圖示 + 512 maskable 圖示 |
-
-## 本機預覽
-
-PWA 需要透過 HTTP（不是 `file://`）才能註冊 Service Worker：
-
-```bash
-# 在這個資料夾的上一層執行
-python3 -m http.server 8099
-# 然後開 http://localhost:8099/trading-dojo/
+## Files
+```
+trading-dojo/
+├─ index.html            app shell (tabs: Arena / Race / Strategy / Data)
+├─ css/app.css           dark mobile-first styles
+├─ js/
+│  ├─ app.js             controller (data → worker → ladder/race/duel)
+│  ├─ indicators.js      pure lookahead-safe SMA/EMA/RSI/ATR/…
+│  ├─ backtest.js        event-driven backtester (t+1-open fills, fees/slippage)
+│  ├─ metrics.js         return/Sharpe/drawdown/win-rate/…
+│  ├─ scoring.js         0–100 composite + tiers + ELO
+│  ├─ presets.js         built-in strategies (source strings)
+│  ├─ backtest.worker.js sandboxed Web Worker runner
+│  ├─ ladder.js          ranked ladder + FLIP re-rank + detail sheet
+│  ├─ race.js            canvas equity-race + duel chart
+│  ├─ data.js / store.js universe loader / localStorage
+│  └─ live.js            Finnhub live screen
+├─ data/                 universe.json · meta.json · candidates.json
+├─ tools/                gen-seed.mjs (offline) · update-universe.mjs (CI)
+└─ sw.js, manifest.json  PWA
 ```
 
-## 部署到 GitHub Pages
+## Local preview
+PWAs need HTTP (not `file://`) to register the service worker and module worker:
+```bash
+python3 -m http.server 8099          # from the repo root
+# open http://localhost:8099/trading-dojo/
+```
+Regenerate the seed universe: `node trading-dojo/tools/gen-seed.mjs`
 
-本資料夾位於 `jacksontai2007.github.io` 倉庫底下，啟用 Pages 後即可透過子路徑存取：
-
-1. 倉庫 **Settings → Pages**
-2. Source 選 **Deploy from a branch**，Branch 選 `main` / `(root)`，Save
-3. 等幾分鐘，網址為 **`https://jacksontai2007.github.io/trading-dojo/`**
-4. 手機 Chrome 開啟 → 選單 → 「安裝應用 / 加入主畫面」即可
-
-因為 `manifest.json`、`sw.js` 與圖示全部使用**相對路徑**，放在子路徑下也能正常安裝與離線運作。
+## Deploy (GitHub Pages)
+**Settings → Pages → Source: `main` / `(root)`** → open `https://<user>.github.io/trading-dojo/` →
+on Android Chrome, menu → **Add to Home screen**. All paths are relative, so it installs and runs
+offline under the subpath.
