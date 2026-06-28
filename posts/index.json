@@ -1,6 +1,14 @@
 {
   "posts": [
     {
+      "id": "cc-unlock",
+      "title": "cc-unlock：给 AI Coding Agent 搭一套安全研究上下文框架",
+      "date": "2026-06-28",
+      "category": "安全",
+      "tags": ["Claude Code", "安全研究", "逆向工程", "AI工具"],
+      "excerpt": "做逆向和漏洞研究时，AI 助手总是「不知道你在干嘛」。cc-unlock 通过 CLAUDE.md 注入五层上下文框架，让 Claude Code 和 Codex 真正进入安全研究员的工作模式 —— 配置一次，跨模型复用。"
+    },
+    {
       "id": "gpt-image-2-prompting-skill",
       "title": "把 GPT Image 2 提示词工程做成一个 Claude Skill",
       "date": "2026-06-20",
