@@ -2,6 +2,7 @@
   "posts": [
     {
       "id": "cc-unlock",
+      "featured": true,
       "title": "cc-unlock：给 AI Coding Agent 搭一套安全研究上下文框架",
       "date": "2026-06-28",
       "category": "安全",
@@ -10,6 +11,7 @@
     },
     {
       "id": "gpt-image-2-prompting-skill",
+      "featured": true,
       "title": "把 GPT Image 2 提示词工程做成一个 Claude Skill",
       "date": "2026-06-20",
       "category": "AI",

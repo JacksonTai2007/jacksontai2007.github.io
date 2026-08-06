@@ -1,53 +1,85 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>文章 · JacksonTai</title>
-  <meta name="description" content="JacksonTai 的全部文章 — 逆向、安全、Python 与前端笔记。">
+  <meta name="description" content="JacksonTai 的全部文章 — 逆向、安全、Python 与前端笔记，支持标签筛选与全文搜索。">
+  <meta name="author" content="JacksonTai">
+  <link rel="canonical" href="https://jacksontai2007.github.io/blog.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="JacksonTai 的博客">
+  <meta property="og:title" content="文章 · JacksonTai">
+  <meta property="og:description" content="全部文章 — 逆向、安全、Python 与前端笔记。">
+  <meta property="og:url" content="https://jacksontai2007.github.io/blog.html">
+  <meta property="og:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="文章 · JacksonTai">
+  <meta name="twitter:description" content="全部文章 — 逆向、安全、Python 与前端笔记。">
+  <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+
+  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=4">
+  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
-        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        if (t !== "light" && t !== "dark") {
+          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
     })();
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"></header>
 
-  <main>
+  <main id="main">
     <div class="wrap">
-      <div class="sheet">
-        <div class="section-head" style="margin-top:0">
-          <h2>全部文章</h2>
+      <section class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">~/posts</span>
+          <span class="win-right"><a href="./archive.html">archive →</a></span>
         </div>
-
-        <div class="toolbar">
+        <div class="win-body">
           <label class="search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input id="search" type="search" placeholder="搜索标题、标签、摘要…" autocomplete="off">
+            <span class="p" aria-hidden="true">$ grep -i</span>
+            <input id="search" type="search" placeholder="搜索标题、标签、摘要…"
+                   autocomplete="off" aria-label="搜索文章">
+            <kbd>/</kbd>
           </label>
-        </div>
-        <div class="filter-tags" id="filter"></div>
 
-        <ul class="post-list" id="post-list" style="margin-top:18px">
-          <li class="skeleton">正在加载文章…</li>
-        </ul>
-      </div>
+          <div class="filter-tags" id="filter" role="group" aria-label="按标签筛选"></div>
+          <p class="result-count" id="count" role="status"></p>
+
+          <ul class="post-list" id="post-list">
+            <li class="skeleton">loading…</li>
+          </ul>
+        </div>
+      </section>
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=4"></script>
+  <script src="./assets/js/blog.js?v=5" defer></script>
   <script>
-    Blog.renderBlog("#post-list", { search: "#search", filter: "#filter" });
+    window.addEventListener("DOMContentLoaded", function () {
+      Blog.renderBlog("#post-list", {
+        search: "#search",
+        filter: "#filter",
+        count: "#count"
+      });
+    });
   </script>
 </body>
 </html>

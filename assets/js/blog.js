@@ -1,42 +1,88 @@
 /* ============================================================
-   Shared blog logic: theme, nav, data loading, list rendering,
-   search & tag filtering. Vanilla JS, no build step.
+   Shared blog runtime: chrome, theme, data, list rendering,
+   search / tag / category filtering, keyboard shortcuts, SEO meta.
+   Vanilla JS, no build step, no dependencies.
    ============================================================ */
 (function () {
   "use strict";
 
-  /* ---------- Shared chrome (header + footer) ---------- */
+  var SITE = "https://jacksontai2007.github.io";
+  var AUTHOR = "JacksonTai";
+  var OG_IMAGE = SITE + "/static/img/logo.png";
+
+  /* ---------- Nav ---------- */
   var NAV = [
-    { href: "index.html", label: "首页" },
-    { href: "blog.html", label: "文章" },
-    { href: "archive.html", label: "归档" },
-    { href: "about.html", label: "关于" }
+    { href: "index.html", label: "~", title: "首页" },
+    { href: "blog.html", label: "./posts", title: "文章" },
+    { href: "archive.html", label: "./archive", title: "归档" },
+    { href: "about.html", label: "./about", title: "关于" }
   ];
+
+  var ICON = {
+    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.2 12H2M22 12h-2.2M5.6 5.6 4 4M20 20l-1.6-1.6M18.4 5.6 20 4M4 20l1.6-1.6"/></svg>',
+    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+    menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>',
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="6"/><polyline points="5 13 12 6 19 13"/></svg>'
+  };
+
+  /* ---------- Helpers ---------- */
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function fmtDate(iso) {
+    if (!iso) return "";
+    var p = String(iso).split("-");
+    return p.length < 3 ? String(iso) : p[0] + "-" + p[1] + "-" + p[2];
+  }
+  function postHref(id) { return "post.html?id=" + encodeURIComponent(id); }
+  function currentPage() { return location.pathname.split("/").pop() || "index.html"; }
+
+  function tagChips(tags) {
+    if (!tags || !tags.length) return "";
+    return tags.map(function (t) {
+      return '<a class="chip" href="blog.html?tag=' + encodeURIComponent(t) + '">' + esc(t) + "</a>";
+    }).join("");
+  }
+
+  /* ---------- Chrome ---------- */
   function headerHTML() {
+    var page = currentPage();
     return (
       '<div class="wrap nav">' +
-        '<a class="brand" href="index.html"><span class="dot"></span>JacksonTai</a>' +
-        '<nav class="nav-links">' +
-          NAV.map(function (n) { return '<a class="nav-link" href="' + n.href + '">' + n.label + "</a>"; }).join("") +
+        '<a class="brand" href="index.html" aria-label="JacksonTai 首页">' +
+          '<span class="user">jacksontai</span><span class="at">@</span>' +
+          '<span class="path">blog:~</span><span class="sigil">$</span>' +
+        "</a>" +
+        '<nav class="nav-links" aria-label="主导航">' +
+          NAV.map(function (n) {
+            var on = n.href === page || (page === "" && n.href === "index.html");
+            return '<a class="nav-link' + (on ? " active" : "") + '" href="' + n.href + '"' +
+              ' title="' + n.title + '"' + (on ? ' aria-current="page"' : "") + ">" + n.label + "</a>";
+          }).join("") +
         "</nav>" +
-        '<button class="theme-toggle" aria-label="切换主题">' +
-          '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
-          '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+        '<button class="icon-btn kbd-btn" type="button" aria-label="键盘快捷键" title="快捷键 (?)"' +
+          ' style="font-size:14px;font-weight:700">?</button>' +
+        '<button class="icon-btn theme-toggle" type="button" aria-label="切换主题" title="切换主题 (t)">' +
+          '<span class="icon-sun">' + ICON.sun + "</span>" +
+          '<span class="icon-moon">' + ICON.moon + "</span>" +
         "</button>" +
-        '<button class="nav-toggle" aria-label="菜单">' +
-          '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>' +
-        "</button>" +
+        '<button class="icon-btn nav-toggle" type="button" aria-label="菜单" aria-expanded="false">' + ICON.menu + "</button>" +
       "</div>"
     );
   }
+
   function footerHTML() {
     return (
       '<div class="wrap">' +
-        "<span>© " + new Date().getFullYear() + " JacksonTai</span>" +
+        "<span># © " + new Date().getFullYear() + " " + AUTHOR + " — built with vanilla JS</span>" +
         '<span class="footer-links">' +
-          '<a href="feed.xml" title="RSS 订阅">RSS</a>' +
+          '<a href="feed.xml" title="RSS 订阅">rss</a>' +
           '<span class="sep">·</span>' +
-          "Built with ☕ &amp; vanilla JS" +
+          '<a href="sitemap.xml">sitemap</a>' +
+          '<span class="sep">·</span>' +
+          '<a href="https://github.com/JacksonTai2007/jacksontai2007.github.io" target="_blank" rel="noopener">source</a>' +
         "</span>" +
       "</div>"
     );
@@ -48,35 +94,174 @@
     root.setAttribute("data-theme", t);
     try { localStorage.setItem("theme", t); } catch (e) {}
   }
-  // initial theme is set inline in <head> to avoid flash; just wire the toggle here
-  window.addEventListener("DOMContentLoaded", function () {
-    // inject shared chrome if placeholders exist
-    var hdr = document.querySelector(".site-header");
-    if (hdr && !hdr.children.length) hdr.innerHTML = headerHTML();
-    var ftr = document.querySelector(".site-footer");
-    if (ftr && !ftr.children.length) ftr.innerHTML = footerHTML();
+  function toggleTheme() {
+    var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    applyTheme(next);
+    toast(next === "dark" ? "theme → dark" : "theme → light");
+  }
 
-    var btn = document.querySelector(".theme-toggle");
-    if (btn) {
-      btn.addEventListener("click", function () {
-        var cur = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-        applyTheme(cur);
-      });
+  /* ---------- Toast ---------- */
+  var toastEl = null, toastTimer = null;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement("div");
+      toastEl.className = "toast";
+      toastEl.setAttribute("role", "status");
+      document.body.appendChild(toastEl);
     }
-    var navToggle = document.querySelector(".nav-toggle");
-    var navLinks = document.querySelector(".nav-links");
-    if (navToggle && navLinks) {
-      navToggle.addEventListener("click", function () {
-        navLinks.classList.toggle("open");
-      });
-    }
-    // mark active nav link
-    var path = location.pathname.split("/").pop() || "index.html";
-    document.querySelectorAll(".nav-link").forEach(function (a) {
-      var href = a.getAttribute("href");
-      if (href === path || (path === "" && href === "index.html")) a.classList.add("active");
+    toastEl.textContent = msg;
+    requestAnimationFrame(function () { toastEl.classList.add("show"); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 1500);
+  }
+
+  /* ---------- Keyboard shortcuts ---------- */
+  var SHORTCUTS = [
+    { keys: ["/"], desc: "搜索文章" },
+    { keys: ["t"], desc: "切换主题" },
+    { keys: ["g", "h"], desc: "首页" },
+    { keys: ["g", "p"], desc: "文章列表" },
+    { keys: ["g", "a"], desc: "归档" },
+    { keys: ["g", "b"], desc: "关于" },
+    { keys: ["?"], desc: "显示这个面板" },
+    { keys: ["Esc"], desc: "关闭 / 取消" }
+  ];
+
+  var helpEl = null;
+  function closeHelp() {
+    if (!helpEl) return;
+    helpEl.classList.remove("open");
+    var el = helpEl;
+    helpEl = null;
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 160);
+  }
+  function openHelp() {
+    if (helpEl) return closeHelp();
+    helpEl = document.createElement("div");
+    helpEl.className = "kbd-overlay";
+    helpEl.innerHTML =
+      '<div class="kbd-panel" role="dialog" aria-modal="true" aria-label="键盘快捷键">' +
+        '<div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span>' +
+        '<span class="win-title">keybindings</span></div>' +
+        "<dl>" +
+        SHORTCUTS.map(function (s) {
+          return '<div class="row"><dt>' + s.keys.map(function (k) {
+            return "<kbd>" + esc(k) + "</kbd>";
+          }).join("") + "</dt><dd>" + esc(s.desc) + "</dd></div>";
+        }).join("") +
+        "</dl>" +
+      "</div>";
+    helpEl.addEventListener("click", function (e) {
+      if (e.target === helpEl) closeHelp();
     });
-  });
+    document.body.appendChild(helpEl);
+    requestAnimationFrame(function () { if (helpEl) helpEl.classList.add("open"); });
+  }
+
+  function focusSearch() {
+    var input = document.getElementById("search");
+    if (input) {
+      input.focus();
+      input.select();
+    } else {
+      location.href = "blog.html?focus=1";
+    }
+  }
+
+  var awaitingGo = false, goTimer = null;
+  function bindKeys() {
+    document.addEventListener("keydown", function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var t = e.target;
+      var typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+
+      if (e.key === "Escape") {
+        if (helpEl) { closeHelp(); return; }
+        if (typing) { t.blur(); return; }
+        return;
+      }
+      if (typing) return;
+
+      if (awaitingGo) {
+        awaitingGo = false;
+        clearTimeout(goTimer);
+        var dest = { h: "index.html", p: "blog.html", a: "archive.html", b: "about.html" }[e.key];
+        if (dest) { e.preventDefault(); location.href = dest; }
+        return;
+      }
+
+      switch (e.key) {
+        case "/":
+          e.preventDefault();
+          focusSearch();
+          break;
+        case "t":
+          toggleTheme();
+          break;
+        case "?":
+          e.preventDefault();
+          openHelp();
+          break;
+        case "g":
+          awaitingGo = true;
+          goTimer = setTimeout(function () { awaitingGo = false; }, 1200);
+          break;
+      }
+    });
+  }
+
+  /* ---------- SEO meta ---------- */
+  function setTag(sel, attrs) {
+    var el = document.head.querySelector(sel);
+    if (!el) {
+      el = document.createElement(attrs.rel ? "link" : "meta");
+      document.head.appendChild(el);
+    }
+    Object.keys(attrs).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  /* Fill in the social/canonical tags a page didn't hardcode. Called by every
+     page; the post page calls it again once the article metadata is known.
+     Note: OG scrapers don't run JS, so post.html's static defaults are what
+     most crawlers see — the dynamic pass is for in-page correctness and for
+     crawlers (Google, Bing) that do execute scripts. */
+  function meta(o) {
+    o = o || {};
+    var url = o.url || (SITE + "/" + currentPage() + location.search);
+    if (o.title) document.title = o.title;
+    var title = o.title || document.title;
+    var desc = o.description || "";
+
+    if (desc) setTag('meta[name="description"]', { name: "description", content: desc });
+    setTag('link[rel="canonical"]', { rel: "canonical", href: url });
+
+    var og = {
+      "og:type": o.type || "website",
+      "og:site_name": AUTHOR + " 的博客",
+      "og:title": title,
+      "og:url": url,
+      "og:image": o.image || OG_IMAGE,
+      "og:locale": "zh_CN"
+    };
+    if (desc) og["og:description"] = desc;
+    Object.keys(og).forEach(function (p) {
+      setTag('meta[property="' + p + '"]', { property: p, content: og[p] });
+    });
+
+    var tw = { "twitter:card": "summary", "twitter:title": title, "twitter:image": o.image || OG_IMAGE };
+    if (desc) tw["twitter:description"] = desc;
+    Object.keys(tw).forEach(function (n) {
+      setTag('meta[name="' + n + '"]', { name: n, content: tw[n] });
+    });
+  }
+
+  function jsonld(obj) {
+    var s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.textContent = JSON.stringify(obj);
+    document.head.appendChild(s);
+  }
 
   /* ---------- Data ---------- */
   var DATA_URL = "posts/index.json";
@@ -90,82 +275,135 @@
       })
       .then(function (data) {
         var posts = (data.posts || []).slice();
-        // newest first
-        posts.sort(function (a, b) { return (a.date < b.date ? 1 : a.date > b.date ? -1 : 0); });
+        posts.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
         _cache = posts;
         return posts;
       });
   }
-
-  /* ---------- Helpers ---------- */
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-  function fmtDate(iso) {
-    // iso = YYYY-MM-DD
-    if (!iso) return "";
-    var p = iso.split("-");
-    if (p.length < 3) return iso;
-    return p[0] + "." + p[1] + "." + p[2];
-  }
-  function postHref(id) { return "post.html?id=" + encodeURIComponent(id); }
-
-  function tagChips(tags, asLinks) {
-    if (!tags || !tags.length) return "";
-    return tags.map(function (t) {
-      if (asLinks) return '<a class="chip" href="blog.html?tag=' + encodeURIComponent(t) + '">' + esc(t) + "</a>";
-      return '<span class="chip">' + esc(t) + "</span>";
-    }).join("");
+  function failInto(el, e, tag) {
+    if (el) el.innerHTML = "<" + tag + ' class="empty">加载失败：' + esc(e.message) + "</" + tag + ">";
   }
 
+  /* ---------- Renderers ---------- */
   function postItemHTML(p) {
     return (
       '<li class="post-item">' +
-      '<div class="post-meta">' +
-        "<span>" + fmtDate(p.date) + "</span>" +
-        (p.category ? '<span class="sep">/</span><span>' + esc(p.category) + "</span>" : "") +
-      "</div>" +
-      '<a class="post-title" href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
-      (p.excerpt ? '<p class="post-excerpt">' + esc(p.excerpt) + "</p>" : "") +
-      '<div class="tags">' + tagChips(p.tags, true) + "</div>" +
+        '<div class="post-meta">' +
+          '<span class="date">' + fmtDate(p.date) + "</span>" +
+          (p.category ? '<span class="sep">/</span><span class="cat">' + esc(p.category) + "</span>" : "") +
+        "</div>" +
+        '<a class="post-title" href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
+        (p.excerpt ? '<p class="post-excerpt">' + esc(p.excerpt) + "</p>" : "") +
+        '<div class="tags">' + tagChips(p.tags) + "</div>" +
       "</li>"
     );
   }
 
-  /* ---------- Renderers (called per-page) ---------- */
   function renderRecent(selector, limit) {
     var el = document.querySelector(selector);
     if (!el) return;
     loadPosts().then(function (posts) {
       var list = posts.slice(0, limit || 5);
-      el.innerHTML = list.length ? list.map(postItemHTML).join("") :
-        '<li class="empty">还没有文章，敬请期待。</li>';
-    }).catch(function (e) {
-      el.innerHTML = '<li class="empty">加载文章失败：' + esc(e.message) + "</li>";
-    });
+      el.innerHTML = list.length
+        ? list.map(postItemHTML).join("")
+        : '<li class="empty">还没有文章，敬请期待。</li>';
+    }).catch(function (e) { failInto(el, e, "li"); });
   }
 
+  /* Featured posts: honours `"featured": true` in posts/index.json and falls
+     back to the newest entries when nothing is flagged. */
+  function renderFeatured(selector, limit) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    limit = limit || 2;
+    loadPosts().then(function (posts) {
+      var picked = posts.filter(function (p) { return p.featured; }).slice(0, limit);
+      if (!picked.length) picked = posts.slice(0, limit);
+      el.innerHTML = picked.map(function (p) {
+        return (
+          '<a class="card" href="' + postHref(p.id) + '">' +
+            '<span class="card-cat">' + esc(p.category || "post") + "</span>" +
+            '<span class="card-title">' + esc(p.title) + "</span>" +
+            (p.excerpt ? '<p class="card-ex">' + esc(p.excerpt) + "</p>" : "") +
+            '<span class="card-date">' + fmtDate(p.date) + "</span>" +
+          "</a>"
+        );
+      }).join("");
+    }).catch(function (e) { failInto(el, e, "p"); });
+  }
+
+  function renderStats(selector) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    loadPosts().then(function (posts) {
+      var tags = {}, cats = {};
+      posts.forEach(function (p) {
+        (p.tags || []).forEach(function (t) { tags[t] = 1; });
+        if (p.category) cats[p.category] = 1;
+      });
+      var rows = [
+        { n: posts.length, k: "posts" },
+        { n: Object.keys(cats).length, k: "categories" },
+        { n: Object.keys(tags).length, k: "tags" },
+        { n: posts[0] ? fmtDate(posts[0].date) : "—", k: "last update" }
+      ];
+      el.innerHTML = rows.map(function (r) {
+        return '<div class="stat"><span class="n">' + esc(r.n) + '</span><span class="k">' + r.k + "</span></div>";
+      }).join("");
+    }).catch(function () { el.innerHTML = ""; });
+  }
+
+  function renderCategories(selector) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    loadPosts().then(function (posts) {
+      var counts = {};
+      posts.forEach(function (p) {
+        var c = p.category || "未分类";
+        counts[c] = (counts[c] || 0) + 1;
+      });
+      var names = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
+      el.innerHTML = names.map(function (c, i) {
+        var last = i === names.length - 1;
+        return (
+          '<li class="cat-row">' +
+            '<span class="tree">' + (last ? "└──" : "├──") + "</span>" +
+            '<a href="blog.html?category=' + encodeURIComponent(c) + '">' + esc(c) + "/</a>" +
+            '<span class="n">' + counts[c] + " 篇</span>" +
+          "</li>"
+        );
+      }).join("");
+    }).catch(function (e) { failInto(el, e, "li"); });
+  }
+
+  /* Blog list page: free-text search + tag + category, all reflected in the URL
+     so any view can be linked to or reloaded. */
   function renderBlog(listSel, opts) {
+    opts = opts || {};
     var listEl = document.querySelector(listSel);
     if (!listEl) return;
-    var searchEl = document.querySelector(opts.search);
-    var filterEl = document.querySelector(opts.filter);
+    var searchEl = opts.search ? document.querySelector(opts.search) : null;
+    var filterEl = opts.filter ? document.querySelector(opts.filter) : null;
+    var countEl = opts.count ? document.querySelector(opts.count) : null;
+
     var params = new URLSearchParams(location.search);
     var activeTag = params.get("tag") || "";
-    var query = "";
+    var activeCat = params.get("category") || "";
+    var query = params.get("q") || "";
+    if (searchEl && query) searchEl.value = query;
 
     loadPosts().then(function (posts) {
-      // build tag filter chips
       if (filterEl) {
-        var tagCount = {};
-        posts.forEach(function (p) { (p.tags || []).forEach(function (t) { tagCount[t] = (tagCount[t] || 0) + 1; }); });
-        var tags = Object.keys(tagCount).sort();
+        var counts = {};
+        posts.forEach(function (p) {
+          (p.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; });
+        });
+        var tags = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
         filterEl.innerHTML =
-          '<a class="chip' + (activeTag ? "" : " active") + '" data-tag="">全部</a>' +
+          '<a class="chip plain' + (activeTag ? "" : " active") + '" href="#" data-tag="">--all</a>' +
           tags.map(function (t) {
-            return '<a class="chip' + (t === activeTag ? " active" : "") + '" data-tag="' + esc(t) + '">' + esc(t) + "</a>";
+            return '<a class="chip' + (t === activeTag ? " active" : "") + '" href="#" data-tag="' +
+              esc(t) + '">' + esc(t) + "</a>";
           }).join("");
         filterEl.querySelectorAll(".chip").forEach(function (c) {
           c.addEventListener("click", function (e) {
@@ -173,37 +411,59 @@
             activeTag = c.getAttribute("data-tag");
             filterEl.querySelectorAll(".chip").forEach(function (x) { x.classList.remove("active"); });
             c.classList.add("active");
-            var u = new URL(location.href);
-            if (activeTag) u.searchParams.set("tag", activeTag); else u.searchParams.delete("tag");
-            history.replaceState(null, "", u);
+            syncUrl();
             draw();
           });
         });
+      }
+
+      function syncUrl() {
+        var u = new URL(location.href);
+        [["tag", activeTag], ["category", activeCat], ["q", query.trim()]].forEach(function (kv) {
+          if (kv[1]) u.searchParams.set(kv[0], kv[1]); else u.searchParams.delete(kv[0]);
+        });
+        u.searchParams.delete("focus");
+        history.replaceState(null, "", u);
       }
 
       function draw() {
         var q = query.trim().toLowerCase();
         var filtered = posts.filter(function (p) {
           if (activeTag && (p.tags || []).indexOf(activeTag) === -1) return false;
+          if (activeCat && p.category !== activeCat) return false;
           if (q) {
-            var hay = (p.title + " " + (p.excerpt || "") + " " + (p.tags || []).join(" ") + " " + (p.category || "")).toLowerCase();
+            var hay = (p.title + " " + (p.excerpt || "") + " " +
+              (p.tags || []).join(" ") + " " + (p.category || "")).toLowerCase();
             if (hay.indexOf(q) === -1) return false;
           }
           return true;
         });
-        listEl.innerHTML = filtered.length ? filtered.map(postItemHTML).join("") :
-          '<li class="empty">没有匹配的文章。</li>';
+        listEl.innerHTML = filtered.length
+          ? filtered.map(postItemHTML).join("")
+          : '<li class="empty">no matches — 换个关键词试试。</li>';
+        if (countEl) {
+          var bits = [];
+          if (activeCat) bits.push("category=" + activeCat);
+          if (activeTag) bits.push("tag=" + activeTag);
+          if (q) bits.push('q="' + query.trim() + '"');
+          countEl.textContent = "# " + filtered.length + " / " + posts.length + " 篇" +
+            (bits.length ? "  ·  " + bits.join("  ") : "");
+        }
       }
 
       if (searchEl) {
-        searchEl.addEventListener("input", function () { query = searchEl.value; draw(); });
+        searchEl.addEventListener("input", function () {
+          query = searchEl.value;
+          syncUrl();
+          draw();
+        });
+        if (params.get("focus")) searchEl.focus();
       }
       draw();
-    }).catch(function (e) {
-      listEl.innerHTML = '<li class="empty">加载文章失败：' + esc(e.message) + "</li>";
-    });
+    }).catch(function (e) { failInto(listEl, e, "li"); });
   }
 
+  /* Archive rendered as a directory tree: year → month → post. */
   function renderArchive(selector) {
     var el = document.querySelector(selector);
     if (!el) return;
@@ -211,28 +471,67 @@
       if (!posts.length) { el.innerHTML = '<p class="empty">还没有文章。</p>'; return; }
       var byYear = {};
       posts.forEach(function (p) {
-        var y = (p.date || "----").slice(0, 4);
+        var y = String(p.date || "----").slice(0, 4);
         (byYear[y] = byYear[y] || []).push(p);
       });
       var years = Object.keys(byYear).sort().reverse();
       el.innerHTML = years.map(function (y) {
-        var rows = byYear[y].map(function (p) {
-          return '<li class="archive-row"><span class="d">' + esc(p.date.slice(5).replace("-", "/")) +
-            '</span><a href="' + postHref(p.id) + '">' + esc(p.title) + "</a></li>";
+        var list = byYear[y];
+        var rows = list.map(function (p, i) {
+          var last = i === list.length - 1;
+          return (
+            '<li class="archive-row">' +
+              '<span class="tree">' + (last ? "└──" : "├──") + "</span>" +
+              '<span class="d">' + esc(String(p.date).slice(5)) + "</span>" +
+              '<a href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
+            "</li>"
+          );
         }).join("");
-        return '<div class="archive-year">' + y + ' · ' + byYear[y].length + ' 篇</div><ul class="archive-list">' + rows + "</ul>";
+        return '<div class="archive-year">' + esc(y) + '/<span class="n">' + list.length +
+          ' 篇</span></div><ul class="archive-list">' + rows + "</ul>";
       }).join("");
-    }).catch(function (e) {
-      el.innerHTML = '<p class="empty">加载失败：' + esc(e.message) + "</p>";
-    });
+    }).catch(function (e) { failInto(el, e, "p"); });
   }
 
-  // expose
+  /* ---------- Boot ---------- */
+  window.addEventListener("DOMContentLoaded", function () {
+    var hdr = document.querySelector(".site-header");
+    if (hdr && !hdr.children.length) hdr.innerHTML = headerHTML();
+    var ftr = document.querySelector(".site-footer");
+    if (ftr && !ftr.children.length) ftr.innerHTML = footerHTML();
+
+    var themeBtn = document.querySelector(".theme-toggle");
+    if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
+
+    var kbdBtn = document.querySelector(".kbd-btn");
+    if (kbdBtn) kbdBtn.addEventListener("click", openHelp);
+
+    var navToggle = document.querySelector(".nav-toggle");
+    var navLinks = document.querySelector(".nav-links");
+    if (navToggle && navLinks) {
+      navToggle.addEventListener("click", function () {
+        var open = navLinks.classList.toggle("open");
+        navToggle.setAttribute("aria-expanded", String(open));
+      });
+    }
+
+    bindKeys();
+  });
+
   window.Blog = {
+    SITE: SITE,
+    AUTHOR: AUTHOR,
     loadPosts: loadPosts,
     renderRecent: renderRecent,
+    renderFeatured: renderFeatured,
+    renderStats: renderStats,
+    renderCategories: renderCategories,
     renderBlog: renderBlog,
     renderArchive: renderArchive,
+    meta: meta,
+    jsonld: jsonld,
+    toast: toast,
+    icons: ICON,
     esc: esc,
     fmtDate: fmtDate,
     postHref: postHref,
