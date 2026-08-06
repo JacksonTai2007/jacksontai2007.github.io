@@ -496,6 +496,11 @@ kbd {
 .archive-row a { color: var(--text); overflow-wrap: anywhere; }
 .archive-row a:hover { color: var(--accent); text-decoration: none; }
 
+/* the about-page timeline reuses the archive rows, but its dates vary in width
+   (2018.11 / 2025 / 未来) — pin a column so the descriptions line up */
+.timeline .d { min-width: 60px; }
+.timeline a { color: var(--cyan); }
+
 /* ============================================================
    Article
    ============================================================ */
