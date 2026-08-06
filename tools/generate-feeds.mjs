@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = "https://jacksontai2007.github.io";
 const TITLE = "JacksonTai 的博客";
-const DESC = "记录逆向、安全、Python 与前端的折腾。";
+const DESC = "逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。";
 
 const data = JSON.parse(fs.readFileSync(path.join(ROOT, "posts/index.json"), "utf8"));
 const posts = (data.posts || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));

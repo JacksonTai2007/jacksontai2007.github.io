@@ -1,70 +1,169 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JacksonTai · 个人博客</title>
-  <meta name="description" content="JacksonTai 的个人博客 — 记录逆向、安全、Python 与前端的折腾。整天半吊子和不学无术的坏孩子，梦想成为庄稼地里的读书人。">
-  <meta name="keywords" content="JacksonTai, 博客, 逆向, IDA Pro, Python, 前端, 安全">
+  <meta name="description" content="JacksonTai 的个人博客 — 逆向工程与移动安全的技术笔记，涵盖 Android 逆向、漏洞分析、Python 自动化与前端。">
+  <meta name="keywords" content="JacksonTai, 博客, 逆向工程, 移动安全, Android, IDA Pro, Python, 前端, CTF">
+  <meta name="author" content="JacksonTai">
+  <link rel="canonical" href="https://jacksontai2007.github.io/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="JacksonTai 的博客">
+  <meta property="og:title" content="JacksonTai · 个人博客">
+  <meta property="og:description" content="逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。">
+  <meta property="og:url" content="https://jacksontai2007.github.io/">
+  <meta property="og:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="JacksonTai · 个人博客">
+  <meta name="twitter:description" content="逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。">
+  <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+
+  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=4">
+  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
   <script>
-    // anti-flash theme init (runs before paint)
+    // resolve the theme before first paint so there is no flash of the wrong mode
     (function () {
       try {
         var t = localStorage.getItem("theme");
-        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        if (t !== "light" && t !== "dark") {
+          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
     })();
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "JacksonTai 的博客",
+    "description": "逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。",
+    "url": "https://jacksontai2007.github.io/",
+    "inLanguage": "zh-CN",
+    "author": {
+      "@type": "Person",
+      "name": "JacksonTai",
+      "url": "https://github.com/JacksonTai2007",
+      "sameAs": ["https://github.com/JacksonTai2007"]
+    }
+  }
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"></header>
 
-  <main>
-    <div class="wrap">
-      <section class="hero-banner">
-        <div class="hero">
-          <img class="avatar" src="./static/img/logo.png" alt="JacksonTai">
-          <h1>你好，我是 Jackson 👋</h1>
-          <p class="lead">整天半吊子和不学无术的坏孩子，梦想成为庄稼地里的读书人。这里记录我在逆向、安全、Python 与前端路上的折腾与笔记。</p>
-          <div class="tags">
+  <main id="main">
+    <div class="wrap stack">
+
+      <!-- ---------- whoami ---------- -->
+      <section class="win hero" aria-labelledby="hero-title">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">jacksontai@blog: ~</span>
+          <span class="win-right"><a href="./feed.xml">rss</a></span>
+        </div>
+        <div class="win-body">
+          <img class="hero-avatar" src="./static/img/logo.png" alt="JacksonTai 的头像"
+               width="78" height="78" decoding="async">
+
+          <p class="cmd">whoami</p>
+          <h1 id="hero-title">Jackson — 逆向工程与移动安全</h1>
+          <p class="lead">常驻中国澳门。做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这里是我的技术笔记与开源项目记录。</p>
+
+          <p class="cmd">cat ~/.stack</p>
+          <div class="kv">
             <span class="chip">IDA Pro</span>
             <span class="chip">Python</span>
-            <span class="chip">HTML</span>
             <span class="chip">Android</span>
             <span class="chip">FrontEnd</span>
+            <span class="chip">CTF</span>
           </div>
-          <div class="socials">
-            <a class="social-btn" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener" aria-label="GitHub">
-              <svg viewBox="0 0 1024 1024"><path d="M511.6 76.3C264.3 76.2 64 276.4 64 523.5 64 718.9 189.3 885 363.8 946c23.5 5.9 19.9-10.8 19.9-22.2v-77.5c-135.7 15.9-141.2-73.9-150.3-88.9C215 726 171.5 718 184.5 703c30.9-15.9 62.4 4 98.9 57.9 26.4 39.1 77.9 32.5 104 26 5.7-23.5 17.9-44.5 34.7-60.8-140.6-25.2-199.2-111-199.2-213 0-49.5 16.3-95 48.3-131.7-20.4-60.5 1.9-112.3 4.9-120 58.1-5.2 118.5 41.6 123.2 45.3 33-8.9 70.7-13.6 112.9-13.6 42.4 0 80.2 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.3-43.9 2.9 7.7 24.7 58.3 5.5 118 32.4 36.8 48.9 82.7 48.9 132.3 0 102.2-59 188.1-200 212.9 23.5 23.2 38.1 55.4 38.1 91v112.5c0.8 9 0 17.9 15 17.9 177.1-59.7 304.6-227 304.6-424.1 0-247.2-200.4-447.3-447.5-447.3z"/></svg>
+
+          <p class="cmd">ls ~/links</p>
+          <div class="links-row">
+            <a class="link-btn" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">
+              <svg viewBox="0 0 1024 1024" aria-hidden="true"><path d="M511.6 76.3C264.3 76.2 64 276.4 64 523.5 64 718.9 189.3 885 363.8 946c23.5 5.9 19.9-10.8 19.9-22.2v-77.5c-135.7 15.9-141.2-73.9-150.3-88.9C215 726 171.5 718 184.5 703c30.9-15.9 62.4 4 98.9 57.9 26.4 39.1 77.9 32.5 104 26 5.7-23.5 17.9-44.5 34.7-60.8-140.6-25.2-199.2-111-199.2-213 0-49.5 16.3-95 48.3-131.7-20.4-60.5 1.9-112.3 4.9-120 58.1-5.2 118.5 41.6 123.2 45.3 33-8.9 70.7-13.6 112.9-13.6 42.4 0 80.2 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.3-43.9 2.9 7.7 24.7 58.3 5.5 118 32.4 36.8 48.9 82.7 48.9 132.3 0 102.2-59 188.1-200 212.9 23.5 23.2 38.1 55.4 38.1 91v112.5c0.8 9 0 17.9 15 17.9 177.1-59.7 304.6-227 304.6-424.1 0-247.2-200.4-447.3-447.5-447.3z"/></svg>
+              github
             </a>
-            <a class="social-btn" href="mailto:jacksontai200701@gmail.com" aria-label="Email">
-              <svg viewBox="0 0 1024 1024"><path d="M926.47619 355.644952V780.190476a73.142857 73.142857 0 0 1-73.142857 73.142857H170.666667a73.142857 73.142857 0 0 1-73.142857-73.142857V355.644952l304.103619 257.828572a170.666667 170.666667 0 0 0 220.745142 0L926.47619 355.644952zM853.333333 170.666667a74.044952 74.044952 0 0 1 26.087619 4.778666 72.704 72.704 0 0 1 30.622477 22.186667 73.508571 73.508571 0 0 1 10.678857 17.67619c3.169524 7.509333 5.12 15.652571 5.607619 24.210286L926.47619 243.809524v24.380952L559.469714 581.241905a73.142857 73.142857 0 0 1-91.306666 2.901333l-3.632762-2.925714L97.52381 268.190476v-24.380952a72.899048 72.899048 0 0 1 40.155428-65.292191A72.97219 72.97219 0 0 1 170.666667 170.666667h682.666666z"/></svg>
+            <a class="link-btn" href="mailto:jacksontai200701@gmail.com">
+              <svg viewBox="0 0 1024 1024" aria-hidden="true"><path d="M926.5 355.6V780a73.1 73.1 0 0 1-73.1 73.1H170.7A73.1 73.1 0 0 1 97.5 780V355.6l304.1 257.9a170.7 170.7 0 0 0 220.8 0l304.1-257.9zM853.3 170.7a73 73 0 0 1 73.2 73.1v24.4L559.5 581.2a73.1 73.1 0 0 1-94.9 0L97.5 268.2v-24.4a73 73 0 0 1 73.2-73.1h682.6z"/></svg>
+              email
+            </a>
+            <a class="link-btn" href="./feed.xml">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3a1 1 0 0 0 0 2 14 14 0 0 1 14 14 1 1 0 1 0 2 0A16 16 0 0 0 5 3zm0 6a1 1 0 1 0 0 2 8 8 0 0 1 8 8 1 1 0 1 0 2 0 10 10 0 0 0-10-10zm1.5 7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>
+              rss
             </a>
           </div>
+
+          <p class="cmd" aria-hidden="true"><span class="caret"></span></p>
         </div>
       </section>
 
-      <div class="sheet" style="margin-top: 20px">
-        <div class="section-head" style="margin-top: 0">
-          <h2>最新文章</h2>
-          <a href="blog.html">全部 →</a>
+      <!-- ---------- stats ---------- -->
+      <section class="stats" id="stats" aria-label="站点统计"></section>
+
+      <!-- ---------- featured ---------- -->
+      <section class="win" aria-labelledby="featured-h">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title" id="featured-h">~/featured</span>
         </div>
-        <ul class="post-list" id="recent-posts">
-          <li class="skeleton">正在加载文章…</li>
-        </ul>
-      </div>
+        <div class="win-body">
+          <p class="cmd">cat ~/posts --featured</p>
+          <div class="cards" id="featured"></div>
+        </div>
+      </section>
+
+      <!-- ---------- recent ---------- -->
+      <section class="win" aria-labelledby="recent-h">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title" id="recent-h">~/posts</span>
+          <span class="win-right"><a href="./blog.html">ls -a →</a></span>
+        </div>
+        <div class="win-body">
+          <p class="cmd">ls -lt ~/posts | head -5</p>
+          <ul class="post-list" id="recent-posts">
+            <li class="skeleton">loading…</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ---------- categories ---------- -->
+      <section class="win" aria-labelledby="cats-h">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title" id="cats-h">~/categories</span>
+        </div>
+        <div class="win-body">
+          <p class="cmd">tree ~/categories</p>
+          <ul class="cat-list" id="categories"></ul>
+          <p class="out hash" style="margin-top:14px">按 <kbd>?</kbd> 查看键盘快捷键</p>
+        </div>
+      </section>
+
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=4"></script>
+  <script src="./assets/js/blog.js?v=5" defer></script>
   <script>
-    Blog.renderRecent("#recent-posts", 5);
+    // blog.js is deferred, so it has already run by the time this fires
+    window.addEventListener("DOMContentLoaded", function () {
+      Blog.renderStats("#stats");
+      Blog.renderFeatured("#featured", 2);
+      Blog.renderRecent("#recent-posts", 5);
+      Blog.renderCategories("#categories");
+    });
   </script>
 </body>
 </html>

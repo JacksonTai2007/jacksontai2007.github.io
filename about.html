@@ -1,66 +1,172 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>关于 · JacksonTai</title>
-  <meta name="description" content="关于 JacksonTai。">
+  <meta name="description" content="关于 JacksonTai — 逆向工程与移动安全方向的开发者，常驻中国澳门。做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。">
+  <meta name="author" content="JacksonTai">
+  <link rel="canonical" href="https://jacksontai2007.github.io/about.html">
+
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="JacksonTai 的博客">
+  <meta property="og:title" content="关于 · JacksonTai">
+  <meta property="og:description" content="逆向工程与移动安全方向的开发者，常驻中国澳门。">
+  <meta property="og:url" content="https://jacksontai2007.github.io/about.html">
+  <meta property="og:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="关于 · JacksonTai">
+  <meta name="twitter:description" content="逆向工程与移动安全方向的开发者，常驻中国澳门。">
+  <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+
+  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=4">
+  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
-        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        if (t !== "light" && t !== "dark") {
+          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
     })();
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "url": "https://jacksontai2007.github.io/about.html",
+    "inLanguage": "zh-CN",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "JacksonTai",
+      "url": "https://jacksontai2007.github.io/",
+      "email": "mailto:jacksontai200701@gmail.com",
+      "sameAs": ["https://github.com/JacksonTai2007"],
+      "knowsAbout": ["逆向工程", "移动安全", "Python", "前端开发", "CTF"]
+    }
+  }
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"></header>
 
-  <main>
-    <div class="wrap">
-      <article class="prose about-block sheet">
-        <h1>关于我</h1>
-        <p>你好，我是 <strong>Jackson</strong> 👋 — 整天半吊子和不学无术的坏孩子，梦想成为庄稼地里的读书人。</p>
-        <p>常驻中国澳门特别行政区。平时折腾逆向工程、移动安全、Python 自动化和一点前端。这个博客用来记录踩过的坑、读过的代码，以及偶尔的灵光一闪。</p>
+  <main id="main">
+    <div class="wrap stack">
 
-        <h2>我在玩什么</h2>
-        <div class="tags" style="margin:10px 0 4px">
-          <span class="chip">IDA Pro</span>
-          <span class="chip">逆向工程</span>
-          <span class="chip">Python</span>
-          <span class="chip">Android</span>
-          <span class="chip">前端 / HTML</span>
-          <span class="chip">CTF</span>
+      <section class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">~/about.md</span>
         </div>
+        <div class="win-body">
+          <p class="cmd">cat ~/about.md</p>
+          <article class="prose">
+            <h1 style="margin-top:0">关于我</h1>
+            <p>你好，我是 <strong>Jackson</strong> 👋 —— 逆向工程与移动安全方向的开发者。</p>
+            <p>常驻中国澳门特别行政区。日常做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这个博客用来记录技术笔记、开源项目，以及踩过的坑。</p>
+          </article>
+        </div>
+      </section>
 
-        <h2>时间线</h2>
-        <ul>
-          <li><strong>2018.11</strong> — 做了人生第一个个人网站</li>
-          <li><strong>2025</strong> — 开始系统地写技术博客</li>
-          <li><strong>未来</strong> — Coming soon……</li>
-        </ul>
+      <section class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">~/.stack</span>
+        </div>
+        <div class="win-body">
+          <p class="cmd">cat ~/.stack</p>
+          <div class="kv" style="margin-bottom:0">
+            <span class="chip">IDA Pro</span>
+            <span class="chip">逆向工程</span>
+            <span class="chip">Python</span>
+            <span class="chip">Android</span>
+            <span class="chip">前端 / HTML</span>
+            <span class="chip">CTF</span>
+          </div>
+        </div>
+      </section>
 
-        <h2>找到我</h2>
-        <p>
-          GitHub：<a href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">@JacksonTai2007</a><br>
-          邮箱：<a href="mailto:jacksontai200701@gmail.com">jacksontai200701@gmail.com</a>
-        </p>
+      <section class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">~/timeline</span>
+        </div>
+        <div class="win-body">
+          <p class="cmd">git log --oneline --reverse</p>
+          <ul class="archive-list timeline">
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">├──</span>
+              <span class="d">2018.11</span>
+              <span>做了人生第一个个人网站</span>
+            </li>
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">├──</span>
+              <span class="d">2025</span>
+              <span>开始系统地写技术博客</span>
+            </li>
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">├──</span>
+              <span class="d">2026.05</span>
+              <span>写下第一篇逆向实战笔记：用 IDA Pro 啃 CrackMe</span>
+            </li>
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">├──</span>
+              <span class="d">2026.06</span>
+              <span>博客重构为零构建纯静态站点</span>
+            </li>
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">├──</span>
+              <span class="d">2026.06</span>
+              <span>开源 <a href="post.html?id=gpt-image-2-prompting-skill">gpt-image-2-prompting-skill</a>（Claude Skill）</span>
+            </li>
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">├──</span>
+              <span class="d">2026.06</span>
+              <span>开源 <a href="post.html?id=cc-unlock">cc-unlock</a>（AI 安全研究上下文框架）</span>
+            </li>
+            <li class="archive-row">
+              <span class="tree" aria-hidden="true">└──</span>
+              <span class="d">未来</span>
+              <span>Coming soon……<span class="caret"></span></span>
+            </li>
+          </ul>
+        </div>
+      </section>
 
-        <hr>
-        <p style="color:var(--text-faint);font-family:var(--mono);font-size:13px">
-          📝 The only way to do great work is to love what you do.
-        </p>
-      </article>
+      <section class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">~/contact</span>
+        </div>
+        <div class="win-body">
+          <p class="cmd">ls ~/links</p>
+          <div class="links-row">
+            <a class="link-btn" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">
+              <svg viewBox="0 0 1024 1024" aria-hidden="true"><path d="M511.6 76.3C264.3 76.2 64 276.4 64 523.5 64 718.9 189.3 885 363.8 946c23.5 5.9 19.9-10.8 19.9-22.2v-77.5c-135.7 15.9-141.2-73.9-150.3-88.9C215 726 171.5 718 184.5 703c30.9-15.9 62.4 4 98.9 57.9 26.4 39.1 77.9 32.5 104 26 5.7-23.5 17.9-44.5 34.7-60.8-140.6-25.2-199.2-111-199.2-213 0-49.5 16.3-95 48.3-131.7-20.4-60.5 1.9-112.3 4.9-120 58.1-5.2 118.5 41.6 123.2 45.3 33-8.9 70.7-13.6 112.9-13.6 42.4 0 80.2 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.3-43.9 2.9 7.7 24.7 58.3 5.5 118 32.4 36.8 48.9 82.7 48.9 132.3 0 102.2-59 188.1-200 212.9 23.5 23.2 38.1 55.4 38.1 91v112.5c0.8 9 0 17.9 15 17.9 177.1-59.7 304.6-227 304.6-424.1 0-247.2-200.4-447.3-447.5-447.3z"/></svg>
+              @JacksonTai2007
+            </a>
+            <a class="link-btn" href="mailto:jacksontai200701@gmail.com">
+              <svg viewBox="0 0 1024 1024" aria-hidden="true"><path d="M926.5 355.6V780a73.1 73.1 0 0 1-73.1 73.1H170.7A73.1 73.1 0 0 1 97.5 780V355.6l304.1 257.9a170.7 170.7 0 0 0 220.8 0l304.1-257.9zM853.3 170.7a73 73 0 0 1 73.2 73.1v24.4L559.5 581.2a73.1 73.1 0 0 1-94.9 0L97.5 268.2v-24.4a73 73 0 0 1 73.2-73.1h682.6z"/></svg>
+              jacksontai200701@gmail.com
+            </a>
+          </div>
+          <p class="out hash" style="margin:18px 0 0">The only way to do great work is to love what you do.</p>
+        </div>
+      </section>
+
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=4"></script>
+  <script src="./assets/js/blog.js?v=5" defer></script>
 </body>
 </html>

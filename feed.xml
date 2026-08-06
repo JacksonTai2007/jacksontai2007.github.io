@@ -3,7 +3,7 @@
   <channel>
     <title>JacksonTai 的博客</title>
     <link>https://jacksontai2007.github.io/</link>
-    <description>记录逆向、安全、Python 与前端的折腾。</description>
+    <description>逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。</description>
     <language>zh-CN</language>
     <atom:link href="https://jacksontai2007.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Sun, 28 Jun 2026 00:00:00 GMT</lastBuildDate>

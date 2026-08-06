@@ -1,44 +1,72 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>归档 · JacksonTai</title>
-  <meta name="description" content="JacksonTai 博客文章按年份归档。">
+  <meta name="description" content="JacksonTai 博客文章按年份归档，一棵按时间排好的目录树。">
+  <meta name="author" content="JacksonTai">
+  <link rel="canonical" href="https://jacksontai2007.github.io/archive.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="JacksonTai 的博客">
+  <meta property="og:title" content="归档 · JacksonTai">
+  <meta property="og:description" content="所有文章按年份归档。">
+  <meta property="og:url" content="https://jacksontai2007.github.io/archive.html">
+  <meta property="og:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="归档 · JacksonTai">
+  <meta name="twitter:description" content="所有文章按年份归档。">
+  <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
+
+  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=4">
+  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
-        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        if (t !== "light" && t !== "dark") {
+          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
     })();
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"></header>
 
-  <main>
+  <main id="main">
     <div class="wrap">
-      <div class="sheet">
-        <div class="section-head" style="margin-top:0">
-          <h2>归档</h2>
+      <section class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-title">~/archive</span>
+          <span class="win-right"><a href="./blog.html">search →</a></span>
         </div>
-        <div id="archive">
-          <p class="skeleton">正在加载…</p>
+        <div class="win-body">
+          <p class="cmd">tree ~/posts --sort=date</p>
+          <div id="archive">
+            <p class="skeleton">loading…</p>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=4"></script>
+  <script src="./assets/js/blog.js?v=5" defer></script>
   <script>
-    Blog.renderArchive("#archive");
+    window.addEventListener("DOMContentLoaded", function () {
+      Blog.renderArchive("#archive");
+    });
   </script>
 </body>
 </html>
