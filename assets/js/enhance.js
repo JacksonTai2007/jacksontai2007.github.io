@@ -46,15 +46,15 @@
       var btn = document.createElement("button");
       btn.className = "copy-btn";
       btn.type = "button";
-      btn.textContent = "copy";
+      btn.textContent = "复制";
       btn.setAttribute("aria-label", "复制代码");
       btn.addEventListener("click", function () {
         var text = code ? code.innerText : pre.innerText;
         var done = function () {
-          btn.textContent = "copied";
+          btn.textContent = "已复制";
           btn.classList.add("copied");
           setTimeout(function () {
-            btn.textContent = "copy";
+            btn.textContent = "复制";
             btn.classList.remove("copied");
           }, 1500);
         };

@@ -70,12 +70,9 @@
         mainEntityOfPage: { "@type": "WebPage", "@id": url }
       });
 
-      var pathEl = document.getElementById("article-path");
-      if (pathEl) pathEl.textContent = "~/posts/" + meta.id + ".md";
-
       var head = document.getElementById("article-head");
       head.innerHTML =
-        '<a class="back-link" href="blog.html">$ cd ../posts</a>' +
+        '<a class="back-link" href="blog.html">← 返回文章列表</a>' +
         "<h1>" + B.esc(meta.title) + "</h1>" +
         '<div class="post-meta">' +
           '<span class="date">' + B.fmtDate(meta.date) + "</span>" +
@@ -109,7 +106,7 @@
           var tocWrap = document.getElementById("toc");
           if (toc.length >= 3 && tocWrap) {
             tocWrap.innerHTML =
-              '<div class="toc-title"># contents</div><ul>' +
+              '<div class="toc-title">目录</div><ul>' +
               toc.map(function (t) {
                 return '<li><a class="lvl-' + t.level + '" href="#' + t.id +
                   '" data-id="' + t.id + '">' + B.esc(t.text) + "</a></li>";
@@ -124,7 +121,7 @@
           });
 
           var rt = document.getElementById("read-time");
-          if (rt) rt.textContent = readingTime(article.textContent || "") + " min read";
+          if (rt) rt.textContent = "约 " + readingTime(article.textContent || "") + " 分钟";
 
           if (window.Enhance) window.Enhance.article(article, toc);
 
@@ -134,9 +131,9 @@
           var nav = document.getElementById("post-nav");
           if (nav && (newer || older)) {
             nav.innerHTML =
-              (older ? '<a href="' + B.postHref(older.id) + '"><span class="dir">← prev</span>' +
+              (older ? '<a href="' + B.postHref(older.id) + '"><span class="dir">← 上一篇</span>' +
                 B.esc(older.title) + "</a>" : "<span></span>") +
-              (newer ? '<a class="nx" href="' + B.postHref(newer.id) + '"><span class="dir">next →</span>' +
+              (newer ? '<a class="nx" href="' + B.postHref(newer.id) + '"><span class="dir">下一篇 →</span>' +
                 B.esc(newer.title) + "</a>" : "");
           }
         });
