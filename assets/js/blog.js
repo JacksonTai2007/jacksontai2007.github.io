@@ -87,9 +87,15 @@
 
   /* ---------- Theme ---------- */
   var root = document.documentElement;
+  var THEME_BG = { light: "#f3f0e7", dark: "#211e19" };
   function applyTheme(t) {
     root.setAttribute("data-theme", t);
     try { localStorage.setItem("theme", t); } catch (e) {}
+    // the static theme-color metas only follow the OS scheme; a manual choice
+    // must override both so mobile browser chrome matches the page canvas
+    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+      m.setAttribute("content", THEME_BG[t] || THEME_BG.light);
+    });
   }
   function toggleTheme() {
     var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
@@ -124,20 +130,24 @@
     { keys: ["Esc"], desc: "关闭 / 取消" }
   ];
 
-  var helpEl = null;
+  var helpEl = null, helpReturnFocus = null;
   function closeHelp() {
     if (!helpEl) return;
     helpEl.classList.remove("open");
     var el = helpEl;
     helpEl = null;
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 160);
+    // aria-modal dialogs must hand focus back to whatever opened them
+    if (helpReturnFocus && document.contains(helpReturnFocus)) helpReturnFocus.focus();
+    helpReturnFocus = null;
   }
   function openHelp() {
     if (helpEl) return closeHelp();
+    helpReturnFocus = document.activeElement;
     helpEl = document.createElement("div");
     helpEl.className = "kbd-overlay";
     helpEl.innerHTML =
-      '<div class="kbd-panel" role="dialog" aria-modal="true" aria-label="键盘快捷键">' +
+      '<div class="kbd-panel" role="dialog" aria-modal="true" aria-label="键盘快捷键" tabindex="-1">' +
         '<div class="kbd-title">键盘快捷键</div>' +
         "<dl>" +
         SHORTCUTS.map(function (s) {
@@ -151,6 +161,8 @@
       if (e.target === helpEl) closeHelp();
     });
     document.body.appendChild(helpEl);
+    var panel = helpEl.querySelector(".kbd-panel");
+    if (panel) panel.focus();
     requestAnimationFrame(function () { if (helpEl) helpEl.classList.add("open"); });
   }
 
@@ -394,18 +406,24 @@
           (p.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; });
         });
         var tags = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
+        function chipHTML(tag, label, on) {
+          return '<a class="chip' + (on ? " active" : "") + '" href="#" role="button"' +
+            ' aria-pressed="' + (on ? "true" : "false") + '" data-tag="' + esc(tag) + '">' +
+            esc(label) + "</a>";
+        }
         filterEl.innerHTML =
-          '<a class="chip' + (activeTag ? "" : " active") + '" href="#" data-tag="">全部</a>' +
-          tags.map(function (t) {
-            return '<a class="chip' + (t === activeTag ? " active" : "") + '" href="#" data-tag="' +
-              esc(t) + '">' + esc(t) + "</a>";
-          }).join("");
+          chipHTML("", "全部", !activeTag) +
+          tags.map(function (t) { return chipHTML(t, t, t === activeTag); }).join("");
         filterEl.querySelectorAll(".chip").forEach(function (c) {
           c.addEventListener("click", function (e) {
             e.preventDefault();
             activeTag = c.getAttribute("data-tag");
-            filterEl.querySelectorAll(".chip").forEach(function (x) { x.classList.remove("active"); });
+            filterEl.querySelectorAll(".chip").forEach(function (x) {
+              x.classList.remove("active");
+              x.setAttribute("aria-pressed", "false");
+            });
             c.classList.add("active");
+            c.setAttribute("aria-pressed", "true");
             syncUrl();
             draw();
           });

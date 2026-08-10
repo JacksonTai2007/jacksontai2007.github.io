@@ -5,20 +5,20 @@
    ============================================================ */
 
 :root {
-  --hl-comment: #9a9284;
+  --hl-comment: #6a6355;
   --hl-keyword: #8b3a2e;
   --hl-string: #4f6146;
   --hl-number: #4a5d78;
   --hl-title: #6b4a7a;
   --hl-attr: #3f6156;
   --hl-type: #8a5a2a;
-  --hl-meta: #7b7466;
+  --hl-meta: #665f51;
   --hl-deletion-bg: rgba(139, 58, 46, 0.10);
   --hl-addition-bg: rgba(79, 97, 70, 0.12);
 }
 
 html[data-theme="dark"] {
-  --hl-comment: #7d766a;
+  --hl-comment: #9c9583;
   --hl-keyword: #cf8578;
   --hl-string: #a3b58e;
   --hl-number: #91a8c4;

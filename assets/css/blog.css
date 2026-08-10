@@ -26,11 +26,10 @@
    ============================================================ */
 :root {
   --bg: #f3f0e7;
-  --surface: #ece7da;
   --card: #f9f6ee;
   --text: #33302a;
   --soft: #5f594d;
-  --faint: #9a9284;
+  --faint: #6a6355;
   --rule: #cfc9ba;
   --rule-soft: #ddd7c8;
   --chip-bg: #eae5d8;
@@ -49,11 +48,10 @@
 
 html[data-theme="dark"] {
   --bg: #211e19;
-  --surface: #2a2620;
   --card: #272319;
   --text: #d9d3c5;
   --soft: #a8a191;
-  --faint: #7d766a;
+  --faint: #9c9583;
   --rule: #453f33;
   --rule-soft: #37322a;
   --chip-bg: #2c2820;
@@ -325,6 +323,8 @@ html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 a.chip { cursor: pointer; }
 a.chip:hover { color: var(--text); border-color: var(--soft); }
 .chip.active { color: var(--bg); background: var(--text); border-color: var(--text); }
+/* active chips are inverted, so the generic hover color would vanish into them */
+a.chip.active:hover { color: var(--bg); border-color: var(--text); }
 
 /* ============================================================
    Search + filter toolbar

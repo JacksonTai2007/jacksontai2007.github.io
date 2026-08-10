@@ -163,7 +163,11 @@
       img.classList.add("zoomable");
       img.setAttribute("loading", "lazy");
       img.setAttribute("decoding", "async");
-      img.addEventListener("click", function () {
+      // zooming is an interaction, so it must be reachable by keyboard too
+      img.setAttribute("tabindex", "0");
+      img.setAttribute("role", "button");
+      img.setAttribute("aria-label", (img.alt ? img.alt + " — " : "") + "放大图片");
+      function open() {
         overlay = document.createElement("div");
         overlay.className = "lightbox";
         var big = document.createElement("img");
@@ -174,6 +178,10 @@
         document.body.appendChild(overlay);
         document.addEventListener("keydown", onKey);
         requestAnimationFrame(function () { if (overlay) overlay.classList.add("open"); });
+      }
+      img.addEventListener("click", open);
+      img.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
       });
     });
   }

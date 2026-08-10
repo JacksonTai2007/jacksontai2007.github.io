@@ -60,6 +60,7 @@
         "@type": "BlogPosting",
         headline: meta.title,
         description: meta.excerpt || "",
+        image: B.SITE + "/static/img/logo.png",
         datePublished: meta.date,
         dateModified: meta.date,
         keywords: (meta.tags || []).join(", "),
