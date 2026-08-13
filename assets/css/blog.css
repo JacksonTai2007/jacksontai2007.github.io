@@ -41,9 +41,13 @@
   --maxw-wide: 1120px;
   --serif: Georgia, "Times New Roman", "Songti SC", "Noto Serif CJK SC",
     "Source Han Serif SC", SimSun, "PingFang SC", serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
-    Consolas, "Liberation Mono", "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", monospace;
+  /* --mono pulls in the webfont, so it is reserved for actual code (post pages
+     only). UI chrome like <kbd> uses --mono-ui and stays on system fonts, which
+     keeps the 31 KB woff2 off pages that never render a code block. */
+  --mono-ui: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    monospace;
+  --mono: "JetBrains Mono", var(--mono-ui);
 }
 
 html[data-theme="dark"] {
@@ -347,7 +351,7 @@ a.chip.active:hover { color: var(--bg); border-color: var(--text); }
 .search kbd { flex-shrink: 0; }
 
 kbd {
-  font-family: var(--mono);
+  font-family: var(--mono-ui);
   font-size: 11px;
   color: var(--faint);
   background: var(--chip-bg);

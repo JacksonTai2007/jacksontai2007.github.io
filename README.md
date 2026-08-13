@@ -95,7 +95,7 @@ assets/
 tools/
   generate-feeds.mjs      生成 feed.xml + sitemap.xml
 feed.xml / sitemap.xml    RSS 订阅源 / 站点地图（由脚本生成）
-static/img/               头像 logo.png、favicon
+static/img/               avatar.png（首页头像 180px）、logo.png（社交分享图 360px）、favicon
 ```
 
 > 改动 `assets/` 下的 CSS / JS 后，记得同步各 HTML 里的 `?v=` 版本号，让浏览器拿到新文件。
