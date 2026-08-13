@@ -187,13 +187,20 @@
   }
 
   window.Enhance = {
+    /* Each step is isolated: this file promises to be optional, so one broken
+       enhancement must not take the other four down with it. */
     article: function (article, toc) {
       if (!article) return;
-      decorateCode(article);
-      lightbox(article);
-      progressBar();
-      backToTop();
-      scrollSpy(toc);
+      var steps = [
+        function () { decorateCode(article); },
+        function () { lightbox(article); },
+        progressBar,
+        backToTop,
+        function () { scrollSpy(toc); }
+      ];
+      steps.forEach(function (step, i) {
+        try { step(); } catch (e) { console.warn("enhance step " + i + " failed", e); }
+      });
     }
   };
 })();

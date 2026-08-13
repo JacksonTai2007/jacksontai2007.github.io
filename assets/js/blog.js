@@ -179,6 +179,10 @@
   var awaitingGo = false, goTimer = null;
   function bindKeys() {
     document.addEventListener("keydown", function (e) {
+      // While an IME candidate window is open, Escape means "cancel this
+      // composition" — it must not reach the Escape branch below and blur the
+      // search box out from under someone typing Chinese.
+      if (e.isComposing || e.keyCode === 229) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       var t = e.target;
       var typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
@@ -273,20 +277,31 @@
 
   /* ---------- Data ---------- */
   var DATA_URL = "posts/index.json";
-  var _cache = null;
+  /* Cache the promise, not the resolved value: the home page calls loadPosts()
+     four times in one tick, and a value cache would let all four race their own
+     request. On failure the slot is cleared so a later call can retry.
+     `no-cache` stays: index.json carries no ?v= stamp, so revalidation is what
+     makes "push a file, it's live" hold for newly published posts. */
+  var _inflight = null;
   function loadPosts() {
-    if (_cache) return Promise.resolve(_cache);
-    return fetch(DATA_URL, { cache: "no-cache" })
-      .then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
-      .then(function (data) {
-        var posts = (data.posts || []).slice();
-        posts.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
-        _cache = posts;
-        return posts;
-      });
+    if (!_inflight) {
+      _inflight = fetch(DATA_URL, { cache: "no-cache" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          var posts = (data.posts || []).slice();
+          // missing dates sort last instead of poisoning the comparator
+          posts.sort(function (a, b) {
+            var ad = a.date || "", bd = b.date || "";
+            return ad < bd ? 1 : ad > bd ? -1 : 0;
+          });
+          return posts;
+        })
+        .catch(function (e) { _inflight = null; throw e; });
+    }
+    return _inflight;
   }
   function failInto(el, e, tag) {
     if (el) el.innerHTML = "<" + tag + ' class="empty">加载失败：' + esc(e.message) + "</" + tag + ">";
@@ -465,10 +480,22 @@
       }
 
       if (searchEl) {
-        searchEl.addEventListener("input", function () {
+        // Filtering on every keystroke would run against half-typed pinyin while
+        // an IME composition is open, so hold off until the word is committed.
+        var composing = false;
+        function applySearch() {
           query = searchEl.value;
           syncUrl();
           draw();
+        }
+        searchEl.addEventListener("compositionstart", function () { composing = true; });
+        searchEl.addEventListener("compositionend", function () {
+          composing = false;
+          applySearch();
+        });
+        searchEl.addEventListener("input", function (e) {
+          if (composing || e.isComposing) return;
+          applySearch();
         });
         if (params.get("focus")) searchEl.focus();
       }
@@ -492,7 +519,7 @@
         var rows = byYear[y].map(function (p) {
           return (
             '<li class="archive-row">' +
-              '<span class="d">' + esc(String(p.date).slice(5)) + "</span>" +
+              '<span class="d">' + esc(String(p.date || "").slice(5)) + "</span>" +
               '<a href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
             "</li>"
           );

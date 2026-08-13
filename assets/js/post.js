@@ -72,7 +72,7 @@
       });
 
       var head = document.getElementById("article-head");
-      head.innerHTML =
+      if (head) head.innerHTML =
         '<a class="back-link" href="blog.html">← 返回文章列表</a>' +
         "<h1>" + B.esc(meta.title) + "</h1>" +
         '<div class="post-meta">' +
@@ -93,49 +93,61 @@
             ? window.marked.parse(md)
             : "<pre>" + B.esc(md) + "</pre>";
 
-          // heading anchors + TOC entries
+          // Past this point the article is on screen and readable. Everything
+          // that follows is navigation and decoration, so it gets its own error
+          // handling — a broken TOC must never repaint a fetched article as
+          // "加载文章失败".
           var toc = [];
-          var seen = {};
-          article.querySelectorAll("h2, h3").forEach(function (h) {
-            var slug = slugify(h.textContent);
-            if (seen[slug]) slug += "-" + seen[slug]++;
-            else seen[slug] = 1;
-            h.id = slug;
-            toc.push({ level: h.tagName === "H2" ? 2 : 3, text: h.textContent, id: slug });
-          });
+          try {
+            var seen = {};
+            article.querySelectorAll("h2, h3").forEach(function (h) {
+              var slug = slugify(h.textContent);
+              if (seen[slug]) slug += "-" + seen[slug]++;
+              else seen[slug] = 1;
+              h.id = slug;
+              toc.push({ level: h.tagName === "H2" ? 2 : 3, text: h.textContent, id: slug });
+            });
 
-          var tocWrap = document.getElementById("toc");
-          if (toc.length >= 3 && tocWrap) {
-            tocWrap.innerHTML =
-              '<div class="toc-title">目录</div><ul>' +
-              toc.map(function (t) {
-                return '<li><a class="lvl-' + t.level + '" href="#' + t.id +
-                  '" data-id="' + t.id + '">' + B.esc(t.text) + "</a></li>";
-              }).join("") +
-              "</ul>";
-            document.querySelector(".article-layout").classList.add("has-toc");
+            var tocWrap = document.getElementById("toc");
+            if (toc.length >= 3 && tocWrap) {
+              tocWrap.innerHTML =
+                '<div class="toc-title">目录</div><ul>' +
+                toc.map(function (t) {
+                  return '<li><a class="lvl-' + t.level + '" href="#' + t.id +
+                    '" data-id="' + t.id + '">' + B.esc(t.text) + "</a></li>";
+                }).join("") +
+                "</ul>";
+              var layout = document.querySelector(".article-layout");
+              if (layout) layout.classList.add("has-toc");
+            }
+
+            article.querySelectorAll('a[href^="http"]').forEach(function (a) {
+              a.target = "_blank";
+              a.rel = "noopener";
+            });
+
+            var rt = document.getElementById("read-time");
+            if (rt) rt.textContent = "约 " + readingTime(article.textContent || "") + " 分钟";
+
+            /* ---- prev / next (posts are newest-first) ---- */
+            var newer = posts[idx - 1];
+            var older = posts[idx + 1];
+            var nav = document.getElementById("post-nav");
+            if (nav && (newer || older)) {
+              nav.innerHTML =
+                (older ? '<a href="' + B.postHref(older.id) + '"><span class="dir">← 上一篇</span>' +
+                  B.esc(older.title) + "</a>" : "<span></span>") +
+                (newer ? '<a class="nx" href="' + B.postHref(newer.id) + '"><span class="dir">下一篇 →</span>' +
+                  B.esc(newer.title) + "</a>" : "");
+            }
+          } catch (e) {
+            console.warn("post enhancements failed", e);
           }
 
-          article.querySelectorAll('a[href^="http"]').forEach(function (a) {
-            a.target = "_blank";
-            a.rel = "noopener";
-          });
-
-          var rt = document.getElementById("read-time");
-          if (rt) rt.textContent = "约 " + readingTime(article.textContent || "") + " 分钟";
-
-          if (window.Enhance) window.Enhance.article(article, toc);
-
-          /* ---- prev / next (posts are newest-first) ---- */
-          var newer = posts[idx - 1];
-          var older = posts[idx + 1];
-          var nav = document.getElementById("post-nav");
-          if (nav && (newer || older)) {
-            nav.innerHTML =
-              (older ? '<a href="' + B.postHref(older.id) + '"><span class="dir">← 上一篇</span>' +
-                B.esc(older.title) + "</a>" : "<span></span>") +
-              (newer ? '<a class="nx" href="' + B.postHref(newer.id) + '"><span class="dir">下一篇 →</span>' +
-                B.esc(newer.title) + "</a>" : "");
+          try {
+            if (window.Enhance) window.Enhance.article(article, toc);
+          } catch (e) {
+            console.warn("enhance failed", e);
           }
         });
     }).catch(function (e) {
