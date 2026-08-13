@@ -37,6 +37,29 @@
       } catch (e) {}
     })();
   </script>
+  <script>
+    // Fire both data requests here, before the deferred scripts are even
+    // fetched. The article id is already in the URL, so the markdown never had
+    // to wait on posts/index.json — and neither request has to wait on ~46 KB
+    // of deferred JS parsing. blog.js and post.js pick these promises up.
+    // Trade-off: an unknown ?id= now costs one speculative 404 on the .md,
+    // since we can't know the id is bogus until index.json lands. The reader
+    // still sees "没有找到这篇文章" — only the console differs.
+    (function () {
+      try {
+        var id = new URLSearchParams(location.search).get("id");
+        if (!id) return;
+        window.__boot = {
+          index: fetch("posts/index.json", { cache: "no-cache" }),
+          // published markdown is immutable in practice, so let it be cached
+          md: fetch("posts/" + encodeURIComponent(id) + ".md")
+        };
+        // keep a rejection from going unhandled before the consumers attach
+        window.__boot.index.catch(function () {});
+        window.__boot.md.catch(function () {});
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -62,8 +85,10 @@
 
   <footer class="site-footer"></footer>
 
+  <!-- highlight.min.js is not listed here on purpose: enhance.js injects it on
+       demand, after the article is on screen, and skips it entirely for posts
+       with no code blocks. -->
   <script src="./assets/js/marked.min.js?v=7" defer></script>
-  <script src="./assets/js/highlight.min.js?v=7" defer></script>
   <script src="./assets/js/blog.js?v=7" defer></script>
   <script src="./assets/js/enhance.js?v=7" defer></script>
   <script src="./assets/js/post.js?v=7" defer></script>

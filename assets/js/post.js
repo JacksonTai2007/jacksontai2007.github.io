@@ -42,9 +42,20 @@
       window.marked.setOptions({ gfm: true, breaks: false });
     }
 
-    B.loadPosts().then(function (posts) {
+    // The markdown request does not depend on index.json, so run them together.
+    // Wrapped in a sentinel rather than left to reject, so that a missing id can
+    // still report "没有找到这篇文章" instead of the markdown's 404.
+    var boot = window.__boot && window.__boot.md;
+    var mdReq = (boot || fetch("posts/" + encodeURIComponent(id) + ".md"))
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+      .then(function (text) { return { ok: true, text: text }; },
+            function (err) { return { ok: false, err: err }; });
+
+    Promise.all([B.loadPosts(), mdReq]).then(function (res) {
+      var posts = res[0], got = res[1];
       var idx = posts.findIndex(function (p) { return p.id === id; });
       if (idx === -1) return fail("没有找到这篇文章。");
+      if (!got.ok) throw got.err;
       var meta = posts[idx];
       var url = B.SITE + "/post.html?id=" + encodeURIComponent(meta.id);
 
@@ -83,11 +94,11 @@
         '<div class="tags">' + B.tagChips(meta.tags) + "</div>";
 
       /* ---- body ---- */
-      return fetch("posts/" + encodeURIComponent(id) + ".md", { cache: "no-cache" })
-        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
-        .then(function (md) {
+      // Same synchronous block as the header above, so the title and the article
+      // land in one paint instead of shifting the page twice.
+      {
           // drop a leading H1 that would just repeat the title
-          md = md.replace(/^\s*#\s+.*\n+/, "");
+          var md = got.text.replace(/^\s*#\s+.*\n+/, "");
           var article = document.getElementById("article");
           article.innerHTML = window.marked
             ? window.marked.parse(md)
@@ -149,7 +160,7 @@
           } catch (e) {
             console.warn("enhance failed", e);
           }
-        });
+      }
     }).catch(function (e) {
       fail("加载文章失败：" + e.message);
     });

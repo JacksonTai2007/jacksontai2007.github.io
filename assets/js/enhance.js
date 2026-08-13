@@ -15,25 +15,43 @@
 
   /* ---------- Code blocks ---------- */
   function langOf(code) {
+    // marked puts language-<x> first; hljs only ever appends its own classes,
+    // so the first match stays the author's declared language.
     var m = /language-([\w+#-]+)/.exec(code.className || "");
-    if (m) return m[1].toLowerCase();
-    // highlight.js records what it auto-detected
-    var d = code.getAttribute("data-highlighted-language");
-    return d ? d.toLowerCase() : "text";
+    return m ? m[1].toLowerCase() : "text";
+  }
+
+  /* highlight.js is 119 KB — by far the largest asset on an article page. It is
+     pulled in on demand, after the article is already rendered, so it never sits
+     on the critical path (and never loads at all for a post with no code). */
+  // Reuse whatever cache-bust stamp this file itself was served with, so the
+  // lazily injected highlighter can never drift out of sync with the HTML.
+  var VER = (function () {
+    var s = document.currentScript;
+    var m = s && /[?&]v=([^&"']*)/.exec(s.src || "");
+    return m ? m[1] : "";
+  })();
+
+  var hljsReq = null;
+  function loadHljs() {
+    if (!hljsReq) {
+      hljsReq = new Promise(function (resolve) {
+        if (window.hljs) return resolve(window.hljs);
+        var s = document.createElement("script");
+        s.src = "assets/js/highlight.min.js" + (VER ? "?v=" + VER : "");
+        s.onload = function () { resolve(window.hljs || null); };
+        s.onerror = function () { resolve(null); };  // never reject: the window
+        document.head.appendChild(s);               // chrome and copy button
+      });                                           // must survive a failure
+    }
+    return hljsReq;
   }
 
   function decorateCode(article) {
+    var jobs = [];
     article.querySelectorAll("pre").forEach(function (pre) {
       if (pre.parentNode && pre.parentNode.classList.contains("code-win")) return;
       var code = pre.querySelector("code");
-      if (window.hljs && code) {
-        try {
-          window.hljs.highlightElement(code);
-          if (window.hljs.highlightAuto && !/language-/.test(code.className)) {
-            // highlightElement already set the detected language class
-          }
-        } catch (e) {}
-      }
 
       var win = document.createElement("div");
       win.className = "code-win";
@@ -78,6 +96,18 @@
 
       win.appendChild(bar);
       win.appendChild(pre);
+      if (code) jobs.push({ code: code, label: bar.querySelector(".lang") });
+    });
+
+    if (!jobs.length) return;  // no code in this post — never fetch the highlighter
+    loadHljs().then(function (h) {
+      if (!h) return;          // offline or blocked: plain but fully readable code
+      jobs.forEach(function (j) {
+        try { h.highlightElement(j.code); } catch (e) {}
+        // hljs appends language-<detected> for bare fences; refresh the label so
+        // an unlabelled block shows what it was detected as instead of "text"
+        j.label.textContent = langOf(j.code);
+      });
     });
   }
 

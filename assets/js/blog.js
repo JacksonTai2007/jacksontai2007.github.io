@@ -285,7 +285,10 @@
   var _inflight = null;
   function loadPosts() {
     if (!_inflight) {
-      _inflight = fetch(DATA_URL, { cache: "no-cache" })
+      // post.html kicks this request off from an inline <head> script; reuse it
+      // when present, otherwise start our own (every other page does).
+      var boot = window.__boot && window.__boot.index;
+      _inflight = (boot || fetch(DATA_URL, { cache: "no-cache" }))
         .then(function (r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.json();
