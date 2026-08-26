@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>404 · JacksonTai</title>
   <meta name="description" content="页面不存在。">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/static/img/favicon.ico">
-  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/assets/css/blog.css?v=5">
+  <link rel="stylesheet" href="/assets/css/blog.css?v=7">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
         if (t !== "light" && t !== "dark") {
-          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
@@ -24,41 +23,37 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"></header>
 
   <main id="main">
     <div class="wrap">
-      <section class="win">
-        <div class="win-bar">
-          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="win-title">jacksontai@blog: ~</span>
-        </div>
-        <div class="win-body">
-          <p class="cmd"><span id="tried">cat</span></p>
-          <p class="out" style="color:var(--red)">bash: 没有那个文件或目录 (404)</p>
-
-          <p class="cmd">ls ~</p>
-          <ul class="cat-list">
-            <li class="cat-row"><span class="tree">├──</span><a href="/">index.html</a><span class="n">首页</span></li>
-            <li class="cat-row"><span class="tree">├──</span><a href="/blog.html">posts/</a><span class="n">全部文章</span></li>
-            <li class="cat-row"><span class="tree">├──</span><a href="/archive.html">archive/</a><span class="n">按年归档</span></li>
-            <li class="cat-row"><span class="tree">└──</span><a href="/about.html">about.md</a><span class="n">关于我</span></li>
-          </ul>
-
-          <p class="cmd" style="margin-top:20px" aria-hidden="true"><span class="caret"></span></p>
-        </div>
+      <section class="block">
+        <p class="kicker">404</p>
+        <article class="prose">
+          <h1 style="margin-top:0">这一页不存在</h1>
+          <p>你要找的页面<span id="tried"></span>不在这里 —— 可能已被移动，或者链接拼错了。</p>
+        </article>
+        <ul class="cat-list" style="margin-top:18px">
+          <li class="cat-row"><a href="/">首页</a><span class="leader" aria-hidden="true"></span><span class="n">回到起点</span></li>
+          <li class="cat-row"><a href="/blog.html">全部文章</a><span class="leader" aria-hidden="true"></span><span class="n">搜索与筛选</span></li>
+          <li class="cat-row"><a href="/archive.html">归档</a><span class="leader" aria-hidden="true"></span><span class="n">按年浏览</span></li>
+          <li class="cat-row"><a href="/about.html">关于</a><span class="leader" aria-hidden="true"></span><span class="n">找到我</span></li>
+        </ul>
       </section>
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="/assets/js/blog.js?v=5" defer></script>
+  <script src="/assets/js/blog.js?v=7" defer></script>
   <script>
     // echo back the path the visitor actually asked for
     window.addEventListener("DOMContentLoaded", function () {
       var el = document.getElementById("tried");
-      if (el) el.textContent = "cat " + location.pathname.slice(0, 120);
+      if (el && location.pathname && location.pathname !== "/404.html") {
+        el.textContent = "（" + location.pathname.slice(0, 120) + "）";
+      }
     });
   </script>
 </body>

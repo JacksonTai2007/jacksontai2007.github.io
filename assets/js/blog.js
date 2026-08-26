@@ -12,10 +12,10 @@
 
   /* ---------- Nav ---------- */
   var NAV = [
-    { href: "index.html", label: "~", title: "首页" },
-    { href: "blog.html", label: "./posts", title: "文章" },
-    { href: "archive.html", label: "./archive", title: "归档" },
-    { href: "about.html", label: "./about", title: "关于" }
+    { href: "index.html", label: "首页" },
+    { href: "blog.html", label: "文章" },
+    { href: "archive.html", label: "归档" },
+    { href: "about.html", label: "关于" }
   ];
 
   var ICON = {
@@ -51,15 +51,12 @@
     var page = currentPage();
     return (
       '<div class="wrap nav">' +
-        '<a class="brand" href="index.html" aria-label="JacksonTai 首页">' +
-          '<span class="user">jacksontai</span><span class="at">@</span>' +
-          '<span class="path">blog:~</span><span class="sigil">$</span>' +
-        "</a>" +
+        '<a class="brand" href="index.html" aria-label="JacksonTai 首页">JacksonTai</a>' +
         '<nav class="nav-links" aria-label="主导航">' +
           NAV.map(function (n) {
             var on = n.href === page || (page === "" && n.href === "index.html");
             return '<a class="nav-link' + (on ? " active" : "") + '" href="' + n.href + '"' +
-              ' title="' + n.title + '"' + (on ? ' aria-current="page"' : "") + ">" + n.label + "</a>";
+              (on ? ' aria-current="page"' : "") + ">" + n.label + "</a>";
           }).join("") +
         "</nav>" +
         '<button class="icon-btn kbd-btn" type="button" aria-label="键盘快捷键" title="快捷键 (?)"' +
@@ -76,7 +73,7 @@
   function footerHTML() {
     return (
       '<div class="wrap">' +
-        "<span># © " + new Date().getFullYear() + " " + AUTHOR + " — built with vanilla JS</span>" +
+        "<span>© " + new Date().getFullYear() + " " + AUTHOR + "</span>" +
         '<span class="footer-links">' +
           '<a href="feed.xml" title="RSS 订阅">rss</a>' +
           '<span class="sep">·</span>' +
@@ -90,14 +87,20 @@
 
   /* ---------- Theme ---------- */
   var root = document.documentElement;
+  var THEME_BG = { light: "#f3f0e7", dark: "#211e19" };
   function applyTheme(t) {
     root.setAttribute("data-theme", t);
     try { localStorage.setItem("theme", t); } catch (e) {}
+    // the static theme-color metas only follow the OS scheme; a manual choice
+    // must override both so mobile browser chrome matches the page canvas
+    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+      m.setAttribute("content", THEME_BG[t] || THEME_BG.light);
+    });
   }
   function toggleTheme() {
     var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
     applyTheme(next);
-    toast(next === "dark" ? "theme → dark" : "theme → light");
+    toast(next === "dark" ? "已切换至深色" : "已切换至浅色");
   }
 
   /* ---------- Toast ---------- */
@@ -127,22 +130,25 @@
     { keys: ["Esc"], desc: "关闭 / 取消" }
   ];
 
-  var helpEl = null;
+  var helpEl = null, helpReturnFocus = null;
   function closeHelp() {
     if (!helpEl) return;
     helpEl.classList.remove("open");
     var el = helpEl;
     helpEl = null;
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 160);
+    // aria-modal dialogs must hand focus back to whatever opened them
+    if (helpReturnFocus && document.contains(helpReturnFocus)) helpReturnFocus.focus();
+    helpReturnFocus = null;
   }
   function openHelp() {
     if (helpEl) return closeHelp();
+    helpReturnFocus = document.activeElement;
     helpEl = document.createElement("div");
     helpEl.className = "kbd-overlay";
     helpEl.innerHTML =
-      '<div class="kbd-panel" role="dialog" aria-modal="true" aria-label="键盘快捷键">' +
-        '<div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span>' +
-        '<span class="win-title">keybindings</span></div>' +
+      '<div class="kbd-panel" role="dialog" aria-modal="true" aria-label="键盘快捷键" tabindex="-1">' +
+        '<div class="kbd-title">键盘快捷键</div>' +
         "<dl>" +
         SHORTCUTS.map(function (s) {
           return '<div class="row"><dt>' + s.keys.map(function (k) {
@@ -155,6 +161,8 @@
       if (e.target === helpEl) closeHelp();
     });
     document.body.appendChild(helpEl);
+    var panel = helpEl.querySelector(".kbd-panel");
+    if (panel) panel.focus();
     requestAnimationFrame(function () { if (helpEl) helpEl.classList.add("open"); });
   }
 
@@ -171,6 +179,10 @@
   var awaitingGo = false, goTimer = null;
   function bindKeys() {
     document.addEventListener("keydown", function (e) {
+      // While an IME candidate window is open, Escape means "cancel this
+      // composition" — it must not reach the Escape branch below and blur the
+      // search box out from under someone typing Chinese.
+      if (e.isComposing || e.keyCode === 229) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       var t = e.target;
       var typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
@@ -265,20 +277,34 @@
 
   /* ---------- Data ---------- */
   var DATA_URL = "posts/index.json";
-  var _cache = null;
+  /* Cache the promise, not the resolved value: the home page calls loadPosts()
+     four times in one tick, and a value cache would let all four race their own
+     request. On failure the slot is cleared so a later call can retry.
+     `no-cache` stays: index.json carries no ?v= stamp, so revalidation is what
+     makes "push a file, it's live" hold for newly published posts. */
+  var _inflight = null;
   function loadPosts() {
-    if (_cache) return Promise.resolve(_cache);
-    return fetch(DATA_URL, { cache: "no-cache" })
-      .then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
-      .then(function (data) {
-        var posts = (data.posts || []).slice();
-        posts.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
-        _cache = posts;
-        return posts;
-      });
+    if (!_inflight) {
+      // post.html kicks this request off from an inline <head> script; reuse it
+      // when present, otherwise start our own (every other page does).
+      var boot = window.__boot && window.__boot.index;
+      _inflight = (boot || fetch(DATA_URL, { cache: "no-cache" }))
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          var posts = (data.posts || []).slice();
+          // missing dates sort last instead of poisoning the comparator
+          posts.sort(function (a, b) {
+            var ad = a.date || "", bd = b.date || "";
+            return ad < bd ? 1 : ad > bd ? -1 : 0;
+          });
+          return posts;
+        })
+        .catch(function (e) { _inflight = null; throw e; });
+    }
+    return _inflight;
   }
   function failInto(el, e, tag) {
     if (el) el.innerHTML = "<" + tag + ' class="empty">加载失败：' + esc(e.message) + "</" + tag + ">";
@@ -363,12 +389,11 @@
         counts[c] = (counts[c] || 0) + 1;
       });
       var names = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
-      el.innerHTML = names.map(function (c, i) {
-        var last = i === names.length - 1;
+      el.innerHTML = names.map(function (c) {
         return (
           '<li class="cat-row">' +
-            '<span class="tree">' + (last ? "└──" : "├──") + "</span>" +
-            '<a href="blog.html?category=' + encodeURIComponent(c) + '">' + esc(c) + "/</a>" +
+            '<a href="blog.html?category=' + encodeURIComponent(c) + '">' + esc(c) + "</a>" +
+            '<span class="leader" aria-hidden="true"></span>' +
             '<span class="n">' + counts[c] + " 篇</span>" +
           "</li>"
         );
@@ -399,18 +424,24 @@
           (p.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; });
         });
         var tags = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
+        function chipHTML(tag, label, on) {
+          return '<a class="chip' + (on ? " active" : "") + '" href="#" role="button"' +
+            ' aria-pressed="' + (on ? "true" : "false") + '" data-tag="' + esc(tag) + '">' +
+            esc(label) + "</a>";
+        }
         filterEl.innerHTML =
-          '<a class="chip plain' + (activeTag ? "" : " active") + '" href="#" data-tag="">--all</a>' +
-          tags.map(function (t) {
-            return '<a class="chip' + (t === activeTag ? " active" : "") + '" href="#" data-tag="' +
-              esc(t) + '">' + esc(t) + "</a>";
-          }).join("");
+          chipHTML("", "全部", !activeTag) +
+          tags.map(function (t) { return chipHTML(t, t, t === activeTag); }).join("");
         filterEl.querySelectorAll(".chip").forEach(function (c) {
           c.addEventListener("click", function (e) {
             e.preventDefault();
             activeTag = c.getAttribute("data-tag");
-            filterEl.querySelectorAll(".chip").forEach(function (x) { x.classList.remove("active"); });
+            filterEl.querySelectorAll(".chip").forEach(function (x) {
+              x.classList.remove("active");
+              x.setAttribute("aria-pressed", "false");
+            });
             c.classList.add("active");
+            c.setAttribute("aria-pressed", "true");
             syncUrl();
             draw();
           });
@@ -440,22 +471,34 @@
         });
         listEl.innerHTML = filtered.length
           ? filtered.map(postItemHTML).join("")
-          : '<li class="empty">no matches — 换个关键词试试。</li>';
+          : '<li class="empty">没有匹配的文章，换个关键词试试。</li>';
         if (countEl) {
           var bits = [];
-          if (activeCat) bits.push("category=" + activeCat);
-          if (activeTag) bits.push("tag=" + activeTag);
-          if (q) bits.push('q="' + query.trim() + '"');
-          countEl.textContent = "# " + filtered.length + " / " + posts.length + " 篇" +
-            (bits.length ? "  ·  " + bits.join("  ") : "");
+          if (activeCat) bits.push("分类：" + activeCat);
+          if (activeTag) bits.push("标签：" + activeTag);
+          if (q) bits.push("搜索：" + query.trim());
+          countEl.textContent = "共 " + filtered.length + " 篇（全部 " + posts.length + " 篇）" +
+            (bits.length ? " · " + bits.join(" · ") : "");
         }
       }
 
       if (searchEl) {
-        searchEl.addEventListener("input", function () {
+        // Filtering on every keystroke would run against half-typed pinyin while
+        // an IME composition is open, so hold off until the word is committed.
+        var composing = false;
+        function applySearch() {
           query = searchEl.value;
           syncUrl();
           draw();
+        }
+        searchEl.addEventListener("compositionstart", function () { composing = true; });
+        searchEl.addEventListener("compositionend", function () {
+          composing = false;
+          applySearch();
+        });
+        searchEl.addEventListener("input", function (e) {
+          if (composing || e.isComposing) return;
+          applySearch();
         });
         if (params.get("focus")) searchEl.focus();
       }
@@ -463,7 +506,7 @@
     }).catch(function (e) { failInto(listEl, e, "li"); });
   }
 
-  /* Archive rendered as a directory tree: year → month → post. */
+  /* Archive: posts grouped by year, dated rows within each year. */
   function renderArchive(selector) {
     var el = document.querySelector(selector);
     if (!el) return;
@@ -476,18 +519,15 @@
       });
       var years = Object.keys(byYear).sort().reverse();
       el.innerHTML = years.map(function (y) {
-        var list = byYear[y];
-        var rows = list.map(function (p, i) {
-          var last = i === list.length - 1;
+        var rows = byYear[y].map(function (p) {
           return (
             '<li class="archive-row">' +
-              '<span class="tree">' + (last ? "└──" : "├──") + "</span>" +
-              '<span class="d">' + esc(String(p.date).slice(5)) + "</span>" +
+              '<span class="d">' + esc(String(p.date || "").slice(5)) + "</span>" +
               '<a href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
             "</li>"
           );
         }).join("");
-        return '<div class="archive-year">' + esc(y) + '/<span class="n">' + list.length +
+        return '<div class="archive-year">' + esc(y) + '<span class="n">' + byYear[y].length +
           ' 篇</span></div><ul class="archive-list">' + rows + "</ul>";
       }).join("");
     }).catch(function (e) { failInto(el, e, "p"); });

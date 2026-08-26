@@ -1,33 +1,33 @@
 /* ============================================================
-   Syntax highlighting — terminal palette
-   Token colours are pulled from the same custom properties the rest of
-   the theme uses, so light/dark switching needs no second stylesheet.
+   Syntax highlighting — muted ink palette
+   Token colours are desaturated to sit quietly on the paper theme;
+   the dark (ink slate) variant lifts the same hues for contrast.
    ============================================================ */
 
 :root {
-  --hl-comment: var(--faint);
-  --hl-keyword: #ff7b72;
-  --hl-string: #a5d6ff;
-  --hl-number: #79c0ff;
-  --hl-title: #d2a8ff;
-  --hl-attr: #7ee787;
-  --hl-type: #ffa657;
-  --hl-meta: #8b949e;
-  --hl-deletion-bg: rgba(255, 123, 114, 0.13);
-  --hl-addition-bg: rgba(126, 231, 135, 0.13);
+  --hl-comment: #6a6355;
+  --hl-keyword: #8b3a2e;
+  --hl-string: #4f6146;
+  --hl-number: #4a5d78;
+  --hl-title: #6b4a7a;
+  --hl-attr: #3f6156;
+  --hl-type: #8a5a2a;
+  --hl-meta: #665f51;
+  --hl-deletion-bg: rgba(139, 58, 46, 0.10);
+  --hl-addition-bg: rgba(79, 97, 70, 0.12);
 }
 
-html[data-theme="light"] {
-  --hl-comment: #6e7781;
-  --hl-keyword: #cf222e;
-  --hl-string: #0a3069;
-  --hl-number: #0550ae;
-  --hl-title: #8250df;
-  --hl-attr: #116329;
-  --hl-type: #953800;
-  --hl-meta: #5b6570;
-  --hl-deletion-bg: rgba(207, 34, 46, 0.10);
-  --hl-addition-bg: rgba(26, 127, 55, 0.10);
+html[data-theme="dark"] {
+  --hl-comment: #9c9583;
+  --hl-keyword: #cf8578;
+  --hl-string: #a3b58e;
+  --hl-number: #91a8c4;
+  --hl-title: #b295c2;
+  --hl-attr: #8fb5a5;
+  --hl-type: #c9a06a;
+  --hl-meta: #a8a191;
+  --hl-deletion-bg: rgba(207, 133, 120, 0.12);
+  --hl-addition-bg: rgba(163, 181, 142, 0.12);
 }
 
 .hljs { color: var(--text); background: transparent; }
@@ -83,8 +83,8 @@ html[data-theme="light"] {
 .hljs-subst,
 .hljs-punctuation { color: var(--text); }
 
-.hljs-deletion { color: var(--red); background: var(--hl-deletion-bg); }
-.hljs-addition { color: var(--accent); background: var(--hl-addition-bg); }
+.hljs-deletion { color: var(--hl-keyword); background: var(--hl-deletion-bg); }
+.hljs-addition { color: var(--hl-string); background: var(--hl-addition-bg); }
 
 .hljs-emphasis { font-style: italic; }
 .hljs-strong { font-weight: 700; }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,18 +20,17 @@
   <meta name="twitter:description" content="全部文章 — 逆向工程、移动安全、Python 与前端笔记。">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
+  <link rel="stylesheet" href="./assets/css/blog.css?v=7">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
         if (t !== "light" && t !== "dark") {
-          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
@@ -44,34 +43,31 @@
 
   <main id="main">
     <div class="wrap">
-      <section class="win">
-        <div class="win-bar">
-          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="win-title">~/posts</span>
-          <span class="win-right"><a href="./archive.html">archive →</a></span>
+      <section class="block">
+        <div class="sec-head">
+          <p class="kicker">全部文章</p>
+          <a class="more" href="./archive.html">按年归档 →</a>
         </div>
-        <div class="win-body">
-          <label class="search">
-            <span class="p" aria-hidden="true">$ grep -i</span>
-            <input id="search" type="search" placeholder="搜索标题、标签、摘要…"
-                   autocomplete="off" aria-label="搜索文章">
-            <kbd>/</kbd>
-          </label>
 
-          <div class="filter-tags" id="filter" role="group" aria-label="按标签筛选"></div>
-          <p class="result-count" id="count" role="status"></p>
+        <label class="search">
+          <input id="search" type="search" placeholder="搜索标题、标签、摘要…"
+                 autocomplete="off" aria-label="搜索文章">
+          <kbd>/</kbd>
+        </label>
 
-          <ul class="post-list" id="post-list">
-            <li class="skeleton">loading…</li>
-          </ul>
-        </div>
+        <div class="filter-tags" id="filter" role="group" aria-label="按标签筛选"></div>
+        <p class="result-count" id="count" role="status"></p>
+
+        <ul class="post-list" id="post-list">
+          <li class="skeleton">正在加载…</li>
+        </ul>
       </section>
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=5" defer></script>
+  <script src="./assets/js/blog.js?v=7" defer></script>
   <script>
     window.addEventListener("DOMContentLoaded", function () {
       Blog.renderBlog("#post-list", {

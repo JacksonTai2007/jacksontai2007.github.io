@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,21 +19,44 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
   <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
-  <link rel="stylesheet" href="./assets/css/highlight-theme.css?v=5">
+  <link rel="stylesheet" href="./assets/css/blog.css?v=7">
+  <link rel="stylesheet" href="./assets/css/highlight-theme.css?v=7">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
         if (t !== "light" && t !== "dark") {
-          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <script>
+    // Fire both data requests here, before the deferred scripts are even
+    // fetched. The article id is already in the URL, so the markdown never had
+    // to wait on posts/index.json — and neither request has to wait on ~46 KB
+    // of deferred JS parsing. blog.js and post.js pick these promises up.
+    // Trade-off: an unknown ?id= now costs one speculative 404 on the .md,
+    // since we can't know the id is bogus until index.json lands. The reader
+    // still sees "没有找到这篇文章" — only the console differs.
+    (function () {
+      try {
+        var id = new URLSearchParams(location.search).get("id");
+        if (!id) return;
+        window.__boot = {
+          index: fetch("posts/index.json", { cache: "no-cache" }),
+          // published markdown is immutable in practice, so let it be cached
+          md: fetch("posts/" + encodeURIComponent(id) + ".md")
+        };
+        // keep a rejection from going unhandled before the consumers attach
+        window.__boot.index.catch(function () {});
+        window.__boot.md.catch(function () {});
       } catch (e) {}
     })();
   </script>
@@ -45,18 +68,12 @@
   <main id="main">
     <div class="wrap wrap-wide">
       <div class="article-layout">
-        <section class="win">
-          <div class="win-bar">
-            <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="win-title" id="article-path">~/posts/</span>
-          </div>
-          <div class="win-body">
-            <header class="article-header" id="article-head"></header>
-            <article class="prose" id="article">
-              <p class="skeleton">loading…</p>
-            </article>
-            <nav class="post-nav" id="post-nav" aria-label="上一篇 / 下一篇"></nav>
-          </div>
+        <section>
+          <header class="article-header" id="article-head"></header>
+          <article class="prose" id="article">
+            <p class="skeleton">正在加载…</p>
+          </article>
+          <nav class="post-nav" id="post-nav" aria-label="上一篇 / 下一篇"></nav>
         </section>
 
         <aside class="toc-wrap" aria-label="目录">
@@ -68,10 +85,12 @@
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/marked.min.js?v=5" defer></script>
-  <script src="./assets/js/highlight.min.js?v=5" defer></script>
-  <script src="./assets/js/blog.js?v=5" defer></script>
-  <script src="./assets/js/enhance.js?v=5" defer></script>
-  <script src="./assets/js/post.js?v=5" defer></script>
+  <!-- highlight.min.js is not listed here on purpose: enhance.js injects it on
+       demand, after the article is on screen, and skips it entirely for posts
+       with no code blocks. -->
+  <script src="./assets/js/marked.min.js?v=7" defer></script>
+  <script src="./assets/js/blog.js?v=7" defer></script>
+  <script src="./assets/js/enhance.js?v=7" defer></script>
+  <script src="./assets/js/post.js?v=7" defer></script>
 </body>
 </html>

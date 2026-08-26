@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>归档 · JacksonTai</title>
-  <meta name="description" content="JacksonTai 博客文章按年份归档，一棵按时间排好的目录树。">
+  <meta name="description" content="JacksonTai 博客文章按年份归档。">
   <meta name="author" content="JacksonTai">
   <link rel="canonical" href="https://jacksontai2007.github.io/archive.html">
 
@@ -20,18 +20,17 @@
   <meta name="twitter:description" content="所有文章按年份归档。">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#0a0d11" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="./static/img/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./assets/css/blog.css?v=5">
+  <link rel="stylesheet" href="./assets/css/blog.css?v=7">
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
         if (t !== "light" && t !== "dark") {
-          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
@@ -44,17 +43,13 @@
 
   <main id="main">
     <div class="wrap">
-      <section class="win">
-        <div class="win-bar">
-          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="win-title">~/archive</span>
-          <span class="win-right"><a href="./blog.html">search →</a></span>
+      <section class="block">
+        <div class="sec-head">
+          <p class="kicker">归档</p>
+          <a class="more" href="./blog.html">搜索文章 →</a>
         </div>
-        <div class="win-body">
-          <p class="cmd">tree ~/posts --sort=date</p>
-          <div id="archive">
-            <p class="skeleton">loading…</p>
-          </div>
+        <div id="archive">
+          <p class="skeleton">正在加载…</p>
         </div>
       </section>
     </div>
@@ -62,7 +57,7 @@
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=5" defer></script>
+  <script src="./assets/js/blog.js?v=7" defer></script>
   <script>
     window.addEventListener("DOMContentLoaded", function () {
       Blog.renderArchive("#archive");

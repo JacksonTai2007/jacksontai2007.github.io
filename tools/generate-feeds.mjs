@@ -13,7 +13,51 @@ const TITLE = "JacksonTai 的博客";
 const DESC = "逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。";
 
 const data = JSON.parse(fs.readFileSync(path.join(ROOT, "posts/index.json"), "utf8"));
-const posts = (data.posts || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
+
+/* Validate before generating anything. A malformed date used to sail through
+   and land in feed.xml as <pubDate>Invalid Date</pubDate>; better to refuse to
+   write and leave the previous, valid feed in place.
+   The round trip catches dates that parse but aren't real — "2026-02-30"
+   silently rolls over to March 2nd, which a regex + isNaN check would miss. */
+const validDate = (d) => {
+  if (typeof d !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+  const dt = new Date(d + "T00:00:00Z");
+  return !Number.isNaN(dt.getTime()) && dt.toISOString().slice(0, 10) === d;
+};
+
+const problems = [];
+if (!Array.isArray(data.posts)) {
+  problems.push('posts/index.json: 顶层 "posts" 必须是数组');
+} else {
+  const ids = new Set();
+  for (const [i, p] of data.posts.entries()) {
+    const where = `posts[${i}]${p && p.id ? ` (id="${p.id}")` : ""}`;
+    if (!p || typeof p.id !== "string" || !p.id.trim()) {
+      problems.push(`${where}: id 缺失或不是非空字符串`);
+      continue;
+    }
+    if (ids.has(p.id)) problems.push(`${where}: id 重复`);
+    ids.add(p.id);
+    if (typeof p.title !== "string" || !p.title.trim()) {
+      problems.push(`${where}: title 缺失或不是非空字符串`);
+    }
+    if (!validDate(p.date)) {
+      problems.push(
+        `${where}: date=${JSON.stringify(p.date)} 不是合法的 YYYY-MM-DD` +
+        "（date 同时用于 RSS 的 pubDate 与 sitemap 的 lastmod，格式不能放宽）");
+    }
+    if (!fs.existsSync(path.join(ROOT, "posts", `${p.id}.md`))) {
+      problems.push(`${where}: 找不到正文 posts/${p.id}.md`);
+    }
+  }
+}
+if (problems.length) {
+  console.error(`posts/index.json 有 ${problems.length} 处问题，未生成任何文件：`);
+  for (const p of problems) console.error("  - " + p);
+  process.exit(1);
+}
+
+const posts = data.posts.slice().sort((a, b) => (a.date < b.date ? 1 : -1));
 
 const xmlEsc = (s) =>
   String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
