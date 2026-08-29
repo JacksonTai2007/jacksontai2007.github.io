@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>赞赏 · 支持作者</title>
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --card: #ffffff;
+    --ink: #23201d;
+    --sub: #7a736b;
+    --line: #ece7e1;
+    --accent: #e8683c;      /* 赞赏暖色（咖啡/朱橙）*/
+    --accent-soft: #fbe9e1;
+    --code-bg: #f2efe9;
+    --ok: #3a9e5b;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171513;
+      --card: #201d1a;
+      --ink: #ece7e1;
+      --sub: #9c948b;
+      --line: #302b26;
+      --accent: #f2794d;
+      --accent-soft: #35241c;
+      --code-bg: #2a2521;
+      --ok: #58c078;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    display: flex; justify-content: center; padding: 48px 20px 72px;
+  }
+  .wrap { width: 100%; max-width: 680px; }
+
+  .hero { text-align: center; margin-bottom: 36px; }
+  .hero .cup { font-size: 44px; line-height: 1; }
+  .hero h1 { font-size: 26px; margin: 14px 0 8px; letter-spacing: .5px; }
+  .hero p { color: var(--sub); margin: 0 auto; max-width: 460px; font-size: 15px; }
+
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; color: var(--sub);
+    letter-spacing: .08em; text-transform: uppercase;
+    margin: 34px 4px 14px;
+  }
+  .section-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* 收款码 */
+  .qr-solo { display: flex; justify-content: center; }
+  .qr-solo .qr-card { width: 100%; max-width: 340px; }
+  .qr-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; text-align: center; box-shadow: var(--shadow);
+  }
+  .qr-frame {
+    width: 100%; aspect-ratio: 1; border-radius: 12px; overflow: hidden;
+    background: var(--code-bg); display: flex; align-items: center; justify-content: center;
+    border: 1px dashed var(--line);
+  }
+  .qr-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .qr-frame .ph { color: var(--sub); font-size: 12px; padding: 12px; }
+  .qr-card .label { margin-top: 12px; font-size: 14px; font-weight: 600; }
+  .qr-card .label .wx { color: #09b83e; }
+  .qr-card .label .zfb { color: #1678ff; }
+
+  /* 虚拟币 */
+  .coin {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow);
+  }
+  .coin__top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .coin__badge {
+    font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .coin__name { font-weight: 600; font-size: 14px; }
+  .coin__net { font-size: 12px; color: var(--sub); margin-left: auto; }
+  .coin__addr {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--code-bg); border-radius: 9px; padding: 8px 10px;
+  }
+  .coin__addr code {
+    flex: 1; font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: 12.5px; word-break: break-all; color: var(--ink);
+  }
+  .copy {
+    flex: 0 0 auto; border: 1px solid var(--line); background: var(--card);
+    color: var(--sub); font-size: 12px; padding: 5px 11px; border-radius: 7px;
+    cursor: pointer; transition: all .15s; white-space: nowrap;
+  }
+  .copy:hover { color: var(--accent); border-color: var(--accent); }
+  .copy.done { color: var(--ok); border-color: var(--ok); }
+
+  /* 技术交流群 */
+  .qq-card {
+    display: flex; align-items: flex-start; gap: 15px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px; box-shadow: var(--shadow);
+  }
+  .qq-icon {
+    flex: 0 0 auto; width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    background: var(--accent-soft);
+  }
+  .qq-body { flex: 1; min-width: 0; }
+  .qq-title { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .qq-desc { font-size: 13px; color: var(--sub); margin-bottom: 12px; }
+  .qq-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .qq-num {
+    font-family: "SF Mono", Consolas, monospace; font-size: 16px; font-weight: 600;
+    letter-spacing: .5px; background: var(--code-bg); padding: 5px 12px; border-radius: 8px;
+  }
+  .qq-join {
+    margin-left: auto; text-decoration: none; font-size: 13px; font-weight: 600;
+    color: #fff; background: var(--accent); padding: 8px 16px; border-radius: 8px;
+    transition: opacity .15s;
+  }
+  .qq-join:hover { opacity: .88; }
+  @media (max-width: 480px) { .qq-join { margin-left: 0; } }
+
+  .note {
+    margin-top: 30px; text-align: center; font-size: 13px; color: var(--sub);
+    background: var(--accent-soft); border-radius: 12px; padding: 14px 18px;
+  }
+  .foot { margin-top: 26px; text-align: center; font-size: 13px; }
+  .foot a { color: var(--accent); text-decoration: none; }
+  .foot a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="cup">☕</div>
+    <h1>请我喝杯咖啡</h1>
+    <p>如果这里的文章或工具帮到了你，可以请我喝杯咖啡。赞赏完全自愿，不影响任何内容的获取 —— 一句谢谢我也很开心。</p>
+  </div>
+
+  <!-- ============ 微信赞赏 ============ -->
+  <div class="section-title">微信扫码赞赏</div>
+  <div class="qr-solo">
+    <div class="qr-card">
+      <div class="qr-frame">
+        <!-- 把你的微信赞赏码截图命名为 wechat-reward.png 放同目录 -->
+        <img src="wechat-reward.png" alt="微信赞赏码"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="ph" style="display:none">放微信赞赏码<br>wechat-reward.png</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 虚拟币 ============ -->
+  <div class="section-title">虚拟币钱包</div>
+
+  <div class="coin">
+    <div class="coin__top">
+      <span class="coin__badge">USDT</span>
+      <span class="coin__name">泰达币</span>
+      <span class="coin__net">TRC20 · 波场</span>
+    </div>
+    <div class="coin__addr">
+      <code data-addr>TDvVKT2XuxT47pSo43vpwNda6evRbX3Hok</code>
+      <button class="copy">复制</button>
+    </div>
+  </div>
+
+  <div class="coin">
+    <div class="coin__top">
+      <span class="coin__badge">USDT</span>
+      <span class="coin__name">泰达币</span>
+      <span class="coin__net">ERC20 · 以太坊</span>
+    </div>
+    <div class="coin__addr">
+      <code data-addr>0xfa79e1386543385edb187d38f353a68d3278314a</code>
+      <button class="copy">复制</button>
+    </div>
+  </div>
+
+  <div class="coin">
+    <div class="coin__top">
+      <span class="coin__badge">BTC</span>
+      <span class="coin__name">比特币</span>
+      <span class="coin__net">Bitcoin</span>
+    </div>
+    <div class="coin__addr">
+      <code data-addr>bc1qenl5nkvvl0e50cpkcr0uvqnuy97flkq8dqmdgnvtsx3vxaeftkqshx30pm</code>
+      <button class="copy">复制</button>
+    </div>
+  </div>
+
+  <div class="coin">
+    <div class="coin__top">
+      <span class="coin__badge">ETH</span>
+      <span class="coin__name">以太坊</span>
+      <span class="coin__net">ERC20</span>
+    </div>
+    <div class="coin__addr">
+      <code data-addr>0xfa79e1386543385edb187d38f353a68d3278314a</code>
+      <button class="copy">复制</button>
+    </div>
+  </div>
+
+  <div class="note">
+    转账前请核对币种与链（网络）——USDT 走 TRC20 手续费最低。走错链资产不可找回。
+  </div>
+
+  <!-- ============ 技术交流 / 反馈 ============ -->
+  <div class="section-title">技术交流 &amp; 反馈</div>
+  <div class="qq-card">
+    <div class="qq-icon">🐧</div>
+    <div class="qq-body">
+      <div class="qq-title">QQ 技术交流群</div>
+      <div class="qq-desc">使用问题、bug 反馈、功能建议，欢迎随时进群交流。</div>
+      <div class="qq-row">
+        <span class="qq-num" data-addr>513487357</span>
+        <button class="copy">复制群号</button>
+        <a class="qq-join" href="https://qm.qq.com/q/o5Bpk6nOzo" target="_blank" rel="noopener">点击加群 →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <a href="/">← 返回博客</a>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.coin__addr, .qq-row');
+      var target = box && box.querySelector('[data-addr]');
+      if (!target) return;
+      var orig = btn.textContent;
+      navigator.clipboard.writeText(target.textContent.trim()).then(function () {
+        btn.textContent = '已复制'; btn.classList.add('done');
+        setTimeout(function () { btn.textContent = orig; btn.classList.remove('done'); }, 1600);
+      });
+    });
+  });
+</script>
+</body>
+</html>
