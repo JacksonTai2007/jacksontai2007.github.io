@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="light" data-root="/">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>404 · JacksonTai</title>
   <meta name="description" content="页面不存在。">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="/static/img/favicon.ico">
-  <link rel="stylesheet" href="/assets/css/blog.css?v=7">
+  <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1a36" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/img/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+  <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="/feed.xml">
+  <link rel="stylesheet" href="/assets/css/blog.css?v=8">
   <script>
+    // resolve the theme before first paint so there is no flash of the wrong mode
     (function () {
       try {
         var t = localStorage.getItem("theme");
@@ -27,26 +31,30 @@
   <header class="site-header"></header>
 
   <main id="main">
-    <div class="wrap">
-      <section class="block">
-        <p class="kicker">404</p>
-        <article class="prose">
-          <h1 style="margin-top:0">这一页不存在</h1>
-          <p>你要找的页面<span id="tried"></span>不在这里 —— 可能已被移动，或者链接拼错了。</p>
-        </article>
-        <ul class="cat-list" style="margin-top:18px">
-          <li class="cat-row"><a href="/">首页</a><span class="leader" aria-hidden="true"></span><span class="n">回到起点</span></li>
-          <li class="cat-row"><a href="/blog.html">全部文章</a><span class="leader" aria-hidden="true"></span><span class="n">搜索与筛选</span></li>
-          <li class="cat-row"><a href="/archive.html">归档</a><span class="leader" aria-hidden="true"></span><span class="n">按年浏览</span></li>
-          <li class="cat-row"><a href="/about.html">关于</a><span class="leader" aria-hidden="true"></span><span class="n">找到我</span></li>
-        </ul>
+    <div class="wrap narrow">
+      <header class="page-head">
+        <p class="nf-code" aria-hidden="true">404</p>
+        <h1>这一页不存在</h1>
+        <p>你要找的页面<span class="nf-path" id="tried"></span>不在这里，可能已经移动，或者链接拼错了。</p>
+      </header>
+
+      <section class="side nf-links" aria-labelledby="nf-h">
+        <div>
+          <h2 id="nf-h">可以从这里继续</h2>
+          <ul class="cat-list">
+            <li class="cat-row"><a href="/">首页</a><span class="n">最近的文章</span></li>
+            <li class="cat-row"><a href="/blog.html">全部文章</a><span class="n">搜索与筛选</span></li>
+            <li class="cat-row"><a href="/archive.html">归档</a><span class="n">按年份浏览</span></li>
+            <li class="cat-row"><a href="/about.html">关于</a><span class="n">联系方式</span></li>
+          </ul>
+        </div>
       </section>
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="/assets/js/blog.js?v=7" defer></script>
+  <script src="/assets/js/blog.js?v=8" defer></script>
   <script>
     // echo back the path the visitor actually asked for
     window.addEventListener("DOMContentLoaded", function () {

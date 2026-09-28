@@ -20,12 +20,15 @@
   <meta name="twitter:description" content="所有文章按年份归档。">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="./static/img/favicon.ico">
+  <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1a36" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="./static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./static/img/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="./static/img/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=7">
+  <link rel="stylesheet" href="./assets/css/blog.css?v=8">
   <script>
+    // resolve the theme before first paint so there is no flash of the wrong mode
     (function () {
       try {
         var t = localStorage.getItem("theme");
@@ -42,22 +45,20 @@
   <header class="site-header"></header>
 
   <main id="main">
-    <div class="wrap">
-      <section class="block">
-        <div class="sec-head">
-          <p class="kicker">归档</p>
-          <a class="more" href="./blog.html">搜索文章 →</a>
-        </div>
-        <div id="archive">
-          <p class="skeleton">正在加载…</p>
-        </div>
-      </section>
+    <div class="wrap narrow">
+      <header class="page-head">
+        <h1>归档</h1>
+        <p>全部文章，按年份和日期排列。想搜索或按标签筛选，去<a class="link" href="./blog.html">文章</a>页。</p>
+      </header>
+      <div id="archive">
+        <p class="skeleton">正在加载文章列表…</p>
+      </div>
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=7" defer></script>
+  <script src="./assets/js/blog.js?v=8" defer></script>
   <script>
     window.addEventListener("DOMContentLoaded", function () {
       Blog.renderArchive("#archive");

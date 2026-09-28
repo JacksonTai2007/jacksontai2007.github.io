@@ -9,6 +9,10 @@
   var SITE = "https://jacksontai2007.github.io";
   var AUTHOR = "JacksonTai";
   var OG_IMAGE = SITE + "/static/img/logo.png";
+  /* 404.html is served at whatever path the visitor mistyped (/posts/x/y),
+     so relative links would resolve against the wrong directory there. It
+     sets data-root="/" to make the shared chrome link from the site root. */
+  var ROOT = document.documentElement.getAttribute("data-root") || "";
 
   /* ---------- Nav ---------- */
   var NAV = [
@@ -22,8 +26,26 @@
     sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.2 12H2M22 12h-2.2M5.6 5.6 4 4M20 20l-1.6-1.6M18.4 5.6 20 4M4 20l1.6-1.6"/></svg>',
     moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
     menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>',
-    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="6"/><polyline points="5 13 12 6 19 13"/></svg>'
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="6"/><polyline points="5 13 12 6 19 13"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>'
   };
+
+  /* The <J_> mark: a flat-top hexagon split into "<" and ">" around a J
+     with a cursor. Each copy gets its own gradient id in case a page
+     inlines it twice. */
+  function logoSVG(uid) {
+    var g = "lg-" + uid;
+    return (
+      '<svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">' +
+        '<defs><linearGradient id="' + g + '" gradientUnits="userSpaceOnUse" x1="4" y1="6" x2="60" y2="58">' +
+          '<stop offset="0" class="lm-s1"/><stop offset="1" class="lm-s2"/>' +
+        "</linearGradient></defs>" +
+        '<path class="lm-hex" stroke="url(#' + g + ')" d="M28.25 8.18h-10L4.5 32l13.75 23.82h10M35.75 8.18h10L59.5 32 45.75 55.82h-10"/>' +
+        '<path class="lm-j" stroke="url(#' + g + ')" d="M23 20h16.5M36 20v15.5a7.75 7.75 0 0 1-15.5 0"/>' +
+        '<rect class="lm-cur" x="39.5" y="41" width="7" height="4.6" rx="1.1"/>' +
+      "</svg>"
+    );
+  }
 
   /* ---------- Helpers ---------- */
   function esc(s) {
@@ -36,13 +58,19 @@
     var p = String(iso).split("-");
     return p.length < 3 ? String(iso) : p[0] + "-" + p[1] + "-" + p[2];
   }
+  // "2026-06-28" -> "2026 年 6 月 28 日"
+  function longDate(iso) {
+    var p = String(iso || "").split("-");
+    if (p.length < 3) return String(iso || "");
+    return p[0] + " 年 " + (+p[1]) + " 月 " + (+p[2]) + " 日";
+  }
   function postHref(id) { return "post.html?id=" + encodeURIComponent(id); }
   function currentPage() { return location.pathname.split("/").pop() || "index.html"; }
 
   function tagChips(tags) {
     if (!tags || !tags.length) return "";
     return tags.map(function (t) {
-      return '<a class="chip" href="blog.html?tag=' + encodeURIComponent(t) + '">' + esc(t) + "</a>";
+      return '<a href="blog.html?tag=' + encodeURIComponent(t) + '">#' + esc(t) + "</a>";
     }).join("");
   }
 
@@ -51,43 +79,48 @@
     var page = currentPage();
     return (
       '<div class="wrap nav">' +
-        '<a class="brand" href="index.html" aria-label="JacksonTai 首页">JacksonTai</a>' +
+        '<a class="brand" href="' + ROOT + 'index.html" aria-label="JacksonTai 首页">' +
+          logoSVG("h") + "<span>JacksonTai</span>" +
+        "</a>" +
         '<nav class="nav-links" aria-label="主导航">' +
           NAV.map(function (n) {
             var on = n.href === page || (page === "" && n.href === "index.html");
-            return '<a class="nav-link' + (on ? " active" : "") + '" href="' + n.href + '"' +
+            // an article lives under 文章: mark it, but it is not that page
+            var inside = page === "post.html" && n.href === "blog.html";
+            return '<a class="nav-link' + (on || inside ? " active" : "") + '" href="' + ROOT + n.href + '"' +
               (on ? ' aria-current="page"' : "") + ">" + n.label + "</a>";
           }).join("") +
         "</nav>" +
-        '<button class="icon-btn kbd-btn" type="button" aria-label="键盘快捷键" title="快捷键 (?)"' +
-          ' style="font-size:14px;font-weight:700">?</button>' +
-        '<button class="icon-btn theme-toggle" type="button" aria-label="切换主题" title="切换主题 (t)">' +
-          '<span class="icon-sun">' + ICON.sun + "</span>" +
-          '<span class="icon-moon">' + ICON.moon + "</span>" +
-        "</button>" +
-        '<button class="icon-btn nav-toggle" type="button" aria-label="菜单" aria-expanded="false">' + ICON.menu + "</button>" +
+        '<div class="nav-actions">' +
+          '<button class="icon-btn search-btn" type="button" aria-label="搜索文章" title="搜索文章（/）">' + ICON.search + "</button>" +
+          '<button class="icon-btn kbd-btn" type="button" aria-label="键盘快捷键" title="键盘快捷键（?）">?</button>' +
+          '<button class="icon-btn theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色（t）">' +
+            '<span class="icon-sun">' + ICON.sun + "</span>" +
+            '<span class="icon-moon">' + ICON.moon + "</span>" +
+          "</button>" +
+          '<button class="icon-btn nav-toggle" type="button" aria-label="菜单" aria-expanded="false">' + ICON.menu + "</button>" +
+        "</div>" +
       "</div>"
     );
   }
 
   function footerHTML() {
     return (
-      '<div class="wrap">' +
-        "<span>© " + new Date().getFullYear() + " " + AUTHOR + "</span>" +
-        '<span class="footer-links">' +
-          '<a href="feed.xml" title="RSS 订阅">rss</a>' +
-          '<span class="sep">·</span>' +
-          '<a href="sitemap.xml">sitemap</a>' +
-          '<span class="sep">·</span>' +
-          '<a href="https://github.com/JacksonTai2007/jacksontai2007.github.io" target="_blank" rel="noopener">source</a>' +
-        "</span>" +
+      '<div class="wrap foot">' +
+        "<p>© " + new Date().getFullYear() + " " + AUTHOR + "，写于澳门。</p>" +
+        '<nav class="foot-links" aria-label="站点链接">' +
+          '<a href="' + ROOT + 'feed.xml">RSS 订阅</a>' +
+          '<a href="' + ROOT + 'sitemap.xml">站点地图</a>' +
+          '<a href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">GitHub</a>' +
+          '<a href="https://github.com/JacksonTai2007/jacksontai2007.github.io" target="_blank" rel="noopener">网站源码</a>' +
+        "</nav>" +
       "</div>"
     );
   }
 
   /* ---------- Theme ---------- */
   var root = document.documentElement;
-  var THEME_BG = { light: "#f3f0e7", dark: "#211e19" };
+  var THEME_BG = { light: "#fafbfc", dark: "#0f1a36" };
   function applyTheme(t) {
     root.setAttribute("data-theme", t);
     try { localStorage.setItem("theme", t); } catch (e) {}
@@ -98,9 +131,9 @@
     });
   }
   function toggleTheme() {
-    var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
     applyTheme(next);
-    toast(next === "dark" ? "已切换至深色" : "已切换至浅色");
+    toast(next === "dark" ? "已切换到深色" : "已切换到浅色");
   }
 
   /* ---------- Toast ---------- */
@@ -121,13 +154,13 @@
   /* ---------- Keyboard shortcuts ---------- */
   var SHORTCUTS = [
     { keys: ["/"], desc: "搜索文章" },
-    { keys: ["t"], desc: "切换主题" },
+    { keys: ["t"], desc: "切换深浅色" },
     { keys: ["g", "h"], desc: "首页" },
     { keys: ["g", "p"], desc: "文章列表" },
     { keys: ["g", "a"], desc: "归档" },
     { keys: ["g", "b"], desc: "关于" },
     { keys: ["?"], desc: "显示这个面板" },
-    { keys: ["Esc"], desc: "关闭 / 取消" }
+    { keys: ["Esc"], desc: "关闭面板或退出输入" }
   ];
 
   var helpEl = null, helpReturnFocus = null;
@@ -172,7 +205,7 @@
       input.focus();
       input.select();
     } else {
-      location.href = "blog.html?focus=1";
+      location.href = ROOT + "blog.html?focus=1";
     }
   }
 
@@ -198,7 +231,7 @@
         awaitingGo = false;
         clearTimeout(goTimer);
         var dest = { h: "index.html", p: "blog.html", a: "archive.html", b: "about.html" }[e.key];
-        if (dest) { e.preventDefault(); location.href = dest; }
+        if (dest) { e.preventDefault(); location.href = ROOT + dest; }
         return;
       }
 
@@ -278,8 +311,8 @@
   /* ---------- Data ---------- */
   var DATA_URL = "posts/index.json";
   /* Cache the promise, not the resolved value: the home page calls loadPosts()
-     four times in one tick, and a value cache would let all four race their own
-     request. On failure the slot is cleared so a later call can retry.
+     several times in one tick, and a value cache would let each call race its
+     own request. On failure the slot is cleared so a later call can retry.
      `no-cache` stays: index.json carries no ?v= stamp, so revalidation is what
      makes "push a file, it's live" hold for newly published posts. */
   var _inflight = null;
@@ -307,20 +340,25 @@
     return _inflight;
   }
   function failInto(el, e, tag) {
-    if (el) el.innerHTML = "<" + tag + ' class="empty">加载失败：' + esc(e.message) + "</" + tag + ">";
+    if (el) el.innerHTML = "<" + tag + ' class="empty">文章列表加载失败（' + esc(e.message) + "），请刷新页面重试。</" + tag + ">";
   }
 
   /* ---------- Renderers ---------- */
+  /* One row of a listing: date and category on the left, the post on the
+     right. Featured posts carry a highlighter mark. */
   function postItemHTML(p) {
     return (
       '<li class="post-item">' +
         '<div class="post-meta">' +
-          '<span class="date">' + fmtDate(p.date) + "</span>" +
-          (p.category ? '<span class="sep">/</span><span class="cat">' + esc(p.category) + "</span>" : "") +
+          '<time datetime="' + esc(p.date || "") + '">' + esc(fmtDate(p.date)) + "</time>" +
+          (p.category ? '<a class="cat" href="blog.html?category=' + encodeURIComponent(p.category) + '">' + esc(p.category) + "</a>" : "") +
         "</div>" +
-        '<a class="post-title" href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
-        (p.excerpt ? '<p class="post-excerpt">' + esc(p.excerpt) + "</p>" : "") +
-        '<div class="tags">' + tagChips(p.tags) + "</div>" +
+        '<div class="post-body">' +
+          '<h3 class="post-title"><a href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
+            (p.featured ? '<span class="pin">精选</span>' : "") + "</h3>" +
+          (p.excerpt ? '<p class="post-excerpt">' + esc(p.excerpt) + "</p>" : "") +
+          (p.tags && p.tags.length ? '<p class="tags">' + tagChips(p.tags) + "</p>" : "") +
+        "</div>" +
       "</li>"
     );
   }
@@ -332,7 +370,7 @@
       var list = posts.slice(0, limit || 5);
       el.innerHTML = list.length
         ? list.map(postItemHTML).join("")
-        : '<li class="empty">还没有文章，敬请期待。</li>';
+        : '<li class="empty">还没有文章。</li>';
     }).catch(function (e) { failInto(el, e, "li"); });
   }
 
@@ -341,42 +379,44 @@
   function renderFeatured(selector, limit) {
     var el = document.querySelector(selector);
     if (!el) return;
-    limit = limit || 2;
     loadPosts().then(function (posts) {
-      var picked = posts.filter(function (p) { return p.featured; }).slice(0, limit);
-      if (!picked.length) picked = posts.slice(0, limit);
-      el.innerHTML = picked.map(function (p) {
-        return (
-          '<a class="card" href="' + postHref(p.id) + '">' +
-            '<span class="card-cat">' + esc(p.category || "post") + "</span>" +
-            '<span class="card-title">' + esc(p.title) + "</span>" +
-            (p.excerpt ? '<p class="card-ex">' + esc(p.excerpt) + "</p>" : "") +
-            '<span class="card-date">' + fmtDate(p.date) + "</span>" +
-          "</a>"
-        );
-      }).join("");
-    }).catch(function (e) { failInto(el, e, "p"); });
+      var picked = posts.filter(function (p) { return p.featured; }).slice(0, limit || 2);
+      if (!picked.length) picked = posts.slice(0, limit || 2);
+      el.innerHTML = picked.map(postItemHTML).join("");
+    }).catch(function (e) { failInto(el, e, "li"); });
   }
 
+  /* A one-line summary of the blog, e.g. under the post list heading. */
   function renderStats(selector) {
     var el = document.querySelector(selector);
     if (!el) return;
     loadPosts().then(function (posts) {
-      var tags = {}, cats = {};
+      if (!posts.length) { el.textContent = ""; return; }
+      var cats = {};
+      posts.forEach(function (p) { if (p.category) cats[p.category] = 1; });
+      el.textContent = "共 " + posts.length + " 篇，" + Object.keys(cats).length +
+        " 个分类，最近一篇写于 " + longDate(posts[0].date) + "。";
+    }).catch(function () { el.textContent = ""; });
+  }
+
+  /* Tags, most used first, with a count where a tag appears more than once. */
+  function renderTags(selector, limit) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    loadPosts().then(function (posts) {
+      var counts = {};
       posts.forEach(function (p) {
-        (p.tags || []).forEach(function (t) { tags[t] = 1; });
-        if (p.category) cats[p.category] = 1;
+        (p.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; });
       });
-      var rows = [
-        { n: posts.length, k: "posts" },
-        { n: Object.keys(cats).length, k: "categories" },
-        { n: Object.keys(tags).length, k: "tags" },
-        { n: posts[0] ? fmtDate(posts[0].date) : "—", k: "last update" }
-      ];
-      el.innerHTML = rows.map(function (r) {
-        return '<div class="stat"><span class="n">' + esc(r.n) + '</span><span class="k">' + r.k + "</span></div>";
+      var tags = Object.keys(counts).sort(function (a, b) {
+        return counts[b] - counts[a] || a.localeCompare(b);
+      });
+      if (limit) tags = tags.slice(0, limit);
+      el.innerHTML = tags.map(function (t) {
+        return '<a href="blog.html?tag=' + encodeURIComponent(t) + '">#' + esc(t) +
+          (counts[t] > 1 ? '<span class="c">' + counts[t] + "</span>" : "") + "</a>";
       }).join("");
-    }).catch(function () { el.innerHTML = ""; });
+    }).catch(function (e) { failInto(el, e, "p"); });
   }
 
   function renderCategories(selector) {
@@ -393,7 +433,6 @@
         return (
           '<li class="cat-row">' +
             '<a href="blog.html?category=' + encodeURIComponent(c) + '">' + esc(c) + "</a>" +
-            '<span class="leader" aria-hidden="true"></span>' +
             '<span class="n">' + counts[c] + " 篇</span>" +
           "</li>"
         );
@@ -430,8 +469,8 @@
             esc(label) + "</a>";
         }
         filterEl.innerHTML =
-          chipHTML("", "全部", !activeTag) +
-          tags.map(function (t) { return chipHTML(t, t, t === activeTag); }).join("");
+          chipHTML("", "全部标签", !activeTag) +
+          tags.map(function (t) { return chipHTML(t, "#" + t, t === activeTag); }).join("");
         filterEl.querySelectorAll(".chip").forEach(function (c) {
           c.addEventListener("click", function (e) {
             e.preventDefault();
@@ -471,14 +510,15 @@
         });
         listEl.innerHTML = filtered.length
           ? filtered.map(postItemHTML).join("")
-          : '<li class="empty">没有匹配的文章，换个关键词试试。</li>';
+          : '<li class="empty">没有符合条件的文章。换个关键词，或者点“全部标签”清除筛选。</li>';
         if (countEl) {
           var bits = [];
-          if (activeCat) bits.push("分类：" + activeCat);
-          if (activeTag) bits.push("标签：" + activeTag);
-          if (q) bits.push("搜索：" + query.trim());
-          countEl.textContent = "共 " + filtered.length + " 篇（全部 " + posts.length + " 篇）" +
-            (bits.length ? " · " + bits.join(" · ") : "");
+          if (activeCat) bits.push("分类「" + activeCat + "」");
+          if (activeTag) bits.push("标签「" + activeTag + "」");
+          if (q) bits.push("关键词「" + query.trim() + "」");
+          countEl.textContent = bits.length
+            ? bits.join("、") + "下有 " + filtered.length + " 篇，全站共 " + posts.length + " 篇。"
+            : "全站共 " + posts.length + " 篇。";
         }
       }
 
@@ -522,13 +562,14 @@
         var rows = byYear[y].map(function (p) {
           return (
             '<li class="archive-row">' +
-              '<span class="d">' + esc(String(p.date || "").slice(5)) + "</span>" +
+              '<time class="d" datetime="' + esc(p.date || "") + '">' + esc(String(p.date || "").slice(5)) + "</time>" +
               '<a href="' + postHref(p.id) + '">' + esc(p.title) + "</a>" +
+              (p.category ? '<span class="cat">' + esc(p.category) + "</span>" : "") +
             "</li>"
           );
         }).join("");
-        return '<div class="archive-year">' + esc(y) + '<span class="n">' + byYear[y].length +
-          ' 篇</span></div><ul class="archive-list">' + rows + "</ul>";
+        return '<h2 class="archive-year">' + esc(y) + '<span class="n">' + byYear[y].length +
+          ' 篇</span></h2><ul class="archive-list">' + rows + "</ul>";
       }).join("");
     }).catch(function (e) { failInto(el, e, "p"); });
   }
@@ -545,6 +586,9 @@
 
     var kbdBtn = document.querySelector(".kbd-btn");
     if (kbdBtn) kbdBtn.addEventListener("click", openHelp);
+
+    var searchBtn = document.querySelector(".search-btn");
+    if (searchBtn) searchBtn.addEventListener("click", focusSearch);
 
     var navToggle = document.querySelector(".nav-toggle");
     var navLinks = document.querySelector(".nav-links");
@@ -565,6 +609,7 @@
     renderRecent: renderRecent,
     renderFeatured: renderFeatured,
     renderStats: renderStats,
+    renderTags: renderTags,
     renderCategories: renderCategories,
     renderBlog: renderBlog,
     renderArchive: renderArchive,
@@ -572,8 +617,10 @@
     jsonld: jsonld,
     toast: toast,
     icons: ICON,
+    logoSVG: logoSVG,
     esc: esc,
     fmtDate: fmtDate,
+    longDate: longDate,
     postHref: postHref,
     tagChips: tagChips
   };

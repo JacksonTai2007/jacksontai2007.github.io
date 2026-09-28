@@ -20,12 +20,15 @@
   <meta name="twitter:description" content="逆向工程与移动安全方向的开发者，常驻中国澳门。">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="./static/img/favicon.ico">
+  <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1a36" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="./static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./static/img/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="./static/img/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=7">
+  <link rel="stylesheet" href="./assets/css/blog.css?v=8">
   <script>
+    // resolve the theme before first paint so there is no flash of the wrong mode
     (function () {
       try {
         var t = localStorage.getItem("theme");
@@ -58,76 +61,63 @@
   <header class="site-header"></header>
 
   <main id="main">
-    <div class="wrap">
+    <div class="wrap narrow">
 
-      <section class="block">
-        <p class="kicker">关于我</p>
-        <article class="prose">
-          <p>你好，我是 <strong>Jackson</strong> 👋 —— 逆向工程与移动安全方向的开发者。</p>
-          <p>常驻中国澳门特别行政区。日常做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这个博客用来记录技术笔记、开源项目，以及踩过的坑。</p>
-        </article>
-      </section>
-
-      <section class="block">
-        <p class="kicker">技术栈</p>
-        <div class="kv" style="margin-bottom:0">
-          <span class="chip">IDA Pro</span>
-          <span class="chip">逆向工程</span>
-          <span class="chip">Python</span>
-          <span class="chip">Android</span>
-          <span class="chip">前端 / HTML</span>
-          <span class="chip">CTF</span>
+      <header class="profile">
+        <img class="avatar" src="./static/img/avatar.jpg" alt="Jackson 的头像"
+             width="96" height="96" decoding="async">
+        <div>
+          <h1>关于 Jackson</h1>
+          <p>逆向工程与移动安全方向的开发者，常驻中国澳门。</p>
         </div>
-      </section>
+      </header>
 
-      <section class="block">
-        <p class="kicker">时间线</p>
-        <ul class="archive-list timeline">
-          <li class="archive-row">
-            <span class="d">2018.11</span>
-            <span>做了人生第一个个人网站</span>
-          </li>
-          <li class="archive-row">
-            <span class="d">2025</span>
-            <span>开始系统地写技术博客</span>
-          </li>
-          <li class="archive-row">
-            <span class="d">2026.05</span>
-            <span>写下第一篇逆向实战笔记：用 IDA Pro 啃 CrackMe</span>
-          </li>
-          <li class="archive-row">
-            <span class="d">2026.06</span>
-            <span>博客重构为零构建纯静态站点</span>
-          </li>
-          <li class="archive-row">
-            <span class="d">2026.06</span>
-            <span>开源 <a href="post.html?id=gpt-image-2-prompting-skill">gpt-image-2-prompting-skill</a>（Claude Skill）</span>
-          </li>
-          <li class="archive-row">
-            <span class="d">2026.06</span>
-            <span>开源 <a href="post.html?id=cc-unlock">cc-unlock</a>（AI 安全研究上下文框架）</span>
-          </li>
-          <li class="archive-row">
-            <span class="d">未来</span>
-            <span>Coming soon……</span>
-          </li>
+      <div class="prose">
+        <p>你好，我是 <strong>Jackson</strong> 👋 —— 逆向工程与移动安全方向的开发者。</p>
+        <p>常驻中国澳门特别行政区。日常做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这个博客用来记录技术笔记、开源项目，以及踩过的坑。</p>
+      </div>
+
+      <section class="about-section" aria-labelledby="stack-h">
+        <h2 id="stack-h">技术栈</h2>
+        <ul class="stack">
+          <li>IDA Pro</li>
+          <li>逆向工程</li>
+          <li>Python</li>
+          <li>Android</li>
+          <li>前端 / HTML</li>
+          <li>CTF</li>
         </ul>
       </section>
 
-      <section class="block">
-        <p class="kicker">联系</p>
-        <div class="links-row">
-          <a class="link-btn" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">@JacksonTai2007</a>
-          <a class="link-btn" href="mailto:jacksontai200701@gmail.com">jacksontai200701@gmail.com</a>
-        </div>
-        <p class="hint" style="margin-top:22px">The only way to do great work is to love what you do.</p>
+      <section class="about-section" aria-labelledby="tl-h">
+        <h2 id="tl-h">时间线</h2>
+        <ol class="timeline">
+          <li><span class="d">2018.11</span><span>做了人生第一个个人网站</span></li>
+          <li><span class="d">2025</span><span>开始系统地写技术博客</span></li>
+          <li><span class="d">2026.05</span><span>写下第一篇逆向实战笔记：用 IDA Pro 啃 CrackMe</span></li>
+          <li><span class="d">2026.06</span><span>博客重构为零构建纯静态站点</span></li>
+          <li><span class="d">2026.06</span><span>开源 <a href="post.html?id=gpt-image-2-prompting-skill">gpt-image-2-prompting-skill</a>（Claude Skill）</span></li>
+          <li><span class="d">2026.06</span><span>开源 <a href="post.html?id=cc-unlock">cc-unlock</a>（AI 安全研究上下文框架）</span></li>
+          <li><span class="d">未来</span><span>Coming soon……</span></li>
+        </ol>
       </section>
+
+      <section class="about-section" aria-labelledby="contact-h">
+        <h2 id="contact-h">联系方式</h2>
+        <ul class="contact-list">
+          <li><span class="k">GitHub</span><a class="link" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">@JacksonTai2007</a></li>
+          <li><span class="k">邮箱</span><a class="link" href="mailto:jacksontai200701@gmail.com">jacksontai200701@gmail.com</a></li>
+          <li><span class="k">RSS</span><a class="link" href="./feed.xml">feed.xml</a></li>
+        </ul>
+      </section>
+
+      <p class="motto">The only way to do great work is to love what you do.</p>
 
     </div>
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=7" defer></script>
+  <script src="./assets/js/blog.js?v=8" defer></script>
 </body>
 </html>

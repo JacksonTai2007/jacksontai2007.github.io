@@ -84,14 +84,16 @@
 
       var head = document.getElementById("article-head");
       if (head) head.innerHTML =
-        '<a class="back-link" href="blog.html">← 返回文章列表</a>' +
+        '<a class="back-link" href="blog.html">返回文章列表</a>' +
         "<h1>" + B.esc(meta.title) + "</h1>" +
         '<div class="post-meta">' +
-          '<span class="date">' + B.fmtDate(meta.date) + "</span>" +
-          (meta.category ? '<span class="sep">/</span><span class="cat">' + B.esc(meta.category) + "</span>" : "") +
-          '<span class="sep">/</span><span id="read-time">…</span>' +
+          '<time datetime="' + B.esc(meta.date || "") + '">' +
+            B.esc(B.longDate ? B.longDate(meta.date) : B.fmtDate(meta.date)) + "</time>" +
+          (meta.category ? '<a class="cat" href="blog.html?category=' + encodeURIComponent(meta.category) + '">' +
+            B.esc(meta.category) + "</a>" : "") +
+          '<span id="read-time"></span>' +
         "</div>" +
-        '<div class="tags">' + B.tagChips(meta.tags) + "</div>";
+        (meta.tags && meta.tags.length ? '<p class="tags">' + B.tagChips(meta.tags) + "</p>" : "");
 
       /* ---- body ---- */
       // Same synchronous block as the header above, so the title and the article
@@ -138,7 +140,7 @@
             });
 
             var rt = document.getElementById("read-time");
-            if (rt) rt.textContent = "约 " + readingTime(article.textContent || "") + " 分钟";
+            if (rt) rt.textContent = "约 " + readingTime(article.textContent || "") + " 分钟读完";
 
             /* ---- prev / next (posts are newest-first) ---- */
             var newer = posts[idx - 1];
@@ -146,9 +148,9 @@
             var nav = document.getElementById("post-nav");
             if (nav && (newer || older)) {
               nav.innerHTML =
-                (older ? '<a href="' + B.postHref(older.id) + '"><span class="dir">← 上一篇</span>' +
+                (older ? '<a href="' + B.postHref(older.id) + '"><span class="dir">上一篇（更早）</span>' +
                   B.esc(older.title) + "</a>" : "<span></span>") +
-                (newer ? '<a class="nx" href="' + B.postHref(newer.id) + '"><span class="dir">下一篇 →</span>' +
+                (newer ? '<a class="nx" href="' + B.postHref(newer.id) + '"><span class="dir">下一篇（更新）</span>' +
                   B.esc(newer.title) + "</a>" : "");
             }
           } catch (e) {

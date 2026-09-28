@@ -21,11 +21,14 @@
   <meta name="twitter:description" content="逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#f3f0e7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#211e19" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="./static/img/favicon.ico">
+  <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1a36" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="./static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./static/img/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="./static/img/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
-  <link rel="stylesheet" href="./assets/css/blog.css?v=7">
+  <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/blog.css?v=8">
   <script>
     // resolve the theme before first paint so there is no flash of the wrong mode
     (function () {
@@ -59,68 +62,235 @@
   <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header"></header>
 
-  <main id="main">
-    <div class="wrap">
+  <main id="main" class="home">
 
-      <section class="block hero" aria-labelledby="hero-title">
-        <p class="kicker">whoami</p>
-        <img class="hero-avatar" src="./static/img/avatar.png" alt="JacksonTai 的头像"
-             width="76" height="76" decoding="async" fetchpriority="high">
-        <h1 id="hero-title">Jackson — 逆向工程与移动安全</h1>
-        <p class="lead">常驻中国澳门。做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这里是我的技术笔记与开源项目记录。</p>
-        <div class="kv">
-          <span class="chip">IDA Pro</span>
-          <span class="chip">Python</span>
-          <span class="chip">Android</span>
-          <span class="chip">FrontEnd</span>
-          <span class="chip">CTF</span>
+    <section class="wrap intro" aria-labelledby="who-h">
+      <div class="intro-text">
+        <div class="who">
+          <img class="avatar" src="./static/img/avatar.jpg" alt="Jackson 的头像"
+               width="72" height="72" decoding="async" fetchpriority="high">
+          <div>
+            <h1 id="who-h">Jackson</h1>
+            <p>GitHub 上的 @JacksonTai2007</p>
+          </div>
         </div>
-        <div class="links-row">
-          <a class="link-btn" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">github</a>
-          <a class="link-btn" href="mailto:jacksontai200701@gmail.com">email</a>
-          <a class="link-btn" href="./feed.xml">rss</a>
-        </div>
-      </section>
-
-      <section class="block" aria-label="站点统计">
-        <div class="stats" id="stats"></div>
-      </section>
-
-      <section class="block" aria-labelledby="featured-h">
-        <p class="kicker" id="featured-h">精选</p>
-        <div class="cards" id="featured"></div>
-      </section>
-
-      <section class="block" aria-labelledby="recent-h">
-        <div class="sec-head">
-          <p class="kicker" id="recent-h">最新文章</p>
-          <a class="more" href="./blog.html">全部文章 →</a>
-        </div>
-        <ul class="post-list" id="recent-posts">
-          <li class="skeleton">正在加载…</li>
+        <p class="lede">逆向工程与移动安全方向的开发者，常驻中国澳门。</p>
+        <p class="more-about">做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这里是我的技术笔记与开源项目记录。</p>
+        <ul class="contact">
+          <li><a class="link" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a class="link" href="mailto:jacksontai200701@gmail.com">jacksontai200701@gmail.com</a></li>
+          <li><a class="link" href="./feed.xml">RSS 订阅</a></li>
         </ul>
-      </section>
+      </div>
 
-      <section class="block" aria-labelledby="cats-h">
-        <p class="kicker" id="cats-h">分类</p>
-        <ul class="cat-list" id="categories"></ul>
-        <p class="hint">按 <kbd>?</kbd> 查看键盘快捷键</p>
-      </section>
+      <figure class="cfg" id="cfg" data-view="graph" aria-labelledby="cfg-cap">
+        <div class="cfg-bar">
+          <span class="cfg-name">jackson_tai · ARM64</span>
+          <div class="cfg-toggle" role="group" aria-label="显示方式">
+            <button type="button" data-view="graph" aria-pressed="true">图形</button>
+            <button type="button" data-view="text" aria-pressed="false">文本</button>
+          </div>
+        </div>
+        <div class="cfg-canvas">
+          <svg class="cfg-edges" aria-hidden="true" focusable="false"></svg>
+<pre class="node n-a" aria-label="入口块"><span class="tv"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="c">; ============ S U B R O U T I N E ============</span>
+</span><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="c">; Attributes: bp-based frame</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="c">; 逆向工程与移动安全，常驻中国澳门</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="in">    </span><span class="m">EXPORT</span> <span class="n">jackson_tai</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><a class="n" href="./about.html">jackson_tai</a>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="in">    </span><span class="m">STP</span>   X29, X30, [SP,#<span class="i">-0x10</span>]!
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001004 </span><span class="in">    </span><span class="m">MOV</span>   X29, SP
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001008 </span><span class="in">    </span><span class="m">ADRL</span>  X0, <span class="n">aMacau</span>    <span class="c">; <span class="s">"澳门"</span></span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001010 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">settle_in</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001014 </span><span class="in">    </span><span class="m">CMP</span>   W0, #<span class="i">REVERSING</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001018 </span><span class="in">    </span><span class="m">B.NE</span>  <span class="n">loc_frontend</span></pre>
+<pre class="node n-b" aria-label="顺序执行块：Android 逆向"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000101C </span><a class="c" href="./blog.html?category=%E9%80%86%E5%90%91">; Android 逆向、漏洞分析</a>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000101C </span><span class="in">    </span><span class="m">ADRL</span>  X1, <span class="n">aIdaPro</span>   <span class="c">; <span class="s">"IDA Pro"</span></span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001024 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">analyze_apk</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001028 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">py_automate</span>  <span class="c">; Python 自动化</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000102C </span><span class="in">    </span><span class="m">B</span>     <span class="n">loc_notes</span></pre>
+<pre class="node n-c" aria-label="loc_frontend"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001030 </span><span class="c">; 也写一点前端</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001030 </span><a class="n" href="./blog.html?tag=FrontEnd">loc_frontend</a><span class="tv">  <span class="c">; CODE XREF: jackson_tai+18↑j</span></span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001030 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">build_site</span></pre>
+<pre class="node n-d" aria-label="loc_notes"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001034 </span><span class="c">; 技术笔记与开源项目</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001034 </span><a class="n" href="./blog.html">loc_notes</a><span class="tv">  <span class="c">; CODE XREF: jackson_tai+2C↑j</span></span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001034 </span><span class="in">    </span><span class="m">ADRL</span>  X0, <span class="n">aBlog</span>     <span class="c">; <span class="s">"blog.html"</span></span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000103C </span><span class="in">    </span><span class="m">BL</span>    <span class="n">publish</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001040 </span><span class="in">    </span><span class="m">LDP</span>   X29, X30, [SP],#<span class="i">0x10</span>
+<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001044 </span><span class="in">    </span><span class="m">RET</span>
+<span class="tv"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001044 </span><span class="c">; End of function jackson_tai</span></span></pre>
+        </div>
+        <figcaption id="cfg-cap">jackson_tai 的控制流图。<span class="t">绿线</span>是条件成立时的跳转，<span class="f">红线</span>是条件不成立时顺序执行，<span class="j">蓝线</span>是无条件流向。点一下带链接的名字，就能跳到对应的文章。</figcaption>
+      </figure>
+    </section>
 
+    <div class="wrap">
+      <div class="home-grid">
+        <section aria-labelledby="posts-h">
+          <div class="section-head">
+            <h2 id="posts-h">最近的文章</h2>
+            <p class="sum" id="stats"></p>
+          </div>
+          <ul class="post-list" id="recent-posts">
+            <li class="skeleton">正在加载文章列表…</li>
+          </ul>
+          <p class="list-foot">更早的文章在<a class="link" href="./blog.html">全部文章</a>里，也可以按年份看<a class="link" href="./archive.html">归档</a>。</p>
+        </section>
+
+        <aside class="side" aria-label="分类、标签与订阅">
+          <section aria-labelledby="cats-h">
+            <h2 id="cats-h">分类</h2>
+            <ul class="cat-list" id="categories"></ul>
+          </section>
+          <section aria-labelledby="tags-h">
+            <h2 id="tags-h">标签</h2>
+            <p class="tag-cloud" id="tags"></p>
+          </section>
+          <section aria-labelledby="rss-h">
+            <h2 id="rss-h">订阅</h2>
+            <p>用 RSS 阅读器订阅 <a class="link" href="./feed.xml">feed.xml</a>，新文章会自动出现在阅读器里。</p>
+          </section>
+          <section aria-labelledby="keys-h">
+            <h2 id="keys-h">键盘</h2>
+            <p>按 <kbd>/</kbd> 搜索文章，按 <kbd>?</kbd> 查看全部快捷键。</p>
+          </section>
+        </aside>
+      </div>
     </div>
+
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=7" defer></script>
+  <script src="./assets/js/blog.js?v=8" defer></script>
   <script>
     // blog.js is deferred, so it has already run by the time this fires
     window.addEventListener("DOMContentLoaded", function () {
       Blog.renderStats("#stats");
-      Blog.renderFeatured("#featured", 2);
       Blog.renderRecent("#recent-posts", 5);
       Blog.renderCategories("#categories");
+      Blog.renderTags("#tags", 16);
+      drawGraph();
     });
+
+    /* The control-flow graph: blocks are laid out by CSS grid, edges are
+       routed here the way a disassembler routes them (down, across, down)
+       and redrawn whenever the layout can change. */
+    function drawGraph() {
+      var fig = document.getElementById("cfg");
+      if (!fig) return;
+      var canvas = fig.querySelector(".cfg-canvas");
+      var svg = fig.querySelector(".cfg-edges");
+      var NS = "http://www.w3.org/2000/svg";
+      var nodes = {
+        a: fig.querySelector(".n-a"), b: fig.querySelector(".n-b"),
+        c: fig.querySelector(".n-c"), d: fig.querySelector(".n-d")
+      };
+      // [from, to, kind, port on the source, port on the target, trace order]
+      var EDGES = [
+        ["a", "b", "f", 0.3, 0.5, 0],
+        ["b", "d", "j", 0.5, 0.3, 1],
+        ["a", "c", "t", 0.7, 0.5, 2],
+        ["c", "d", "j", 0.5, 0.7, 3]
+      ];
+      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var traced = false;
+
+      function box(el) {
+        return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight };
+      }
+      function route(e) {
+        var s = box(nodes[e[0]]), t = box(nodes[e[1]]);
+        var x1 = Math.round(s.x + s.w * e[3]) + 0.5, y1 = s.y + s.h;
+        var x2 = Math.round(t.x + t.w * e[4]) + 0.5, tip = t.y, y2 = tip - 7;
+        var ym = Math.round((y1 + tip) / 2);
+        var d;
+        if (Math.abs(x2 - x1) < 2) {
+          d = "M" + x1 + " " + y1 + "V" + y2;
+        } else {
+          var dir = x2 > x1 ? 1 : -1;
+          var r = Math.min(8, Math.abs(x2 - x1) / 2, (ym - y1) / 2);
+          d = "M" + x1 + " " + y1 + "V" + (ym - r) +
+            "Q" + x1 + " " + ym + " " + (x1 + dir * r) + " " + ym +
+            "H" + (x2 - dir * r) +
+            "Q" + x2 + " " + ym + " " + x2 + " " + (ym + r) +
+            "V" + y2;
+        }
+        return { d: d, head: "M" + (x2 - 5) + " " + y2 + "L" + x2 + " " + tip + "L" + (x2 + 5) + " " + y2 + "Z" };
+      }
+      function draw() {
+        if (fig.getAttribute("data-view") !== "graph") return;
+        // collapse the old drawing first, or it would keep the canvas from shrinking
+        svg.setAttribute("width", 0);
+        svg.setAttribute("height", 0);
+        var w = canvas.scrollWidth, h = canvas.scrollHeight;
+        svg.setAttribute("width", w);
+        svg.setAttribute("height", h);
+        svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+        svg.textContent = "";
+        var animate = !traced && !reduce;
+        EDGES.forEach(function (e) {
+          var g = route(e);
+          var p = document.createElementNS(NS, "path");
+          p.setAttribute("d", g.d);
+          p.setAttribute("class", e[2]);
+          var head = document.createElementNS(NS, "path");
+          head.setAttribute("d", g.head);
+          head.setAttribute("class", "ah " + e[2]);
+          svg.appendChild(p);
+          svg.appendChild(head);
+          if (animate) {
+            // the first paint traces execution: entry, the taken path, then the rest
+            var len = p.getTotalLength(), delay = 0.2 + e[5] * 0.32;
+            p.style.strokeDasharray = len;
+            p.style.strokeDashoffset = len;
+            head.style.opacity = 0;
+            p.getBoundingClientRect();
+            p.style.transition = "stroke-dashoffset .34s ease-out " + delay + "s";
+            head.style.transition = "opacity .12s linear " + (delay + 0.3) + "s";
+            p.style.strokeDashoffset = 0;
+            head.style.opacity = 1;
+          }
+        });
+        traced = true;
+      }
+      function setView(v) {
+        fig.setAttribute("data-view", v);
+        fig.querySelectorAll(".cfg-toggle button").forEach(function (b) {
+          b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === v));
+        });
+        draw();
+      }
+      fig.querySelectorAll(".cfg-toggle button").forEach(function (b) {
+        b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
+      });
+
+      var pending = false;
+      window.addEventListener("resize", function () {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(function () { pending = false; draw(); });
+      });
+      // a phone opens on the linear listing, the way a narrow window would
+      var narrow = window.matchMedia && matchMedia("(max-width: 640px)").matches;
+      fig.setAttribute("data-view", narrow ? "text" : "graph");
+      fig.querySelectorAll(".cfg-toggle button").forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === (narrow ? "text" : "graph")));
+      });
+
+      // block sizes depend on the mono font, so route once it has arrived
+      // (or after a second, whichever comes first)
+      var fontsReady = document.fonts && document.fonts.ready
+        ? Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1000); })])
+        : Promise.resolve();
+      fontsReady.then(function () {
+        if (fig.getAttribute("data-view") !== "graph") return;
+        // the graph does not fit this panel: fall back to the listing
+        if (canvas.scrollWidth > canvas.clientWidth + 2) { setView("text"); return; }
+        draw();
+      });
+    }
   </script>
 </body>
 </html>
