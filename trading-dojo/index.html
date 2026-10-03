@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0e14">
+<meta name="description" content="Penny Stock Arena — write a trading strategy, watch it score and rank a universe of $0.50–$5 US stocks on a CodeCombat-style ladder with an animated equity race.">
+<title>Penny Stock Arena</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🏟️</span>
+      <div>
+        <h1>Penny Stock Arena</h1>
+        <small id="subtitle">$0.50–$5 US stocks · strategy ladder</small>
+      </div>
+    </div>
+    <button id="runBtn" class="run-btn">▶ Compete</button>
+  </header>
+
+  <div id="seedBanner" class="seed-banner" hidden>
+    ⚠️ <b>SEED DATA</b> — <span id="seedDetail">synthetic demo prices, not real markets.</span>
+  </div>
+
+  <div id="progress" class="progress" hidden><div id="progressBar"></div><span id="progressLabel"></span></div>
+
+  <main>
+    <!-- ARENA / LADDER -->
+    <section id="view-arena" class="view active">
+      <div class="ladder-head">
+        <div class="filters" id="filters">
+          <button class="chip on" data-filter="all">All</button>
+          <button class="chip" data-filter="beat">Beat baseline</button>
+          <button class="chip" data-filter="top25">Top 25</button>
+        </div>
+        <div class="ladder-meta" id="ladderMeta"></div>
+      </div>
+      <div id="ladder" class="ladder"></div>
+    </section>
+
+    <!-- RACE -->
+    <section id="view-race" class="view">
+      <div class="race-frame">
+        <canvas id="raceCanvas"></canvas>
+        <div id="raceStandings" class="standings"></div>
+        <div id="raceBanner" class="race-banner" hidden></div>
+      </div>
+      <div class="race-controls">
+        <button id="playBtn" class="ctrl">⏸</button>
+        <input id="scrub" class="scrub" type="range" min="0" max="1000" value="0">
+        <div class="speeds" id="speeds">
+          <button data-spd="0.5">0.5×</button>
+          <button data-spd="1" class="on">1×</button>
+          <button data-spd="2">2×</button>
+          <button data-spd="4">4×</button>
+        </div>
+      </div>
+      <div class="race-note" id="raceNote">Top movers under your strategy, racing from a common start.</div>
+    </section>
+
+    <!-- STRATEGY -->
+    <section id="view-strategy" class="view">
+      <div class="presets" id="presets"></div>
+      <div class="editor-wrap">
+        <div class="editor-label">Strategy code <span class="muted">— function strategy(candles, ctx)</span></div>
+        <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+        <div id="editorStatus" class="editor-status"></div>
+      </div>
+      <details class="config">
+        <summary>⚙️ Backtest settings</summary>
+        <div class="config-grid">
+          <label>Start cash $<input id="cfgCash" type="number" min="1000" step="1000" value="10000"></label>
+          <label>Fees (bps)<input id="cfgFee" type="number" min="0" step="1" value="10"></label>
+          <label>Slippage (bps)<input id="cfgSlip" type="number" min="0" step="1" value="15"></label>
+          <label>Race lanes<input id="cfgTopN" type="number" min="2" max="8" step="1" value="6"></label>
+          <label class="check"><input id="cfgShort" type="checkbox"> Allow shorts</label>
+        </div>
+      </details>
+      <button id="runBtn2" class="run-btn wide">▶ Compete with this strategy</button>
+      <div class="duel" id="duel">
+        <div class="duel-label">Your strategy vs Buy &amp; Hold (avg equity)</div>
+        <canvas id="duelCanvas"></canvas>
+        <div id="duelReadout" class="duel-readout"></div>
+      </div>
+    </section>
+
+    <!-- DATA -->
+    <section id="view-data" class="view">
+      <div class="card">
+        <h3>Data source</h3>
+        <div id="dataInfo" class="data-info"></div>
+        <p class="muted small">The arena ships with a baked universe so it works offline. Real $0.50–$5 prices come from the scheduled GitHub Action (CI) or the in-browser live screen below.</p>
+      </div>
+      <div class="card">
+        <h3>Go live (optional)</h3>
+        <p class="muted small">Paste a free <a href="https://finnhub.io/register" target="_blank" rel="noopener">Finnhub</a> API key to pull real-time quotes for the candidate penny stocks, in your browser. The key is stored only on this device and sent only to Finnhub.</p>
+        <div class="live-row">
+          <input id="finnhubKey" type="password" placeholder="Finnhub API key" autocomplete="off">
+          <button id="goLiveBtn" class="ctrl">Fetch quotes</button>
+        </div>
+        <div id="liveStatus" class="live-status"></div>
+        <div id="liveList" class="live-list"></div>
+      </div>
+      <div class="card">
+        <h3>Reset</h3>
+        <p class="muted small">Clears your saved strategy, ELO ladder, and settings on this device.</p>
+        <button id="resetBtn" class="ctrl danger">Reset everything</button>
+      </div>
+      <footer class="disclaimer">
+        Not investment advice. Backtests on a survivorship-biased, currently-listed universe with
+        idealized fills — real penny-stock liquidity, spreads, and halts make live results far worse.
+        For education and practice only.
+      </footer>
+    </section>
+  </main>
+
+  <!-- detail sheet -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-backdrop"></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="arena"><span>🪜</span>Arena</button>
+    <button class="tab" data-view="race"><span>🏁</span>Race</button>
+    <button class="tab" data-view="strategy"><span>✍️</span>Strategy</button>
+    <button class="tab" data-view="data"><span>📡</span>Data</button>
+  </nav>
+</div>
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

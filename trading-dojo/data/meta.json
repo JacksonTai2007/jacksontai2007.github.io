@@ -1,0 +1,14 @@
+{
+  "dataKind": "seed",
+  "asOf": "2026-06-26",
+  "source": "synthetic-gbm-v1",
+  "universeSize": 120,
+  "barsPerStock": 252,
+  "priceBand": [
+    0.5,
+    5
+  ],
+  "interval": "1d",
+  "schemaVersion": 3,
+  "warning": "SEED DATA — synthetic prices, NOT real markets. Run the CI updater for real data."
+}
