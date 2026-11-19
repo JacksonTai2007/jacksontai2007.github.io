@@ -1,49 +1,24 @@
 /* ============================================================
-   Syntax highlighting — disassembler listing colours
-   Navy keywords, blue names, green numbers, olive strings and
-   grey-blue comments, the way a disassembler colours a listing.
-   Light is the base; dark redefines the tokens for the ink-blue
-   ground and follows the same three theme states as blog.css.
+   Syntax highlighting — terminal palette
+
+   Code blocks sit on the terminal surface in both light and dark
+   modes (see blog.css), so there is one palette, not two: amber
+   keywords, cyan names, green strings, peach numbers and warm grey
+   comments, on graphite.
    ============================================================ */
 
 :root {
-  --hl-text: var(--code-ink, #16213d);
-  --hl-comment: #66769a;
-  --hl-keyword: #0e2a78;
-  --hl-string: #7b5a00;
-  --hl-number: #1d7a3c;
-  --hl-title: #1f3f9e;
-  --hl-attr: #7a3b8f;
-  --hl-type: #8a4b12;
-  --hl-meta: #5a6781;
-  --hl-deletion-bg: rgba(199, 58, 50, 0.1);
-  --hl-addition-bg: rgba(30, 138, 62, 0.1);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --hl-comment: #8e9cbd;
-    --hl-keyword: #a9c4ff;
-    --hl-string: #ffc98a;
-    --hl-number: #82dca3;
-    --hl-title: #ffd866;
-    --hl-attr: #d6a8ff;
-    --hl-type: #ffab70;
-    --hl-meta: #9aa7c4;
-    --hl-deletion-bg: rgba(255, 122, 110, 0.14);
-    --hl-addition-bg: rgba(92, 207, 128, 0.14);
-  }
-}
-:root[data-theme="dark"] {
-  --hl-comment: #8e9cbd;
-  --hl-keyword: #a9c4ff;
-  --hl-string: #ffc98a;
-  --hl-number: #82dca3;
-  --hl-title: #ffd866;
-  --hl-attr: #d6a8ff;
-  --hl-type: #ffab70;
-  --hl-meta: #9aa7c4;
-  --hl-deletion-bg: rgba(255, 122, 110, 0.14);
-  --hl-addition-bg: rgba(92, 207, 128, 0.14);
+  --hl-text: var(--term-ink, #e6e3dc);
+  --hl-comment: #8a857b;
+  --hl-keyword: #ffb547;
+  --hl-string: #a6da95;
+  --hl-number: #f5a97f;
+  --hl-title: #7dcfff;
+  --hl-attr: #c6a0f6;
+  --hl-type: #eed49f;
+  --hl-meta: #939ab7;
+  --hl-deletion-bg: rgba(255, 107, 91, 0.16);
+  --hl-addition-bg: rgba(166, 218, 149, 0.14);
 }
 
 .hljs { color: var(--hl-text); background: transparent; }
@@ -99,8 +74,8 @@
 .hljs-subst,
 .hljs-punctuation { color: var(--hl-text); }
 
-.hljs-deletion { color: var(--edge-f, #c73a32); background: var(--hl-deletion-bg); }
-.hljs-addition { color: var(--edge-t, #1e8a3e); background: var(--hl-addition-bg); }
+.hljs-deletion { color: var(--edge-f, #ff6b5b); background: var(--hl-deletion-bg); }
+.hljs-addition { color: var(--edge-t, #a6da95); background: var(--hl-addition-bg); }
 
 .hljs-emphasis { font-style: italic; }
 .hljs-strong { font-weight: 700; }

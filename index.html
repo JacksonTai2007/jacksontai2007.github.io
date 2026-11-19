@@ -4,31 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JacksonTai · 个人博客</title>
-  <meta name="description" content="JacksonTai 的个人博客 — 逆向工程与移动安全的技术笔记，涵盖 Android 逆向、漏洞分析、Python 自动化与前端。">
-  <meta name="keywords" content="JacksonTai, 博客, 逆向工程, 移动安全, Android, IDA Pro, Python, 前端, CTF">
+  <meta name="description" content="JacksonTai 的个人主页与博客 — 逆向工程、移动安全与漏洞研究的技术笔记、复现记录和开源项目。">
+  <meta name="keywords" content="JacksonTai, 博客, 逆向工程, 移动安全, 漏洞研究, CVE, Android, IDA Pro, Python, CTF">
   <meta name="author" content="JacksonTai">
   <link rel="canonical" href="https://jacksontai2007.github.io/">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="JacksonTai 的博客">
   <meta property="og:title" content="JacksonTai · 个人博客">
-  <meta property="og:description" content="逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。">
+  <meta property="og:description" content="逆向工程、移动安全与漏洞研究 —— 技术笔记、复现记录和开源项目。">
   <meta property="og:url" content="https://jacksontai2007.github.io/">
   <meta property="og:image" content="https://jacksontai2007.github.io/static/img/logo.png">
   <meta property="og:locale" content="zh_CN">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="JacksonTai · 个人博客">
-  <meta name="twitter:description" content="逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。">
+  <meta name="twitter:description" content="逆向工程、移动安全与漏洞研究 —— 技术笔记、复现记录和开源项目。">
   <meta name="twitter:image" content="https://jacksontai2007.github.io/static/img/logo.png">
 
-  <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0f1a36" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e0f11" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="./static/img/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="./static/img/favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="./static/img/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="JacksonTai 的博客" href="./feed.xml">
   <link rel="preload" href="./assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./assets/css/blog.css?v=8">
+  <link rel="stylesheet" href="./assets/css/blog.css?v=9">
   <script>
     // resolve the theme before first paint so there is no flash of the wrong mode
     (function () {
@@ -46,7 +46,7 @@
     "@context": "https://schema.org",
     "@type": "Blog",
     "name": "JacksonTai 的博客",
-    "description": "逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。",
+    "description": "逆向工程、移动安全与漏洞研究 —— 技术笔记、复现记录和开源项目。",
     "url": "https://jacksontai2007.github.io/",
     "inLanguage": "zh-CN",
     "author": {
@@ -64,233 +64,96 @@
 
   <main id="main" class="home">
 
-    <section class="wrap intro" aria-labelledby="who-h">
-      <div class="intro-text">
-        <div class="who">
-          <img class="avatar" src="./static/img/avatar.jpg" alt="Jackson 的头像"
-               width="72" height="72" decoding="async" fetchpriority="high">
-          <div>
-            <h1 id="who-h">Jackson</h1>
-            <p>GitHub 上的 @JacksonTai2007</p>
-          </div>
+    <section class="wrap col hero" aria-labelledby="who-h">
+      <p class="kicker"><span class="p">$</span> whoami</p>
+      <div class="hero-id">
+        <img class="avatar" src="./static/img/avatar.jpg" alt="Jackson 的头像"
+             width="72" height="72" decoding="async" fetchpriority="high">
+        <div>
+          <h1 id="who-h">Jackson Tai</h1>
+          <p class="hero-role">逆向工程<span class="sep">/</span>移动安全<span class="sep">/</span>漏洞研究</p>
         </div>
-        <p class="lede">逆向工程与移动安全方向的开发者，常驻中国澳门。</p>
-        <p class="more-about">做 Android 逆向、漏洞分析与 Python 自动化，也写一点前端。这里是我的技术笔记与开源项目记录。</p>
-        <ul class="contact">
-          <li><a class="link" href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a class="link" href="mailto:jacksontai200701@gmail.com">jacksontai200701@gmail.com</a></li>
-          <li><a class="link" href="./feed.xml">RSS 订阅</a></li>
-        </ul>
       </div>
-
-      <figure class="cfg" id="cfg" data-view="graph" aria-labelledby="cfg-cap">
-        <div class="cfg-bar">
-          <span class="cfg-name">jackson_tai · ARM64</span>
-          <div class="cfg-toggle" role="group" aria-label="显示方式">
-            <button type="button" data-view="graph" aria-pressed="true">图形</button>
-            <button type="button" data-view="text" aria-pressed="false">文本</button>
-          </div>
-        </div>
-        <div class="cfg-canvas">
-          <svg class="cfg-edges" aria-hidden="true" focusable="false"></svg>
-<pre class="node n-a" aria-label="入口块"><span class="tv"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="c">; ============ S U B R O U T I N E ============</span>
-</span><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="c">; Attributes: bp-based frame</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="c">; 逆向工程与移动安全，常驻中国澳门</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="in">    </span><span class="m">EXPORT</span> <span class="n">jackson_tai</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><a class="n" href="./about.html">jackson_tai</a>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001000 </span><span class="in">    </span><span class="m">STP</span>   X29, X30, [SP,#<span class="i">-0x10</span>]!
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001004 </span><span class="in">    </span><span class="m">MOV</span>   X29, SP
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001008 </span><span class="in">    </span><span class="m">ADRL</span>  X0, <span class="n">aMacau</span>    <span class="c">; <span class="s">"澳门"</span></span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001010 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">settle_in</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001014 </span><span class="in">    </span><span class="m">CMP</span>   W0, #<span class="i">REVERSING</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001018 </span><span class="in">    </span><span class="m">B.NE</span>  <span class="n">loc_frontend</span></pre>
-<pre class="node n-b" aria-label="顺序执行块：Android 逆向"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000101C </span><a class="c" href="./blog.html?category=%E9%80%86%E5%90%91">; Android 逆向、漏洞分析</a>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000101C </span><span class="in">    </span><span class="m">ADRL</span>  X1, <span class="n">aIdaPro</span>   <span class="c">; <span class="s">"IDA Pro"</span></span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001024 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">analyze_apk</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001028 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">py_automate</span>  <span class="c">; Python 自动化</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000102C </span><span class="in">    </span><span class="m">B</span>     <span class="n">loc_notes</span></pre>
-<pre class="node n-c" aria-label="loc_frontend"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001030 </span><span class="c">; 也写一点前端</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001030 </span><a class="n" href="./blog.html?tag=FrontEnd">loc_frontend</a><span class="tv">  <span class="c">; CODE XREF: jackson_tai+18↑j</span></span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001030 </span><span class="in">    </span><span class="m">BL</span>    <span class="n">build_site</span></pre>
-<pre class="node n-d" aria-label="loc_notes"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001034 </span><span class="c">; 技术笔记与开源项目</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001034 </span><a class="n" href="./blog.html">loc_notes</a><span class="tv">  <span class="c">; CODE XREF: jackson_tai+2C↑j</span></span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001034 </span><span class="in">    </span><span class="m">ADRL</span>  X0, <span class="n">aBlog</span>     <span class="c">; <span class="s">"blog.html"</span></span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>0000103C </span><span class="in">    </span><span class="m">BL</span>    <span class="n">publish</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001040 </span><span class="in">    </span><span class="m">LDP</span>   X29, X30, [SP],#<span class="i">0x10</span>
-<span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001044 </span><span class="in">    </span><span class="m">RET</span>
-<span class="tv"><span class="ea"><span class="seg">.text:</span><span class="z">00000000</span>00001044 </span><span class="c">; End of function jackson_tai</span></span></pre>
-        </div>
-        <figcaption id="cfg-cap">jackson_tai 的控制流图。<span class="t">绿线</span>是条件成立时的跳转，<span class="f">红线</span>是条件不成立时顺序执行，<span class="j">蓝线</span>是无条件流向。点一下带链接的名字，就能跳到对应的文章。</figcaption>
-      </figure>
+      <p class="hero-lede">常驻中国澳门。平时拆 Android 应用、复现漏洞，也写一点前端。这里放我的技术笔记、漏洞复现记录和开源项目。</p>
+      <p class="hero-links">
+        <a href="https://github.com/JacksonTai2007" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="mailto:jacksontai200701@gmail.com">邮件</a>
+        <a href="./feed.xml">RSS</a>
+        <a href="./about.html">关于我</a>
+      </p>
     </section>
 
-    <div class="wrap">
-      <div class="home-grid">
-        <section aria-labelledby="posts-h">
-          <div class="section-head">
-            <h2 id="posts-h">最近的文章</h2>
-            <p class="sum" id="stats"></p>
-          </div>
-          <ul class="post-list" id="recent-posts">
-            <li class="skeleton">正在加载文章列表…</li>
-          </ul>
-          <p class="list-foot">更早的文章在<a class="link" href="./blog.html">全部文章</a>里，也可以按年份看<a class="link" href="./archive.html">归档</a>。</p>
-        </section>
+    <section class="wrap col home-section" aria-labelledby="rec-h">
+      <h2 class="sec" id="rec-h"><span class="path">~/honors</span>荣誉与致谢</h2>
+      <ul class="records">
+        <li>
+          <a href="./post.html?id=cve-2026-115560">
+            <span class="yr">2026</span>
+            <span class="badge cve">CVE</span>
+            <span class="rec"><span class="id">CVE-2026-115560</span><span class="desc">PHP 官方安全公告致谢 · Reporter</span></span>
+            <span class="go" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/JacksonTai2007/codequest-2026" target="_blank" rel="noopener">
+            <span class="yr">2026</span>
+            <span class="badge prize">PRIZE</span>
+            <span class="rec"><span class="id">CodeQuest 2026</span><span class="desc">CodeCombat 黑客松一等奖</span></span>
+            <span class="go" aria-hidden="true">↗</span>
+          </a>
+        </li>
+      </ul>
+    </section>
 
-        <aside class="side" aria-label="分类、标签与订阅">
-          <section aria-labelledby="cats-h">
-            <h2 id="cats-h">分类</h2>
-            <ul class="cat-list" id="categories"></ul>
-          </section>
-          <section aria-labelledby="tags-h">
-            <h2 id="tags-h">标签</h2>
-            <p class="tag-cloud" id="tags"></p>
-          </section>
-          <section aria-labelledby="rss-h">
-            <h2 id="rss-h">订阅</h2>
-            <p>用 RSS 阅读器订阅 <a class="link" href="./feed.xml">feed.xml</a>，新文章会自动出现在阅读器里。</p>
-          </section>
-          <section aria-labelledby="keys-h">
-            <h2 id="keys-h">键盘</h2>
-            <p>按 <kbd>/</kbd> 搜索文章，按 <kbd>?</kbd> 查看全部快捷键。</p>
-          </section>
-        </aside>
+    <section class="wrap col home-section" aria-labelledby="posts-h">
+      <div class="section-head">
+        <h2 class="sec" id="posts-h"><span class="path">~/writing</span>最近的文章</h2>
+        <p class="sum" id="stats"></p>
       </div>
-    </div>
+      <ul class="post-list" id="recent-posts">
+        <li class="skeleton">正在加载文章列表…</li>
+      </ul>
+      <p class="sec-foot"><a href="./blog.html">全部文章 →</a>&emsp;<a href="./archive.html">按年份归档 →</a></p>
+    </section>
+
+    <section class="wrap col home-section" aria-labelledby="work-h">
+      <h2 class="sec" id="work-h"><span class="path">~/projects</span>开源项目</h2>
+      <ul class="projects">
+        <li>
+          <a class="proj-name" href="https://github.com/JacksonTai2007/TencentGamesafeCTF2026AndroidWriteUp" target="_blank" rel="noopener">TencentGamesafeCTF2026AndroidWriteUp</a>
+          <span class="proj-lang">Android</span>
+          <p class="proj-desc">2026 腾讯游戏安全竞赛初赛，安卓客户端安全题的分析报告，附沙箱分析产物。</p>
+        </li>
+        <li>
+          <a class="proj-name" href="https://github.com/JacksonTai2007/cc-unlock" target="_blank" rel="noopener">cc-unlock</a>
+          <span class="proj-lang">JavaScript</span>
+          <p class="proj-desc">给 Claude Code 和 Codex 部署安全研究工作区指令与技能的工作台。<a class="link" href="./post.html?id=cc-unlock">相关文章</a></p>
+        </li>
+        <li>
+          <a class="proj-name" href="https://github.com/JacksonTai2007/gpt-image-2-prompting-skill" target="_blank" rel="noopener">gpt-image-2-prompting-skill</a>
+          <span class="proj-lang">Claude Skill</span>
+          <p class="proj-desc">把模糊的画面想法变成可复现的 GPT Image 2 提示词：六段式协议、13 个模板、29 个场景配方。<a class="link" href="./post.html?id=gpt-image-2-prompting-skill">相关文章</a></p>
+        </li>
+        <li>
+          <a class="proj-name" href="https://github.com/JacksonTai2007/Macau-High-school-students-Python-Problem-Exercise" target="_blank" rel="noopener">Macau-High-school-students-Python-Problem-Exercise</a>
+          <span class="proj-lang">HTML</span>
+          <p class="proj-desc">澳门中学生 Python 解难大赛的历届真题练习。</p>
+        </li>
+      </ul>
+      <p class="sec-foot"><a href="https://github.com/JacksonTai2007?tab=repositories" target="_blank" rel="noopener">GitHub 上的全部仓库 ↗</a></p>
+    </section>
 
   </main>
 
   <footer class="site-footer"></footer>
 
-  <script src="./assets/js/blog.js?v=8" defer></script>
+  <script src="./assets/js/blog.js?v=9" defer></script>
   <script>
     // blog.js is deferred, so it has already run by the time this fires
     window.addEventListener("DOMContentLoaded", function () {
       Blog.renderStats("#stats");
       Blog.renderRecent("#recent-posts", 5);
-      Blog.renderCategories("#categories");
-      Blog.renderTags("#tags", 16);
-      drawGraph();
     });
-
-    /* The control-flow graph: blocks are laid out by CSS grid, edges are
-       routed here the way a disassembler routes them (down, across, down)
-       and redrawn whenever the layout can change. */
-    function drawGraph() {
-      var fig = document.getElementById("cfg");
-      if (!fig) return;
-      var canvas = fig.querySelector(".cfg-canvas");
-      var svg = fig.querySelector(".cfg-edges");
-      var NS = "http://www.w3.org/2000/svg";
-      var nodes = {
-        a: fig.querySelector(".n-a"), b: fig.querySelector(".n-b"),
-        c: fig.querySelector(".n-c"), d: fig.querySelector(".n-d")
-      };
-      // [from, to, kind, port on the source, port on the target, trace order]
-      var EDGES = [
-        ["a", "b", "f", 0.3, 0.5, 0],
-        ["b", "d", "j", 0.5, 0.3, 1],
-        ["a", "c", "t", 0.7, 0.5, 2],
-        ["c", "d", "j", 0.5, 0.7, 3]
-      ];
-      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var traced = false;
-
-      function box(el) {
-        return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight };
-      }
-      function route(e) {
-        var s = box(nodes[e[0]]), t = box(nodes[e[1]]);
-        var x1 = Math.round(s.x + s.w * e[3]) + 0.5, y1 = s.y + s.h;
-        var x2 = Math.round(t.x + t.w * e[4]) + 0.5, tip = t.y, y2 = tip - 7;
-        var ym = Math.round((y1 + tip) / 2);
-        var d;
-        if (Math.abs(x2 - x1) < 2) {
-          d = "M" + x1 + " " + y1 + "V" + y2;
-        } else {
-          var dir = x2 > x1 ? 1 : -1;
-          var r = Math.min(8, Math.abs(x2 - x1) / 2, (ym - y1) / 2);
-          d = "M" + x1 + " " + y1 + "V" + (ym - r) +
-            "Q" + x1 + " " + ym + " " + (x1 + dir * r) + " " + ym +
-            "H" + (x2 - dir * r) +
-            "Q" + x2 + " " + ym + " " + x2 + " " + (ym + r) +
-            "V" + y2;
-        }
-        return { d: d, head: "M" + (x2 - 5) + " " + y2 + "L" + x2 + " " + tip + "L" + (x2 + 5) + " " + y2 + "Z" };
-      }
-      function draw() {
-        if (fig.getAttribute("data-view") !== "graph") return;
-        // collapse the old drawing first, or it would keep the canvas from shrinking
-        svg.setAttribute("width", 0);
-        svg.setAttribute("height", 0);
-        var w = canvas.scrollWidth, h = canvas.scrollHeight;
-        svg.setAttribute("width", w);
-        svg.setAttribute("height", h);
-        svg.setAttribute("viewBox", "0 0 " + w + " " + h);
-        svg.textContent = "";
-        var animate = !traced && !reduce;
-        EDGES.forEach(function (e) {
-          var g = route(e);
-          var p = document.createElementNS(NS, "path");
-          p.setAttribute("d", g.d);
-          p.setAttribute("class", e[2]);
-          var head = document.createElementNS(NS, "path");
-          head.setAttribute("d", g.head);
-          head.setAttribute("class", "ah " + e[2]);
-          svg.appendChild(p);
-          svg.appendChild(head);
-          if (animate) {
-            // the first paint traces execution: entry, the taken path, then the rest
-            var len = p.getTotalLength(), delay = 0.2 + e[5] * 0.32;
-            p.style.strokeDasharray = len;
-            p.style.strokeDashoffset = len;
-            head.style.opacity = 0;
-            p.getBoundingClientRect();
-            p.style.transition = "stroke-dashoffset .34s ease-out " + delay + "s";
-            head.style.transition = "opacity .12s linear " + (delay + 0.3) + "s";
-            p.style.strokeDashoffset = 0;
-            head.style.opacity = 1;
-          }
-        });
-        traced = true;
-      }
-      function setView(v) {
-        fig.setAttribute("data-view", v);
-        fig.querySelectorAll(".cfg-toggle button").forEach(function (b) {
-          b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === v));
-        });
-        draw();
-      }
-      fig.querySelectorAll(".cfg-toggle button").forEach(function (b) {
-        b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
-      });
-
-      var pending = false;
-      window.addEventListener("resize", function () {
-        if (pending) return;
-        pending = true;
-        requestAnimationFrame(function () { pending = false; draw(); });
-      });
-      // a phone opens on the linear listing, the way a narrow window would
-      var narrow = window.matchMedia && matchMedia("(max-width: 640px)").matches;
-      fig.setAttribute("data-view", narrow ? "text" : "graph");
-      fig.querySelectorAll(".cfg-toggle button").forEach(function (b) {
-        b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === (narrow ? "text" : "graph")));
-      });
-
-      // block sizes depend on the mono font, so route once it has arrived
-      // (or after a second, whichever comes first)
-      var fontsReady = document.fonts && document.fonts.ready
-        ? Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1000); })])
-        : Promise.resolve();
-      fontsReady.then(function () {
-        if (fig.getAttribute("data-view") !== "graph") return;
-        // the graph does not fit this panel: fall back to the listing
-        if (canvas.scrollWidth > canvas.clientWidth + 2) { setView("text"); return; }
-        draw();
-      });
-    }
   </script>
 </body>
 </html>

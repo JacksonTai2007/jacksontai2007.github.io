@@ -80,7 +80,7 @@
     return (
       '<div class="wrap nav">' +
         '<a class="brand" href="' + ROOT + 'index.html" aria-label="JacksonTai 首页">' +
-          logoSVG("h") + "<span>JacksonTai</span>" +
+          logoSVG("h") + '<span class="brand-name">jacksontai</span><span class="brand-cur" aria-hidden="true"></span>' +
         "</a>" +
         '<nav class="nav-links" aria-label="主导航">' +
           NAV.map(function (n) {
@@ -120,7 +120,7 @@
 
   /* ---------- Theme ---------- */
   var root = document.documentElement;
-  var THEME_BG = { light: "#fafbfc", dark: "#0f1a36" };
+  var THEME_BG = { light: "#f5f3ee", dark: "#0e0f11" };
   function applyTheme(t) {
     root.setAttribute("data-theme", t);
     try { localStorage.setItem("theme", t); } catch (e) {}
