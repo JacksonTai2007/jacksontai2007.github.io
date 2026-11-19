@@ -6,7 +6,15 @@
     <description>逆向工程与移动安全的技术笔记 —— Android 逆向、漏洞分析、Python 自动化与前端。</description>
     <language>zh-CN</language>
     <atom:link href="https://jacksontai2007.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 28 Jun 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>进了 PHP 安全公告的致谢名单：CVE-2026-115560 复现与上报记录</title>
+      <link>https://jacksontai2007.github.io/post.html?id=cve-2026-115560</link>
+      <guid isPermaLink="true">https://jacksontai2007.github.io/post.html?id=cve-2026-115560</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 GMT</pubDate>
+      <category>安全</category>
+      <description>PHP 11 月 19 日公开了 CVE-2026-115560，公告致谢的五位报告者里有我。漏洞不是我发现的，我的报告被判为重复；这篇讲它补充了什么：不需要 gadget 类，一个上传请求就能改写 $_SESSION 里的权限字段。</description>
+    </item>
     <item>
       <title>cc-unlock：给 AI Coding Agent 搭一套安全研究上下文框架</title>
       <link>https://jacksontai2007.github.io/post.html?id=cc-unlock</link>

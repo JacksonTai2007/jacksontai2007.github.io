@@ -1,6 +1,15 @@
 {
   "posts": [
     {
+      "id": "cve-2026-115560",
+      "featured": true,
+      "title": "进了 PHP 安全公告的致谢名单：CVE-2026-115560 复现与上报记录",
+      "date": "2026-11-20",
+      "category": "安全",
+      "tags": ["PHP", "CVE", "漏洞复现", "安全研究"],
+      "excerpt": "PHP 11 月 19 日公开了 CVE-2026-115560，公告致谢的五位报告者里有我。漏洞不是我发现的，我的报告被判为重复；这篇讲它补充了什么：不需要 gadget 类，一个上传请求就能改写 $_SESSION 里的权限字段。"
+    },
+    {
       "id": "cc-unlock",
       "featured": true,
       "title": "cc-unlock：给 AI Coding Agent 搭一套安全研究上下文框架",
